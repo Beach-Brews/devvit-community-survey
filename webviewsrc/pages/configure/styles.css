@@ -1,0 +1,30 @@
+﻿#configure header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    box-shadow: 0 2px 1px -1px #555555;
+}
+
+#configure h1 {
+    font-size: 1.25rem;
+}
+
+#configure ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+#configure nav li {
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+#configure nav li.active {
+    border-bottom: 2px solid #aa4444;
+}

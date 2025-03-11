@@ -5,11 +5,11 @@
  * License: BSD-3-Clause
  */
 
-import {DevvitMessage, WebViewMessage} from "./defs.js";
 import {UseWebViewResult} from "@devvit/public-api";
+import {MessageFromDevvit, MessageToDevvit} from "../../webviewsrc/devvit/defs.js";
 
 export const devvitOnMessage =
-    async(message: WebViewMessage, webView: UseWebViewResult<DevvitMessage>): Promise<void> => {
+    async(message: MessageToDevvit, webView: UseWebViewResult<MessageFromDevvit>): Promise<void> => {
 
     };
 

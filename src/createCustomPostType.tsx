@@ -6,10 +6,10 @@
  */
 
 import {Devvit, useAsync, useWebView} from '@devvit/public-api';
-import type {DevvitMessage, WebViewMessage} from './dwc/defs.js';
 import {Redis} from "./data/Redis.js";
 import {Logger} from "./utils/logging.js";
 import {devvitOnMessage} from "./dwc/index.js";
+import {MessageFromDevvit, MessageToDevvit} from "../webviewsrc/devvit/defs.js";
 
 const logger = Logger.CreateLogger('Survey');
 
@@ -67,7 +67,7 @@ Devvit.addCustomPostType({
         }
 
         // Load up webView
-        const webView = useWebView<WebViewMessage, DevvitMessage>({
+        const webView = useWebView<MessageToDevvit, MessageFromDevvit>({
             url: 'page.html',
             onMessage: devvitOnMessage
         });
