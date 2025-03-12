@@ -11,7 +11,7 @@ export const ConfigureHeader = (props: ConfigureHeaderProps) => {
     for (let code in ConfigureSection) {
         if (!ConfigureSection.hasOwnProperty(code)) continue;
         menuItems.push(<li
-            itemID={code}
+            key={code}
             onClick={() => props.setActiveSection(ConfigureSection[code])}
             className={props.activeMenu === ConfigureSection[code] ? 'active' : ''}>{ConfigureSection[code]}</li>);
     }
@@ -28,7 +28,9 @@ export const ConfigureHeader = (props: ConfigureHeaderProps) => {
                     </ul>
                 </nav>
             </div>
-            <div><span>DRAFT</span></div>
+            <div>
+                <button>Draft</button>
+            </div>
         </header>
     )
 };

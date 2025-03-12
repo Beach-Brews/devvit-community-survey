@@ -43,7 +43,7 @@ export class Schema {
 
     static paragraphQuestion = z
         .object({
-            type: z.literal('scale'),
+            type: z.literal('paragraph'),
             min: z.number().min(0),
             max: z.number().min(0)
         })
@@ -52,7 +52,7 @@ export class Schema {
 
     static scaleQuestion = z
         .object({
-            type: z.literal('range'),
+            type: z.literal('scale'),
             min: z.number().min(0),
             max: z.number().min(3),
             minLabel: z.string().min(1),

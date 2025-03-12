@@ -5,9 +5,12 @@
  * License: BSD-3-Clause
  */
 
+import {SurveyConfigModel} from "./models.js";
+
 /* ========================================================================= */
 /* ==================== Messages From WebView To Devvit ==================== */
 /* ========================================================================= */
+
 export type FutureToDevvit = { name: string };
 
 export type MessageToDevvit = {
@@ -21,15 +24,7 @@ export type MessageToDevvit = {
 /* ==================== Messages From Devvit To WebView ==================== */
 /* ========================================================================= */
 export type InitFromDevvit = {
-    postConfig: {
-        isOwner: boolean,
-        title: string,
-        intro: string,
-        closeDate: string,
-        allowMultiple: boolean,
-        publishDate: string,
-        status: 'draft'|'live'
-    }
+    postConfig: SurveyConfigModel
 };
 export type FutureFromDevvit = { number: number; name: string; error?: string };
 

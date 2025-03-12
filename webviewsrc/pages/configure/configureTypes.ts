@@ -2,4 +2,4 @@
     'questions' = 'Questions',
     'results' = 'Results',
     'settings' = 'Settings'
-};
+}
