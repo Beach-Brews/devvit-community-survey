@@ -1,0 +1,88 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "community-survey",
+  "permissions": {
+    "redis": true,
+    "media": true,
+    "reddit": {
+      "enable": true
+    }
+  },
+  "post": {
+    "dir": "dist/client",
+    "entrypoints": {
+      "default": {
+        "entry": "index.html",
+        "height": "tall"
+      },
+      "dashboard": {
+        "entry": "dashboard.html"
+      }
+    }
+  },
+  "server": {
+    "dir": "dist/server",
+    "entry": "index.cjs"
+  },
+  "media": {
+      "dir": "assets"
+  },
+  "menu": {
+    "items": [
+      {
+        "label": "Create Survey Dashboard",
+        "description": "Community-Survey",
+        "location": "subreddit",
+        "forUserType": "moderator",
+        "endpoint": "/internal/menu/create-dashboard"
+      }
+    ]
+  },
+  "triggers": {
+    "onAppInstall": "/internal/trigger/on-install",
+    "onAppUpgrade": "/internal/trigger/on-upgrade"
+  },
+  "scheduler": {
+    "tasks": {
+      "publish-check": {
+        "endpoint": "/internal/cron/publish-check",
+        "cron": "* * * * *"
+      }
+    }
+  },
+  "settings": {
+    "subreddit": {
+      "logLevel": {
+        "type": "select",
+        "label": "Log Level",
+        "helpText": "Controls the level of log messages for performance.",
+        "defaultValue": "Warn",
+        "options": [
+          {
+            "label": "Error",
+            "value": "Error"
+          },
+          {
+            "label": "Warn",
+            "value": "Warn"
+          },
+          {
+            "label": "Info",
+            "value": "Info"
+          },
+          {
+            "label": "Debug",
+            "value": "Debug"
+          },
+          {
+            "label": "Trace",
+            "value": "Trace"
+          }
+        ]
+      }
+    }
+  },
+  "dev": {
+    "subreddit": "beachbrewsboil"
+  }
+}
