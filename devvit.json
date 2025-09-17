@@ -82,6 +82,9 @@
       }
     }
   },
+  "marketingAssets": {
+	"icon": "assets/community-home-app-icon.png"
+  },
   "dev": {
     "subreddit": "beachbrewsboil"
   }

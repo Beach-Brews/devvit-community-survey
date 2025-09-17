@@ -88,12 +88,11 @@ export class Schema {
         .strictObject({
             owner: z.string().min(1),
             title: z.string().min(1),
-            intro: z.string().min(1),
+            intro: z.string(),
             allowMultiple: z.boolean(),
             createDate: z.iso.datetime(),
             publishDate: z.iso.datetime().nullable(),
             closeDate: z.iso.datetime().nullable(),
-            status: z.enum(['draft', 'live', 'closed']),
             questions: Schema.surveyQuestionList
         });
 }

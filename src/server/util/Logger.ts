@@ -8,8 +8,8 @@
  * License: BSD-3-Clause
  */
 
-import {SettingsClient} from "@devvit/settings";
-import {AppSettings, LogLevel} from "./AppSettings.js";
+import {settings} from '@devvit/web/server';
+import {AppSettings, LogLevel} from "./AppSettings";
 
 export class Logger {
 
@@ -17,7 +17,7 @@ export class Logger {
     #logLevel: LogLevel;
     #traceName: string | undefined;
 
-    public static async Create(label: string, settings: SettingsClient): Promise<Logger> {
+    public static async Create(label: string): Promise<Logger> {
         return new Logger(label, await AppSettings.GetLogLevel(settings));
     }
 

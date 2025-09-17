@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import {SettingsClient} from '@devvit/settings';
+import {settings} from '@devvit/web/server';
 
 // Represents the log level of the application.
 export enum LogLevel {
@@ -27,7 +27,7 @@ enum SettingKeys {
 export class AppSettings {
 
     // Gets the configured log level to reduce the amount of logs
-    public static async GetLogLevel(settings: SettingsClient): Promise<LogLevel> {
+    public static async GetLogLevel(): Promise<LogLevel> {
         const savedLvl = await settings.get<string[]>(SettingKeys.LogLevel);
         const key = savedLvl && savedLvl.length > 0 && savedLvl[0] ? savedLvl[0] : null;
         return (key ? LogLevel[key as keyof typeof LogLevel] : LogLevel.Error) ?? LogLevel.Error;

@@ -7,12 +7,13 @@
 
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
-import { context, reddit, settings } from '@devvit/web/server';
+import { context, reddit } from '@devvit/web/server';
 import { Logger } from "../../util/Logger";
+import { isMod } from '../../util/userUtils';
 
 export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
     router.post('/internal/menu/create-dashboard', async (_req, res): Promise<void> => {
-        const logger = await Logger.Create("Menu - Create Dashboard", settings);
+        const logger = await Logger.Create("Menu - Create Dashboard");
         logger.traceStart("/internal/menu/create-dashboard");
 
         try {
@@ -23,7 +24,11 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
                 throw new Error('Subreddit Name is required.');
             }
 
-            // TODO: Check moderator status
+            // Confirm user is a moderator
+            if (!(await isMod())) {
+                // noinspection ExceptionCaughtLocallyJS
+                throw new Error('You must be a moderator.');
+            }
 
             // Create the new Dashboard post
             const post = await reddit.submitCustomPost({
@@ -33,7 +38,7 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
                     description: 'Create, edit and manage surveys',
                     buttonLabel: 'Launch Dashboard',
                     // TODO: entry: 'dashboard'
-                    // TODO: backgroundUri: ''
+                    // TODO: backgroundUri: 'icon.png'
                     // TODO: appIconUri: ''
                 },
                 subredditName: context.subredditName,
@@ -47,8 +52,7 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
             });
 
             // Immediately remove it from sub feed
-            // TODO: Figure out how to do this
-            //await post.remove(false);
+            await post.remove(false);
 
             res.json({
                 navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${post.id}`,
