@@ -17,7 +17,7 @@ export type DashboardSurveyIdPageContext = {
 
 export type DashboardPageContext = DashboardListPageContext | DashboardSurveyIdPageContext;
 
-export type DashboardContextProps = {
+export interface DashboardContextProps {
     pageContext: DashboardPageContext;
     setPageContext: Dispatch<SetStateAction<DashboardPageContext>>;
 }
