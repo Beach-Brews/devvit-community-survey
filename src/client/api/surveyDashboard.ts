@@ -9,6 +9,7 @@ import { SurveyDto } from '../../shared/redis/SurveyDto';
 
 const tmpList: SurveyDto[] = [
     {
+        id: "sv_534",
         title: "Draft Survey - No Publish Date",
         intro: "Hello",
         allowMultiple: false,
@@ -19,6 +20,7 @@ const tmpList: SurveyDto[] = [
         questions: []
     },
     {
+        id: "sv_533",
         title: "Scheduled Survey - Scheduled to be published",
         intro: "Hello",
         allowMultiple: false,
@@ -29,6 +31,7 @@ const tmpList: SurveyDto[] = [
         questions: []
     },
     {
+        id: "sv_532",
         title: "Live Survey - Has Close Date",
         intro: "Hello",
         allowMultiple: false,
@@ -39,6 +42,7 @@ const tmpList: SurveyDto[] = [
         questions: []
     },
     {
+        id: "sv_531",
         title: "Live Survey - No Close Date",
         intro: "Hello",
         allowMultiple: false,
@@ -49,6 +53,7 @@ const tmpList: SurveyDto[] = [
         questions: []
     },
     {
+        id: "sv_530",
         title: "Closed Survey - No More Responses",
         intro: "Hello",
         allowMultiple: false,
@@ -62,6 +67,12 @@ const tmpList: SurveyDto[] = [
 
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
     return new Promise((res, _rej) => {
-        setTimeout(() => res([]), 3000);
+        setTimeout(() => res([]), 250);
+    });
+};
+
+export const getSurveyById = async (id: string): Promise<SurveyDto | undefined> => {
+    return new Promise((res, _rej) => {
+        setTimeout(() => res(tmpList.find(s => s.id == id)), 250);
     });
 };

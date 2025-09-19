@@ -86,6 +86,7 @@ export class Schema {
 
     static surveyConfig = z
         .strictObject({
+            id: z.string().min(1),
             owner: z.string().min(1),
             title: z.string().min(1),
             intro: z.string(),

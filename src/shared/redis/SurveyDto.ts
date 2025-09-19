@@ -56,6 +56,7 @@ export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | RankQuestio
 export type SurveyQuestionList = SurveyQuestionDto[];
 
 export type SurveyDto = {
+    id: string;
     title: string;
     intro: string;
     allowMultiple: boolean;

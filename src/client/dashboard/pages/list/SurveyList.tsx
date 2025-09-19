@@ -11,7 +11,7 @@ import { DashboardContext } from '../../DashboardContext';
 import { SurveyListCard } from './SurveyListCard';
 import { SurveyListCardLoading } from './SurveyListCardLoading';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { getSurveyList } from '../../../api/surveyList';
+import { getSurveyList } from '../../../api/surveyDashboard';
 
 export const SurveyList = () => {
     const ctx = useContext(DashboardContext);
@@ -36,7 +36,7 @@ export const SurveyList = () => {
                 <div className="my-4">
                     <button
                         className="border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-700 flex gap-2 items-center cursor-pointer"
-                        onClick={() => ctx.setPageContext({page: 'edit', surveyId: -1})}
+                        onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}
                     >
                         <PlusCircleIcon className="size-6" />
                         <div>New</div>
@@ -44,10 +44,14 @@ export const SurveyList = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-                {loading && [<SurveyListCardLoading />, <SurveyListCardLoading />, <SurveyListCardLoading />]}
-                {!loading && surveyList?.map(s => <SurveyListCard survey={s} />)}
+                {loading && [<SurveyListCardLoading key="load1" />, <SurveyListCardLoading key="load2" />, <SurveyListCardLoading key="load3" />]}
+                {!loading && surveyList?.map(s => <SurveyListCard key={`card_${s.id}`} survey={s} />)}
                 {!loading && (!surveyList || surveyList.length <= 0) && (
-                    <div className="col-span-1 md:col-span-2 flex justify-center">You have not created any surveys yet. </div>
+                    <div className="col-span-1 md:col-span-2 flex justify-center">
+                        <p className="border-1 px-4 py-2 bg-sky-100 dark:bg-sky-950 rounded-md border-sky-300 dark:border-sky-700">
+                            You have not created any surveys yet. Start by <span className="underline cursor-pointer" onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}>creating a new survey</span>!
+                        </p>
+                    </div>
                 )}
             </div>
         </div>
