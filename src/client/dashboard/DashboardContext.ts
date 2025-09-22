@@ -17,19 +17,13 @@ export type DashboardSurveyIdPageContext = {
 
 export type DashboardPageContext = DashboardListPageContext | DashboardSurveyIdPageContext;
 
-export interface DashboardModalContextProps {
-    title: string;
-    content: ReactElement | ReactElement[];
-    disableClose?: boolean;
-}
-
-export type DashboardModalContext = DashboardModalContextProps | undefined;
+export type DashboardModalContent = ReactElement | undefined;
 
 export interface DashboardContextProps {
     pageContext: DashboardPageContext;
     setPageContext: Dispatch<SetStateAction<DashboardPageContext>>;
-    modalContext: DashboardModalContext;
-    setModalContext: Dispatch<SetStateAction<DashboardModalContext>>;
+    modal: DashboardModalContent;
+    setModal: Dispatch<SetStateAction<DashboardModalContent>>;
 }
 
 export const DashboardContext = createContext<DashboardContextProps | undefined>(undefined);

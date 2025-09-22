@@ -11,9 +11,11 @@ import { CalendarIcon, NoSymbolIcon, PencilIcon, RssIcon } from '@heroicons/reac
 import { DashboardContext } from '../../DashboardContext';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { formatDateTime } from '../../shared/dateFormat';
+import { SurveyDeleteConfirmModal } from './SurveyDeleteConfirmModal';
 
 export interface SurveyListCardProps {
     survey: SurveyDto;
+    updateSurveyList: () => Promise<void>;
 }
 
 export const SurveyListCard = (props: SurveyListCardProps) => {
@@ -39,14 +41,13 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
         ctx.setPageContext({page: 'edit', surveyId: survey.id});
     };
     const deleteSurvey = () => {
-        alert(`Delete survey ${survey.id}`);
+        ctx.setModal(<SurveyDeleteConfirmModal action={'delete'} survey={survey} updateSurveyList={props.updateSurveyList} />);
     };
     const closeSurvey = () => {
-        alert(`Close survey ${survey.id}`);
-
+        ctx.setModal(<SurveyDeleteConfirmModal action={'close'} survey={survey} updateSurveyList={props.updateSurveyList} />);
     };
     const viewSurveyResults = () => {
-        alert(`View survey ${survey.id}`);
+        ctx.setPageContext({page: 'results', surveyId: survey.id});
     };
 
     return (

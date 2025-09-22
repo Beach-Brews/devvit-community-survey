@@ -66,13 +66,47 @@ const tmpList: SurveyDto[] = [
 ];
 
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
-    return new Promise((res, _rej) => {
-        setTimeout(() => res([]), 250);
+    return await new Promise<SurveyDto[]>((res, _rej) => {
+        setTimeout(() => {
+            res(tmpList);
+        }, 250);
     });
 };
 
 export const getSurveyById = async (id: string): Promise<SurveyDto | undefined> => {
     return new Promise((res, _rej) => {
         setTimeout(() => res(tmpList.find(s => s.id == id)), 250);
+    });
+};
+
+export const deleteSurveyById = async (id: string): Promise<boolean> => {
+    return new Promise((res, rej) => {
+        setTimeout(() => {
+            if (id === 'sv_530') {
+                return rej(false);
+            }
+            const itemIdx = tmpList.findIndex(s => s.id == id);
+            if (itemIdx > -1) {
+                tmpList.splice(itemIdx, 1);
+                return res(true);
+            }
+            return rej(false);
+        }, 250);
+    });
+};
+
+export const closeSurveyById = async (id: string): Promise<boolean> => {
+    return new Promise((res, rej) => {
+        setTimeout(() => {
+            if (id === 'sv_532') {
+                return rej(false);
+            }
+            const item = tmpList.find(s => s.id == id);
+            if (item) {
+                item.closeDate = new Date().getTime();
+                return res(true);
+            }
+            return rej(false);
+        }, 250);
     });
 };
