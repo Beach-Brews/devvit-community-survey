@@ -59,6 +59,7 @@ export type SurveyDto = {
     id: string;
     title: string;
     intro: string;
+    outro: string;
     allowMultiple: boolean;
     createDate: number;
     publishDate: number | null;

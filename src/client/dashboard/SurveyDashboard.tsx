@@ -8,9 +8,9 @@
 import { useState } from 'react';
 import { navigateTo } from '@devvit/web/client';
 import { DashboardContext, DashboardModalContent, DashboardPageContext } from './DashboardContext';
-import { SurveyList } from './pages/list/SurveyList';
-import { SurveyEditor } from './pages/editor/SurveyEditor';
-import { SurveyResults } from './pages/results/SurveyResults';
+import { SurveyListPage } from './pages/list/SurveyListPage';
+import { SurveyEditorPage } from './pages/editor/SurveyEditorPage';
+import { SurveyResultsPage } from './pages/results/SurveyResultsPage';
 
 export const SurveyDashboard = () => {
     const [pageContext, setPageContext] = useState<DashboardPageContext>({page: 'list'});
@@ -31,12 +31,12 @@ export const SurveyDashboard = () => {
                         {(() => {
                             switch (pageContext.page) {
                                 case 'edit':
-                                    return <SurveyEditor />;
+                                    return <SurveyEditorPage />;
                                 case 'results':
-                                    return <SurveyResults />;
+                                    return <SurveyResultsPage />;
                                 case 'list':
                                 default:
-                                    return <SurveyList />;
+                                    return <SurveyListPage />;
                             }
                         })()}
                     </div>

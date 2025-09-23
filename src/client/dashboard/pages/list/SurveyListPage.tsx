@@ -14,7 +14,7 @@ import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { getSurveyList } from '../../../api/surveyDashboard';
 import { navigateTo } from '@devvit/web/client';
 
-export const SurveyList = () => {
+export const SurveyListPage = () => {
     const ctx = useContext(DashboardContext);
     if (!ctx) throw Error('Context undefined.');
 
@@ -45,7 +45,7 @@ export const SurveyList = () => {
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey Dashboard</h1>
                 <div className="my-4">
                     <button
-                        className="border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-700 flex gap-2 items-center cursor-pointer"
+                        className="border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex gap-2 items-center cursor-pointer"
                         onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}
                     >
                         <PlusCircleIcon className="size-6" />

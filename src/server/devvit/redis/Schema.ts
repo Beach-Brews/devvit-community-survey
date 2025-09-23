@@ -90,6 +90,7 @@ export class Schema {
             owner: z.string().min(1),
             title: z.string().min(1),
             intro: z.string(),
+            outro: z.string(),
             allowMultiple: z.boolean(),
             createDate: z.iso.datetime(),
             publishDate: z.iso.datetime().nullable(),

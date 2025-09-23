@@ -12,10 +12,16 @@ Currently, moderators are the only ones who can create and manage surveys.
 
 Here are a few future features that are planned:
 
+### General
+* Accessibility
+
 ### Dashboard
 * Survey settings
   * Background colors
   * Allow multiple submissions
+  * Allow view results
 
 ### Survey
 * Edit response
+* Multiple responses
+* View results
