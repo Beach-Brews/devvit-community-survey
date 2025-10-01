@@ -5,63 +5,150 @@
 * License: BSD-3-Clause
 */
 
-import { SurveyDto } from '../../shared/redis/SurveyDto';
+import { SurveyDto, SurveyQuestionList } from '../../shared/redis/SurveyDto';
+
+const questions: SurveyQuestionList = [
+    {
+        id: 'sq_766',
+        order: 0,
+        title: 'This is question one',
+        description: 'Here are some details about the question.',
+        required: true,
+        type: 'multi',
+        options: [
+            {
+                label: 'Option One',
+                value: '1'
+            },
+            {
+                label: 'Option Two',
+                value: '2'
+            },
+            {
+                label: 'Option Three',
+                value: '3'
+            }
+        ]
+    },
+    {
+        id: 'sq_764',
+        order: 1,
+        title: 'This is question two',
+        description: 'Here are some details about the question.',
+        required: true,
+        type: 'checkbox',
+        options: [
+            {
+                label: 'Option One',
+                value: '1'
+            },
+            {
+                label: 'Option Two',
+                value: '2'
+            },
+            {
+                label: 'Option Three',
+                value: '3'
+            }
+        ]
+    },
+    {
+        id: 'sq_763',
+        order: 2,
+        title: 'This is question three',
+        description: 'Here are some details about the question.',
+        required: true,
+        type: 'scale',
+        minLabel: 'Low end',
+        min: 1,
+        maxLabel: 'High end',
+        max: 5
+    },
+    {
+
+        id: 'sq_762',
+        order: 3,
+        title: 'This is question Four',
+        description: 'Here are some details about the question.',
+        required: true,
+        type: 'rank',
+        options: [
+            {
+                label: 'Option One',
+                value: '1'
+            },
+            {
+                label: 'Option Two',
+                value: '2'
+            },
+            {
+                label: 'Option Three',
+                value: '3'
+            }
+        ]
+    }
+];
 
 const tmpList: SurveyDto[] = [
     {
         id: "sv_534",
         title: "Draft Survey - No Publish Date",
         intro: "Hello",
+        outro: "Thank you for your response.",
         allowMultiple: false,
         createDate: new Date().getTime(),
         publishDate: null,
         closeDate: null,
         responseCount: null,
-        questions: []
+        questions: questions
     },
     {
         id: "sv_533",
         title: "Scheduled Survey - Scheduled to be published",
         intro: "Hello",
+        outro: "Thank you for your response.",
         allowMultiple: false,
         createDate: new Date().getTime(),
         publishDate: new Date('2026-01-01T00:00:00.0000').getTime(),
         closeDate: null,
         responseCount: null,
-        questions: []
+        questions: questions
     },
     {
         id: "sv_532",
         title: "Live Survey - Has Close Date",
         intro: "Hello",
+        outro: "Thank you for your response.",
         allowMultiple: false,
         createDate: new Date().getTime(),
         publishDate: new Date('2025-09-17T00:00:00.0000').getTime(),
         closeDate: new Date('2025-09-30T00:00:00.0000').getTime(),
         responseCount: 73,
-        questions: []
+        questions: questions
     },
     {
         id: "sv_531",
         title: "Live Survey - No Close Date",
         intro: "Hello",
+        outro: "Thank you for your response.",
         allowMultiple: false,
         createDate: new Date().getTime(),
         publishDate: new Date('2025-09-17T00:00:00.0000').getTime(),
         closeDate: null,
         responseCount: 1432,
-        questions: []
+        questions: questions
     },
     {
         id: "sv_530",
         title: "Closed Survey - No More Responses",
         intro: "Hello",
+        outro: "Thank you for your response.",
         allowMultiple: false,
         createDate: new Date().getTime(),
         publishDate: new Date('2025-09-15T00:00:00.0000').getTime(),
         closeDate: new Date('2025-09-17T00:00:00.0000').getTime(),
         responseCount: 382,
-        questions: []
+        questions: questions
     }
 ];
 

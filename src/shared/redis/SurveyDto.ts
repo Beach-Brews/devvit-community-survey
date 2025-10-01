@@ -10,6 +10,8 @@ export type QuestionOptionDto = {
     value: string;
 };
 
+export type QuestionType = 'text' | 'scale' | 'rank' | 'multi' | 'checkbox' | 'description';
+
 export type CommonQuestionProps = {
     id: string;
     order: number;
