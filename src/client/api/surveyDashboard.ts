@@ -162,7 +162,7 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
 
 export const getSurveyById = async (id: string): Promise<SurveyDto | undefined> => {
     return new Promise((res, _rej) => {
-        setTimeout(() => res(tmpList.find(s => s.id == id)), 2500);
+        setTimeout(() => res(tmpList.find(s => s.id == id)), 250);
     });
 };
 
@@ -194,6 +194,26 @@ export const closeSurveyById = async (id: string): Promise<boolean> => {
                 return res(true);
             }
             return rej(false);
+        }, 250);
+    });
+};
+
+
+export const saveSurvey = async (survey: SurveyDto): Promise<boolean> => {
+    return new Promise((res, rej) => {
+        setTimeout(() => {
+            if (survey.id === 'sv_532') {
+                return rej(false);
+            }
+            const itemIdx = tmpList.findIndex(s => s.id == survey.id);
+            if (itemIdx > -1) {
+                tmpList[itemIdx] = survey;
+                return res(true);
+            }
+
+            tmpList.push(survey);
+
+            return res(true);
         }, 250);
     });
 };

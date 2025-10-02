@@ -5,13 +5,14 @@
 * License: BSD-3-Clause
 */
 
-import { ChangeEvent, useCallback, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { SurveyDto, SurveyQuestionDto } from '../../../../shared/redis/SurveyDto';
 import { CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
 import { Constants } from '../../../../shared/constants';
 import { genQuestion, genSurvey } from '../../../../shared/redis/uuidGenerator';
 import { DashboardContext } from '../../DashboardContext';
+import * as surveyDashboardApi from '../../../api/surveyDashboard';
 
 export interface SurveyEditorProps {
     survey: SurveyDto | null;
@@ -24,18 +25,27 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
 
     const [survey, setSurvey] = useState<SurveyDto>(props.survey ?? genSurvey());
 
-    const saveSurvey = useCallback((s: SurveyDto, close: boolean) => {
-        // TODO: Call API to save first
-        console.log("Save survey! ", s, JSON.stringify(s).length);
+    const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
+        await surveyDashboardApi.saveSurvey(s);
         if (close)
             ctx.setPageContext({page: 'list'});
+        return true;
     }, [ctx]);
 
+    const skipAutoSave = useRef(true);
     useEffect(() => {
-        // TODO: How to prevent this from calling on initial render? useRef doesn't seem to work...
+        // Skip saving on initial load
+        if (skipAutoSave.current) {
+            skipAutoSave.current = false;
+            return;
+        }
+
+        // Set a timeout for triggering an auto-save
         const timeout = setTimeout(async () => {
-            saveSurvey(survey, false);
+            await saveSurvey(survey, false);
         }, Constants.SURVEY_AUTOSAVE_DEBOUNCE);
+
+        // Clear timeout if state changes
         return () => {
             clearTimeout(timeout);
         }
@@ -153,6 +163,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
 
     const requestPublish = async () => {
         // TODO: Show modal
+        ctx.setPageContext({page: 'list'});
     };
 
     return (
