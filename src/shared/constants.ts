@@ -7,5 +7,6 @@
 
 export const Constants = {
     MAX_QUESTION_COUNT: 10,
-    MAX_OPTION_COUNT: 5
+    MAX_OPTION_COUNT: 5,
+    SURVEY_AUTOSAVE_DEBOUNCE: 2000
 };

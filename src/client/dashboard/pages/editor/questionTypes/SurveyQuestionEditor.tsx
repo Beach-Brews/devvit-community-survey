@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import { MultiQuestionEditor } from './MultiQuestionEditor';
+import { MultiOptionEditor } from './MultiOptionEditor';
 import { CommonQuestionEditorProps } from './commonEditorTypes';
 import React, { ChangeEvent, useContext } from 'react';
 import { QuestionType } from '../../../../../shared/redis/SurveyDto';
@@ -38,8 +38,14 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
         const fieldName = e.target.name;
         let value = e.target.value;
 
+        // Force a question title
         if (fieldName === 'title' && (!value || value.length <= 0)) {
             value = 'Question Title';
+        }
+
+        if ((q as never)[fieldName] === value) {
+            console.log('Not updated');
+            return;
         }
 
         props.modifyQuestion({
@@ -77,10 +83,10 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
     const renderQuestionEditor = () => {
         switch (q.type) {
             case 'multi':
-                return <MultiQuestionEditor {...props} />;
             case 'checkbox':
-            case 'scale':
             case 'rank':
+                return <MultiOptionEditor {...props} />;
+            case 'scale':
             case 'text':
             case 'description':
             default:

@@ -40,7 +40,7 @@ export const SurveyListPage = () => {
     }, [updateSurveyList]);
 
     return (
-        <div>
+        <>
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey Dashboard</h1>
                 <div className="my-4">
@@ -71,6 +71,6 @@ export const SurveyListPage = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </>
     );
 };

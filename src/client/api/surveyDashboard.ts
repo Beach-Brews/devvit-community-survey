@@ -96,7 +96,7 @@ const tmpList: SurveyDto[] = [
         intro: "Hello",
         outro: "Thank you for your response.",
         allowMultiple: false,
-        createDate: new Date().getTime(),
+        createDate: Date.now(),
         publishDate: null,
         closeDate: null,
         responseCount: null,
@@ -108,7 +108,7 @@ const tmpList: SurveyDto[] = [
         intro: "Hello",
         outro: "Thank you for your response.",
         allowMultiple: false,
-        createDate: new Date().getTime(),
+        createDate: Date.now(),
         publishDate: new Date('2026-01-01T00:00:00.0000').getTime(),
         closeDate: null,
         responseCount: null,
@@ -120,7 +120,7 @@ const tmpList: SurveyDto[] = [
         intro: "Hello",
         outro: "Thank you for your response.",
         allowMultiple: false,
-        createDate: new Date().getTime(),
+        createDate: Date.now(),
         publishDate: new Date('2025-09-17T00:00:00.0000').getTime(),
         closeDate: new Date('2025-09-30T00:00:00.0000').getTime(),
         responseCount: 73,
@@ -132,7 +132,7 @@ const tmpList: SurveyDto[] = [
         intro: "Hello",
         outro: "Thank you for your response.",
         allowMultiple: false,
-        createDate: new Date().getTime(),
+        createDate: Date.now(),
         publishDate: new Date('2025-09-17T00:00:00.0000').getTime(),
         closeDate: null,
         responseCount: 1432,
@@ -144,7 +144,7 @@ const tmpList: SurveyDto[] = [
         intro: "Hello",
         outro: "Thank you for your response.",
         allowMultiple: false,
-        createDate: new Date().getTime(),
+        createDate: Date.now(),
         publishDate: new Date('2025-09-15T00:00:00.0000').getTime(),
         closeDate: new Date('2025-09-17T00:00:00.0000').getTime(),
         responseCount: 382,
@@ -162,7 +162,7 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
 
 export const getSurveyById = async (id: string): Promise<SurveyDto | undefined> => {
     return new Promise((res, _rej) => {
-        setTimeout(() => res(tmpList.find(s => s.id == id)), 250);
+        setTimeout(() => res(tmpList.find(s => s.id == id)), 2500);
     });
 };
 
@@ -190,7 +190,7 @@ export const closeSurveyById = async (id: string): Promise<boolean> => {
             }
             const item = tmpList.find(s => s.id == id);
             if (item) {
-                item.closeDate = new Date().getTime();
+                item.closeDate = Date.now();
                 return res(true);
             }
             return rej(false);

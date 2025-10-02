@@ -24,7 +24,7 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
 
     const { survey } = props;
 
-    const now = new Date().getTime();
+    const now = Date.now();
     const isClosed = survey.closeDate && survey.closeDate < now;
     const isPublished = survey.publishDate && survey.publishDate <= now;
     const isScheduled = survey.publishDate && survey.publishDate > now;
