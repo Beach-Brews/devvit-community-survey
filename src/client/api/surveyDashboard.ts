@@ -10,7 +10,6 @@ import { SurveyDto, SurveyQuestionList } from '../../shared/redis/SurveyDto';
 const questions: SurveyQuestionList = [
     {
         id: 'sq_766',
-        order: 0,
         title: 'This is question one',
         description: 'Here are some details about the question.',
         required: true,
@@ -32,7 +31,6 @@ const questions: SurveyQuestionList = [
     },
     {
         id: 'sq_764',
-        order: 1,
         title: 'This is question two',
         description: 'Here are some details about the question.',
         required: true,
@@ -54,20 +52,20 @@ const questions: SurveyQuestionList = [
     },
     {
         id: 'sq_763',
-        order: 2,
         title: 'This is question three',
         description: 'Here are some details about the question.',
         required: true,
         type: 'scale',
+        kind: 'otf',
         minLabel: 'Low end',
         min: 1,
+        midLabel: '',
         maxLabel: 'High end',
         max: 5
     },
     {
 
         id: 'sq_762',
-        order: 3,
         title: 'This is question Four',
         description: 'Here are some details about the question.',
         required: true,
@@ -155,7 +153,14 @@ const tmpList: SurveyDto[] = [
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
     return await new Promise<SurveyDto[]>((res, _rej) => {
         setTimeout(() => {
-            res(tmpList);
+            const now = Date.now();
+            const sStatus = (s: SurveyDto): number => {
+                if (s.closeDate && s.closeDate < now) return 1;
+                if (s.publishDate && s.publishDate <= now) return 2;
+                return s.publishDate && s.publishDate > now ? 3 : 4;
+            };
+            const sorted = [...tmpList].sort((a,b) => sStatus(a) - sStatus(b));
+            res(sorted);
         }, 250);
     });
 };
@@ -197,7 +202,6 @@ export const closeSurveyById = async (id: string): Promise<boolean> => {
         }, 250);
     });
 };
-
 
 export const saveSurvey = async (survey: SurveyDto): Promise<boolean> => {
     return new Promise((res, rej) => {

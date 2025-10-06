@@ -22,7 +22,6 @@ export class Schema {
     static commonQuestionProps = z
         .strictObject({
             id: z.string().min(1),
-            order: z.number().min(1),
             title: z.string().min(1),
             description: z.string(),
             required: z.boolean()
@@ -36,50 +35,40 @@ export class Schema {
             max: z.number().min(0)
         });
 
+    static scaleKind = z.union([
+        z.literal('otf'),
+        z.literal('ott')
+    ]);
+
     static scaleQuestion = z
         .strictObject({
             ...Schema.commonQuestionProps,
             type: z.literal('scale'),
+            kind: Schema.scaleKind,
             min: z.number().min(1),
-            max: z.number().min(10),
+            max: z.number().min(5),
             minLabel: z.string().min(1),
+            midLabel: z.string(),
             maxLabel: z.string().min(1)
         });
 
-    static rankQuestion = z
-        .strictObject({
-            ...Schema.commonQuestionProps,
-            type: z.literal('rank'),
-            options: z.array(Schema.questionOption)
-        });
+    static multiOptionQuestionTypes = z.union([
+        z.literal('multi'),
+        z.literal('checkbox'),
+        z.literal('rank')
+    ]);
 
-    static multiChoiceQuestion = z
+    static multiOptionQuestion = z
         .strictObject({
             ...Schema.commonQuestionProps,
-            type: z.literal('multi'),
+            type: Schema.multiOptionQuestionTypes,
             options: z.array(Schema.questionOption)
-        });
-
-    static checkboxesQuestion = z
-        .strictObject({
-            ...Schema.commonQuestionProps,
-            type: z.literal('checkbox'),
-            options: z.array(Schema.questionOption)
-        });
-
-    static descriptionQuestion = z
-        .strictObject({
-            ...Schema.commonQuestionProps,
-            type: z.literal('description')
         });
 
     static question = z.union([
         Schema.textQuestion,
         Schema.scaleQuestion,
-        Schema.rankQuestion,
-        Schema.multiChoiceQuestion,
-        Schema.checkboxesQuestion,
-        Schema.descriptionQuestion
+        Schema.multiOptionQuestion
     ]);
 
     static surveyQuestionList = z.array(Schema.question);

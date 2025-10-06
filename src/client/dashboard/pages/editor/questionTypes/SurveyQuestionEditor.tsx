@@ -6,13 +6,14 @@
 */
 
 import { MultiOptionEditor } from './MultiOptionEditor';
+import { ScaleEditor } from './ScaleEditor';
 import { CommonQuestionEditorProps } from './commonEditorTypes';
 import React, { ChangeEvent, useContext } from 'react';
 import { QuestionType } from '../../../../../shared/redis/SurveyDto';
-import { ArrowDownCircleIcon, ArrowUpCircleIcon } from '@heroicons/react/24/outline';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { DashboardContext } from '../../../DashboardContext';
 import { DashboardModal } from '../../../shared/components/DashboardModal';
+import { genOption } from '../../../../../shared/redis/uuidGenerator';
 
 export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
     const ctx = useContext(DashboardContext);
@@ -21,8 +22,27 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
     const q = props.question;
 
     const onChangeType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        q.type = e.target.value as QuestionType;
-        props.modifyQuestion(q);
+        const newQ = {...q};
+        newQ.type = e.target.value as QuestionType;
+        switch (newQ.type) {
+            case 'multi':
+            case 'checkbox':
+            case 'rank':
+                newQ.options = newQ.options ?? [ genOption(0) ];
+                break;
+            case 'scale':
+                newQ.min = newQ.min ?? 1;
+                newQ.max = newQ.max ?? 5;
+                newQ.minLabel = newQ.minLabel ?? '';
+                newQ.midLabel = newQ.midLabel ?? '';
+                newQ.maxLabel = newQ.maxLabel ?? '';
+                break;
+            case 'text':
+                newQ.min = newQ.min ?? 0;
+                newQ.max = newQ.max ?? 150;
+                break;
+        }
+        props.modifyQuestion(newQ);
     };
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -87,15 +107,19 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
             case 'rank':
                 return <MultiOptionEditor {...props} />;
             case 'scale':
+                return <ScaleEditor {...props} />;
             case 'text':
-            case 'description':
             default:
                 return <div>Question type {q.type} not currently supported.</div>;
         }
     };
 
+    const onDuplicateQuestion = () => {
+        props.duplicateAction?.(q);
+    };
+
     return (
-        <div className="flex p-4 pr-0 text-neutral-700 dark:text-neutral-300 rounded-md bg-white shadow-md dark:bg-neutral-900 dark:shadow-neutral-800">
+        <div className="flex p-4 pr-0 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
             <div className="w-full text-sm flex flex-col gap-4">
                 <div>
                     <input name="title" placeholder="Question Title" maxLength={50} value={q.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
@@ -106,12 +130,13 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
                     <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${512-q.description.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.description.length} / 512</div>
                 </div>
                 <div className="flex gap-2 items-center">
-                    <label>Type:</label>
-                    <select value={q.type} onChange={onChangeType} className="border-1 rounded-sm px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
+                    <label>Question Type:</label>
+                    <select value={q.type} onChange={onChangeType} className=" border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
                         <option value="multi">Multiple Choice</option>
                         <option value="checkbox">Checkbox</option>
-                        <option value="scale">Scale</option>
                         <option value="rank">Rank</option>
+                        <option value="scale">Scale</option>
+                        <option value="text">Text</option>
                     </select>
                 </div>
                 {renderQuestionEditor()}
@@ -119,9 +144,9 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
             <div className="w-12 flex flex-col items-center gap-4">
                 <button disabled={props.isFirst} onClick={onMoveUp} className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200 disabled:pointer-events-none disabled:opacity-50"><ArrowUpCircleIcon className="size-6" /></button>
                 <button disabled={props.isLast} onClick={onMoveDown} className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200 disabled:pointer-events-none disabled:opacity-50"><ArrowDownCircleIcon className="size-6" /></button>
+                <button disabled={!props.duplicateAction} onClick={onDuplicateQuestion} className="mt-4 p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200 disabled:pointer-events-none disabled:opacity-50"><DocumentDuplicateIcon className="size-6" /></button>
                 <button onClick={onDeleteQuestion} className="mt-4 p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200"><TrashIcon className="size-6" /></button>
             </div>
         </div>
     )
 };
-//className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200

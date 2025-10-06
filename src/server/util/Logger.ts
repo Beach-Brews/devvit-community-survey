@@ -8,7 +8,6 @@
  * License: BSD-3-Clause
  */
 
-import {settings} from '@devvit/web/server';
 import {AppSettings, LogLevel} from "./AppSettings";
 
 export class Logger {
@@ -18,13 +17,17 @@ export class Logger {
     #traceName: string | undefined;
 
     public static async Create(label: string): Promise<Logger> {
-        return new Logger(label, await AppSettings.GetLogLevel(settings));
+        return new Logger(label, await AppSettings.GetLogLevel());
     }
 
     public constructor(label: string, logLevel?: LogLevel) {
         this.#label = label;
         this.#logLevel = logLevel ?? LogLevel.Warn;
     }
+
+    public get label() { return this.#label; }
+
+    public set label(val: string) { this.#label = val; }
 
     public get logLevel() { return this.#logLevel; }
 

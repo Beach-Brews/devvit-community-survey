@@ -10,11 +10,10 @@ export type QuestionOptionDto = {
     value: string;
 };
 
-export type QuestionType = 'text' | 'scale' | 'rank' | 'multi' | 'checkbox' | 'description';
+export type QuestionType = 'text' | 'scale' | 'rank' | 'multi' | 'checkbox';
 
 export type CommonQuestionProps = {
     id: string;
-    order: number;
     title: string;
     description: string;
     required: boolean;
@@ -26,34 +25,26 @@ export type TextQuestionDto = CommonQuestionProps & {
     max: number;
 };
 
+export type ScaleKind = 'otf' | 'ott';
+
 export type ScaleQuestionDto = CommonQuestionProps & {
     type: 'scale';
+    kind: ScaleKind;
     min: number;
     max: number;
     minLabel: string;
+    midLabel: string;
     maxLabel: string;
 };
 
-export type RankQuestionDto = CommonQuestionProps & {
-    type: 'rank';
+export type MultiOptionQuestionTypes = 'multi' | 'checkbox' | 'rank';
+
+export type MultiOptionQuestion = CommonQuestionProps & {
+    type: MultiOptionQuestionTypes;
     options: QuestionOptionDto[];
 };
 
-export type MultiChoiceQuestionDto = CommonQuestionProps & {
-    type: 'multi';
-    options: QuestionOptionDto[];
-};
-
-export type CheckboxQuestionDto = CommonQuestionProps & {
-    type: 'checkbox';
-    options: QuestionOptionDto[];
-};
-
-export type DescriptionQuestionDto = CommonQuestionProps & {
-    type: 'description';
-};
-
-export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | RankQuestionDto | MultiChoiceQuestionDto | CheckboxQuestionDto | DescriptionQuestionDto;
+export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | MultiOptionQuestion;
 
 export type SurveyQuestionList = SurveyQuestionDto[];
 

@@ -26,7 +26,7 @@ export const SurveyDeleteConfirmModal = (props: SurveyDeleteConfirmModalProps) =
     const ctx = useContext(DashboardContext);
     if (!ctx) throw Error('Context undefined.');
 
-    const setModal = ctx.setModal
+    const setModal = ctx.setModal;
 
     const surveyId = props.survey.id;
     const isClose = props.action === 'close';

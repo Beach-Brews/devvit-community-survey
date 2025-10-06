@@ -10,9 +10,10 @@ import { SurveyDto, SurveyQuestionDto } from '../../../../shared/redis/SurveyDto
 import { CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
 import { Constants } from '../../../../shared/constants';
-import { genQuestion, genSurvey } from '../../../../shared/redis/uuidGenerator';
+import { genQuestion, genQuestionId, genSurvey } from '../../../../shared/redis/uuidGenerator';
 import { DashboardContext } from '../../DashboardContext';
 import * as surveyDashboardApi from '../../../api/surveyDashboard';
+import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 
 export interface SurveyEditorProps {
     survey: SurveyDto | null;
@@ -64,8 +65,6 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             const qBefore = ql[idx-1];
                             const thisQ = ql[idx];
                             if (thisQ && qBefore) {
-                                thisQ.order -= 1;
-                                qBefore.order += 1;
                                 newState[idx - 1] = thisQ;
                                 newState[idx] = qBefore;
                             }
@@ -74,8 +73,6 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             const qAFter = ql[idx+1];
                             const thisQ = ql[idx];
                             if (thisQ && qAFter) {
-                                thisQ.order += 1;
-                                qAFter.order -= 1;
                                 newState[idx + 1] = thisQ;
                                 newState[idx] = qAFter;
                             }
@@ -89,9 +86,6 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             const q = ql[i];
                             if (!q || i == idx) continue;
 
-                            if (i > idx) {
-                                q.order = i+1;
-                            }
                             newState.push(q);
                         }
                         // Force at least one question
@@ -149,22 +143,23 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         });
     };
 
-    const onAddQuestion = () => {
+    const onAddQuestion = (q?: SurveyQuestionDto) => {
         setSurvey(s => {
             return {
                 ...s,
                 questions: [
                     ...s.questions,
-                    genQuestion(s.questions.length)
+                    q ? {...q, id: genQuestionId() } : genQuestion(s.questions.length)
                 ]
             };
         });
     };
 
     const requestPublish = async () => {
-        // TODO: Show modal
-        ctx.setPageContext({page: 'list'});
+        ctx.setModal(<SurveyEditorPublishModal survey={survey} />);
     };
+
+    const maxReached = survey.questions.length == Constants.MAX_QUESTION_COUNT;
 
     return (
         <>
@@ -189,7 +184,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             </div>
             <div className="my-4">
                 <div className="flex flex-col gap-8">
-                    <div className="text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white shadow-md dark:bg-neutral-900 dark:shadow-neutral-800">
+                    <div className="text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
                         <div>
                             <input name="title" placeholder="Survey Title" maxLength={50} value={survey.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full text-2xl border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
                             <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${50-survey.title.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.title.length} / 50</div>
@@ -199,16 +194,16 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${512-survey.intro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.intro.length} / 512</div>
                         </div>
                     </div>
-                    {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==survey.questions.length-1} />)}
+                    {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==survey.questions.length-1} duplicateAction={!maxReached ? onAddQuestion : undefined} />)}
                     <div className="flex justify-center">
-                        <button disabled={survey.questions.length == Constants.MAX_QUESTION_COUNT} onClick={onAddQuestion} className="w-1/2 lg:w-1/3 border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex justify-center gap-2 items-center cursor-pointer disabled:pointer-events-none disabled:opacity-50">
-                            {survey.questions.length == Constants.MAX_QUESTION_COUNT
+                        <button disabled={maxReached} onClick={() => onAddQuestion()} className="w-1/2 lg:w-1/3 border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex justify-center gap-2 items-center cursor-pointer disabled:pointer-events-none disabled:opacity-50">
+                            {maxReached
                                 ? <div>Max Question Count Reached</div>
                                 : <><PlusCircleIcon className="size-5" /><div>Add Question</div></>
                             }
                         </button>
                     </div>
-                    <div className="text-sm p-4 flex flex-col gap-4 text-neutral-700 dark:text-neutral-300 rounded-md bg-white shadow-md dark:bg-neutral-900 dark:shadow-neutral-800">
+                    <div className="text-sm p-4 flex flex-col gap-4 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
                         <div >
                             <textarea name="outro" placeholder="Thank the responders with an outro." maxLength={512} value={survey.outro} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full min-h-[4rem] max-h-[10rem] border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
                             <div className={`text-xs p-1 text-right bg-neutral-50 dark:bg-neutral-900 ${512-survey.outro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.outro.length} / 512</div>

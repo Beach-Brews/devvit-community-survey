@@ -51,7 +51,7 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
     };
 
     return (
-        <div className="text-sm p-2 flex flex-col justify-between gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white shadow-md dark:bg-neutral-900 dark:shadow-neutral-800">
+        <div className="text-sm p-2 flex flex-col justify-between gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
             <div className="flex justify-between items-center">
                 <div className="px-1 text-[0.70rem] uppercase font-bold">{status}</div>
                 <div className="flex gap-1">

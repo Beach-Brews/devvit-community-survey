@@ -17,6 +17,7 @@ export interface DashboardModalProps {
     children: ReactElement;
     type?: ModalType;
     disableClose?: boolean;
+    disableAccept?: boolean;
     onAccept?: AsyncHandler<boolean>;
     onCancel?: AsyncHandler<void>;
     onClose?: AsyncHandler<void>;
@@ -83,7 +84,13 @@ export const DashboardModal = (props: DashboardModalProps) => {
                 {props.type === 'destroy' && (
                     <div className="p-4 pt-0 flex justify-between gap-4">
                         <button className="w-1/2 p-2 font-bold text-md cursor-pointer rounded-md bg-neutral-300 dark:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 disabled:dark:bg-neutral-800" disabled={props.processing} onClick={onCancel}>{props.cancelLabel ?? 'Cancel'}</button>
-                        <button className="w-1/2 p-2 font-bold text-md cursor-pointer rounded-md bg-red-800 text-white disabled:cursor-not-allowed disabled:bg-red-950 disabled:text-white/50" disabled={props.processing} onClick={onAccept}>{props.confirmLabel ?? 'Delete'}</button>
+                        <button className="w-1/2 p-2 font-bold text-md cursor-pointer rounded-md bg-red-800 text-white disabled:cursor-not-allowed disabled:bg-red-950 disabled:text-white/50" disabled={props.processing || props.disableAccept} onClick={onAccept}>{props.confirmLabel ?? 'Delete'}</button>
+                    </div>
+                )}
+                {props.type === 'confirm' && (
+                    <div className="p-4 pt-0 flex justify-between gap-4">
+                        <button className="w-1/2 p-2 font-bold text-md cursor-pointer rounded-md bg-neutral-300 dark:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400 disabled:dark:bg-neutral-800" disabled={props.processing} onClick={onCancel}>{props.cancelLabel ?? 'Cancel'}</button>
+                        <button className="w-1/2 p-2 font-bold text-md cursor-pointer rounded-md bg-blue-800 text-white disabled:cursor-not-allowed disabled:bg-blue-950 disabled:text-white/50" disabled={props.processing || props.disableAccept} onClick={onAccept}>{props.confirmLabel ?? 'Confirm'}</button>
                     </div>
                 )}
             </div>

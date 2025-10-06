@@ -12,4 +12,5 @@ export interface CommonQuestionEditorProps {
     modifyQuestion: (question: SurveyQuestionDto, action?: 'up' | 'down' | 'delete') => void;
     isFirst: boolean;
     isLast: boolean;
+    duplicateAction: ((q?: SurveyQuestionDto) => void) | undefined;
 }

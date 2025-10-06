@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { SurveyDto, SurveyQuestionDto } from './SurveyDto';
+import { QuestionOptionDto, SurveyDto, SurveyQuestionDto } from './SurveyDto';
 
 const genUid = () => {
     return (Date.now().toString(36).substring(3)
@@ -23,7 +23,7 @@ export const genSurvey = (): SurveyDto => {
         id: genSurveyId(),
         title: 'Untitled Survey',
         intro: '',
-        outro: 'Than you for your response.',
+        outro: 'Thank you for your response.',
         allowMultiple: false,
         createDate: Date.now(),
         publishDate: null,
@@ -38,14 +38,15 @@ export const genQuestion = (order: number): SurveyQuestionDto => {
         id: genQuestionId(),
         title: `New Question #${order+1}`,
         description: '',
-        order: order,
         required: false,
         type: 'multi',
-        options: [
-            {
-                label: 'Option #1',
-                value: ''
-            }
-        ]
+        options: [ genOption(0) ]
     };
 }
+
+export const genOption = (order: number): QuestionOptionDto => {
+    return             {
+        label: `Option #${order+1}`,
+        value: genOptionId()
+    };
+};
