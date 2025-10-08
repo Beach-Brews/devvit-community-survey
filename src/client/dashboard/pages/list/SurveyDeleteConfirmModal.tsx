@@ -9,7 +9,7 @@ import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { DashboardModal } from '../../shared/components/DashboardModal';
 import { useCallback, useContext, useState } from 'react';
 import { StopCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { closeSurveyById, deleteSurveyById } from '../../../api/surveyDashboard';
+import { closeSurveyById, deleteSurveyById } from '../../api/dashboardApi';
 import { DashboardContext } from '../../DashboardContext';
 
 export interface SurveyDeleteConfirmModalProps {
@@ -42,8 +42,10 @@ export const SurveyDeleteConfirmModal = (props: SurveyDeleteConfirmModalProps) =
                 ? await closeSurveyById(surveyId)
                 : await deleteSurveyById(surveyId);
             setState({ processing: false, error: !deleted });
-            setModal(undefined);
-            void updateSurveyList();
+            if (deleted) {
+                setModal(undefined);
+                void updateSurveyList();
+            }
             return deleted;
         } catch(e) {
             setState({ processing: false, error: true });

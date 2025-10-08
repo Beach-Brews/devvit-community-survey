@@ -9,7 +9,7 @@ import { useContext, useEffect, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { DashboardContext, DashboardSurveyIdPageContext } from '../../DashboardContext';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { getSurveyById } from '../../../api/surveyDashboard';
+import { getSurveyById } from '../../api/dashboardApi';
 import { navigateTo } from '@devvit/web/client';
 
 export const SurveyResultsPage = () => {

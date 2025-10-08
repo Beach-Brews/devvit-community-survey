@@ -7,12 +7,11 @@
 
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
-import { settings } from '@devvit/web/server';
 import { Logger } from "../../util/Logger";
 
 export const registerAppInstallTrigger: PathFactory = (router: Router) => {
     router.post('/internal/trigger/on-install', async (_req, res): Promise<void> => {
-        const logger = await Logger.Create("Trigger - App Install", settings);
+        const logger = await Logger.Create("Trigger - App Install");
         logger.traceStart("/internal/trigger/on-install");
 
         try {

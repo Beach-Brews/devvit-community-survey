@@ -131,7 +131,7 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
                 </div>
                 <div className="flex gap-2 items-center">
                     <label>Question Type:</label>
-                    <select value={q.type} onChange={onChangeType} className=" border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
+                    <select value={q.type} onChange={onChangeType} className="border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
                         <option value="multi">Multiple Choice</option>
                         <option value="checkbox">Checkbox</option>
                         <option value="rank">Rank</option>

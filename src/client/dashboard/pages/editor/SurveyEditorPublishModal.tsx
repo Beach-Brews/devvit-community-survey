@@ -9,7 +9,7 @@ import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { DashboardModal } from '../../shared/components/DashboardModal';
 import { ChangeEvent, useCallback, useContext, useState } from 'react';
 import { CalendarDaysIcon } from '@heroicons/react/24/solid';
-import { saveSurvey } from '../../../api/surveyDashboard';
+import { saveSurvey } from '../../api/dashboardApi';
 import { DashboardContext } from '../../DashboardContext';
 import { BulletIcon } from '../../shared/components/CustomIcons';
 

@@ -7,12 +7,11 @@
 
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
-import { settings } from '@devvit/web/server';
 import { Logger } from "../../util/Logger";
 
 export const registerAppUpgradeTrigger: PathFactory = (router: Router) => {
     router.post('/internal/trigger/on-upgrade', async (_req, res): Promise<void> => {
-        const logger = await Logger.Create("Trigger - App Upgrade", settings);
+        const logger = await Logger.Create("Trigger - App Upgrade");
         logger.traceStart("/internal/trigger/on-upgrade");
 
         try {

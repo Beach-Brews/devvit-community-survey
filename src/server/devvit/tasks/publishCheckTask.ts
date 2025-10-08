@@ -7,12 +7,11 @@
 
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
-import { settings } from '@devvit/web/server';
 import { Logger } from "../../util/Logger";
 
 export const registerPublishCheckTask: PathFactory = (router: Router) => {
     router.post('/internal/cron/publish-check', async (_req, res): Promise<void> => {
-        const logger = await Logger.Create("Task - Publish Check", settings);
+        const logger = await Logger.Create("Task - Publish Check");
         logger.traceStart("/internal/menu/publish-check");
 
         try {

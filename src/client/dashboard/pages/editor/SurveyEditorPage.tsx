@@ -8,10 +8,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { DashboardContext, DashboardSurveyIdPageContext } from '../../DashboardContext';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { getSurveyById } from '../../../api/surveyDashboard';
+import { getSurveyById } from '../../api/dashboardApi';
 import { SurveyEditorLoading } from './SurveyEditorLoading';
 import { navigateTo } from '@devvit/web/client';
 import { SurveyEditor } from './SurveyEditor';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 export const SurveyEditorPage = () => {
     const ctx = useContext(DashboardContext);
@@ -45,6 +46,17 @@ export const SurveyEditorPage = () => {
         <>
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold my-4">Survey Editor</h1>
+                {!loading && (
+                    <div className="my-4">
+                        <button
+                            className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer"
+                            onClick={() => ctx.setPageContext({page: 'list'})}
+                        >
+                            <XMarkIcon className="size-6" />
+                            <div>Close</div>
+                        </button>
+                    </div>
+                )}
             </div>
             <div className="my-4">
                 {loading

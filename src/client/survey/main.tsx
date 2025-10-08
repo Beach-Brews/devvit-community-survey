@@ -10,4 +10,4 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 */
-window.location.href = "dashboard.html";
+window.location.href = "dashboard.html" + window.location.search;

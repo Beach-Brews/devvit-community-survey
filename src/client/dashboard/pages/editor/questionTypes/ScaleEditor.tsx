@@ -38,7 +38,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
         <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">
                 <label>Scale Kind:</label>
-                <select value={q.kind} onChange={onChangeKind} className="border-1 rounded-sm px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
+                <select value={q.kind} onChange={onChangeKind} className="border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
                     <option value="otf">1 - 5</option>
                     <option value="ott">1 - 10</option>
                     {/*TODO: Add rating and free-select (slider)*/}
@@ -52,7 +52,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                         onChange={(e) => onInputChange(e)}
                         name="minLabel"
                         value={q.minLabel}
-                        className="p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                        className="w-full p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                     />
                 </div>
                 <div className="w-1/3 flex flex-col">
@@ -62,7 +62,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                         onChange={(e) => onInputChange(e)}
                         name="midLabel"
                         value={q.midLabel}
-                        className="p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                        className="w-full p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                     />
                 </div>
                 <div className="w-1/3 flex flex-col">
@@ -72,7 +72,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                         onChange={(e) => onInputChange(e)}
                         name="maxLabel"
                         value={q.maxLabel}
-                        className="p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                        className="w-full p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                     />
                 </div>
             </div>

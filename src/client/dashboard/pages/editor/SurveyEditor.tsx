@@ -12,7 +12,7 @@ import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
 import { Constants } from '../../../../shared/constants';
 import { genQuestion, genQuestionId, genSurvey } from '../../../../shared/redis/uuidGenerator';
 import { DashboardContext } from '../../DashboardContext';
-import * as surveyDashboardApi from '../../../api/surveyDashboard';
+import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 
 export interface SurveyEditorProps {
