@@ -52,7 +52,8 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
             });
 
             // Immediately remove it from sub feed
-            await post.remove(false);
+            // TODO: How do I remove this, but also have it render?
+            //await post.remove(false);
 
             res.json({
                 navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${post.id}`,

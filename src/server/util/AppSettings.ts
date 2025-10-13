@@ -20,7 +20,7 @@ export enum LogLevel {
 enum SettingKeys {
 
     // Logging level
-    LogLevel = 'log-level'
+    LogLevel = 'logLevel'
 
 }
 

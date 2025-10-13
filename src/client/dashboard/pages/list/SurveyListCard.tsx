@@ -63,7 +63,7 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
             <div className="px-1 text-2xl text-neutral-900 dark:text-neutral-100">{survey.title}</div>
             <div className="flex justify-between items-center min-h-6">
                 {(isPublished
-                    ? <div className="flex items-center cursor-pointer rounded-lg px-1 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurveyResults}><PresentationChartBarIcon className="size-5" /> 1,462</div>
+                    ? <div className="flex gap-2 items-center cursor-pointer rounded-lg px-1 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurveyResults}><PresentationChartBarIcon className="size-5" /><span>{survey.responseCount?.toLocaleString()}</span></div>
                     : <div></div>
                 )}
                 {!isScheduled && !isPublished && (<div className="flex items-center px-1">Not Scheduled</div>)}

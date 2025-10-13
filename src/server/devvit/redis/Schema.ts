@@ -13,15 +13,23 @@ export class Schema {
 
     /* ==================== Question Config ==================== */
 
+    static surveyIdRegex = /^sv_[0-9a-zA-Z]{10}$/;
+    static questionIdRegex = /^sq_[0-9a-zA-Z]{10}$/;
+    static optionIdRegex = /^sqo_[0-9a-zA-Z]{10}$/;
+
     static questionOption = z
         .strictObject({
             label: z.string().min(1),
-            value: z.string()
+            value: z.string().regex(Schema.optionIdRegex, {
+                error: 'Not a valid option ID string'
+            })
         });
 
     static commonQuestionProps = z
         .strictObject({
-            id: z.string().min(1),
+            id: z.string().regex(Schema.questionIdRegex, {
+                error: 'Not a valid question ID string'
+            }),
             title: z.string().min(1),
             description: z.string(),
             required: z.boolean()
@@ -29,7 +37,7 @@ export class Schema {
 
     static textQuestion = z
         .strictObject({
-            ...Schema.commonQuestionProps,
+            ...Schema.commonQuestionProps.shape,
             type: z.literal('text'),
             min: z.number().min(0),
             max: z.number().min(0)
@@ -42,7 +50,7 @@ export class Schema {
 
     static scaleQuestion = z
         .strictObject({
-            ...Schema.commonQuestionProps,
+            ...Schema.commonQuestionProps.shape,
             type: z.literal('scale'),
             kind: Schema.scaleKind,
             min: z.number().min(1),
@@ -60,7 +68,7 @@ export class Schema {
 
     static multiOptionQuestion = z
         .strictObject({
-            ...Schema.commonQuestionProps,
+            ...Schema.commonQuestionProps.shape,
             type: Schema.multiOptionQuestionTypes,
             options: z.array(Schema.questionOption)
         });
@@ -75,15 +83,25 @@ export class Schema {
 
     static surveyConfig = z
         .strictObject({
-            id: z.string().min(1),
+            id: z.string().regex(Schema.surveyIdRegex, {
+                error: 'Not a valid survey ID string'
+            }),
             owner: z.string().min(1),
             title: z.string().min(1),
             intro: z.string(),
             outro: z.string(),
             allowMultiple: z.boolean(),
-            createDate: z.iso.datetime(),
-            publishDate: z.iso.datetime().nullable(),
-            closeDate: z.iso.datetime().nullable(),
+            createDate: z.number(),
+            publishDate: z.number().nullable(),
+            closeDate: z.number().nullable(),
+            responseCount: z.number()
+        });
+
+    static surveyConfigWithQuestions = z
+        .strictObject({
+            ...Schema.surveyConfig.shape,
             questions: Schema.surveyQuestionList
         });
+
+    static stringArray = z.array(z.string());
 }

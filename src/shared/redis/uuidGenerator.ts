@@ -22,6 +22,7 @@ export const genSurvey = (): SurveyDto => {
     return {
         id: genSurveyId(),
         title: 'Untitled Survey',
+        owner: '',
         intro: '',
         outro: 'Thank you for your response.',
         allowMultiple: false,

@@ -6,12 +6,17 @@
 */
 
 import { SurveyDto } from '../../../shared/redis/SurveyDto';
+import { ApiResponse } from '../../../shared/types/api';
 
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
     // Fetch survey list from API
-    const resp = await fetch('/api/survey/list');
+    const resp = await fetch('/api/dash/survey/list');
     if (!resp.ok) return [];
-    const list = await resp.json() as SurveyDto[];
+    const apiResponse = await resp.json() as ApiResponse<SurveyDto[]> | undefined;
+
+    // If empty, return empty
+    const list = apiResponse?.result;
+    if (!list) return [];
 
     // Sort based on status
     const now = Date.now();
@@ -26,21 +31,21 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
 };
 
 export const getSurveyById = async (id: string): Promise<SurveyDto | undefined> => {
-    const resp = await fetch(`/api/survey/${id}`);
-    return resp.ok ? await resp.json() : undefined;
+    const resp = await fetch(`/api/dash/survey/${id}`);
+    return resp.ok ? (await resp.json() as ApiResponse<SurveyDto>)?.result ?? undefined : undefined;
 };
 
 export const deleteSurveyById = async (id: string): Promise<boolean> => {
-    const resp = await fetch(`/api/survey/${id}`, { method: "delete" });
+    const resp = await fetch(`/api/dash/survey/${id}`, { method: "delete" });
     return resp.ok;
 };
 
 export const closeSurveyById = async (id: string): Promise<boolean> => {
-    const resp = await fetch(`/api/survey/${id}/close`, { method: "patch" });
+    const resp = await fetch(`/api/dash/survey/${id}/close`, { method: "post" });
     return resp.ok;
 };
 
 export const saveSurvey = async (survey: SurveyDto): Promise<boolean> => {
-    const resp = await fetch(`/api/survey/${survey.id}`, { method: "patch", body: JSON.stringify(survey)});
+    const resp = await fetch(`/api/dash/survey/${survey.id}`, { method: "post", body: JSON.stringify(survey)});
     return resp.ok;
 };

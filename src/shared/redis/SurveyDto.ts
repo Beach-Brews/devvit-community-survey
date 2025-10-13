@@ -50,6 +50,7 @@ export type SurveyQuestionList = SurveyQuestionDto[];
 
 export type SurveyDto = {
     id: string;
+    owner: string;
     title: string;
     intro: string;
     outro: string;
@@ -58,5 +59,5 @@ export type SurveyDto = {
     publishDate: number | null;
     closeDate: number | null;
     responseCount: number | null;
-    questions: SurveyQuestionList;
+    questions?: SurveyQuestionList;
 };
