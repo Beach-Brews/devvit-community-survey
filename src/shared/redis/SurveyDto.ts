@@ -58,6 +58,10 @@ export type SurveyDto = {
     createDate: number;
     publishDate: number | null;
     closeDate: number | null;
-    responseCount: number | null;
+    responseCount?: number;
     questions?: SurveyQuestionList;
 };
+
+export type SurveyWithQuestionsDto = SurveyDto & {
+    questions: SurveyQuestionList;
+}

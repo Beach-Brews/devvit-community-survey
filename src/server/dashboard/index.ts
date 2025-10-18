@@ -8,18 +8,16 @@
 import { PathFactory } from '../PathFactory';
 import { Router } from 'express';
 import { SurveyDto } from '../../shared/redis/SurveyDto';
-import { ApiResponse, MessageResponse } from '../../shared/types/api';
+import { ApiResponse, MessageResponse, SurveyIdParam } from '../../shared/types/api';
 import {
     errorIfNotMod,
     errorIfNoUserId,
     messageResponse,
     successResponse,
-    surveyNotFoundResponse,
+    surveyNotFoundResponse
 } from '../util/apiUtils';
 import * as dashRedis from '../devvit/redis/dashboard';
 import { Logger } from '../util/Logger';
-
-type SurveyIdParam = {surveyId: string};
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
@@ -109,11 +107,13 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 // Might be "expected" if future allows all mods to modify all surveys.
 
                 // Upsert
-                const isNew = await dashRedis.upsertSurvey(userId, req.params.surveyId, req.body);
-                if (!isNew) {
-                    messageResponse(res, 200, 'Updated existing survey', 100);
+                const [isNew, postId] = await dashRedis.upsertSurvey(userId, req.params.surveyId, req.body);
+                if (postId) {
+                    successResponse<string>(res, postId, 200, 'Published survey', 102);
+                } else if (!isNew) {
+                    messageResponse(res, 200, 'Updated existing survey', 101);
                 } else {
-                    messageResponse(res, 200, 'Created new survey', 101);
+                    messageResponse(res, 200, 'Created new survey', 100);
                 }
 
             } catch(e) {

@@ -10,6 +10,7 @@ import { Router } from 'express';
 import { context, reddit } from '@devvit/web/server';
 import { Logger } from "../../util/Logger";
 import { isMod } from '../../util/userUtils';
+import { PostType } from '../../../shared/types/general';
 
 export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
     router.post('/internal/menu/create-dashboard', async (_req, res): Promise<void> => {
@@ -44,7 +45,7 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
                 subredditName: context.subredditName,
                 title: 'Survey Dashboard',
                 postData: {
-                    postType:'Dashboard'
+                    postType: PostType[PostType.Dashboard]
                 },
                 textFallback: {
                     text: 'Sorry, this app is not supported on Old Reddit.'

@@ -18,29 +18,25 @@ export class Schema {
     static optionIdRegex = /^sqo_[0-9a-zA-Z]{10}$/;
 
     static questionOption = z
-        .strictObject({
-            label: z.string().min(1),
-            value: z.string().regex(Schema.optionIdRegex, {
-                error: 'Not a valid option ID string'
-            })
+        .looseObject({
+            label: z.string().min(1, 'Option label missing'),
+            value: z.string().regex(Schema.optionIdRegex, 'Not a valid option ID string')
         });
 
     static commonQuestionProps = z
-        .strictObject({
-            id: z.string().regex(Schema.questionIdRegex, {
-                error: 'Not a valid question ID string'
-            }),
-            title: z.string().min(1),
-            description: z.string(),
-            required: z.boolean()
+        .looseObject({
+            id: z.string().regex(Schema.questionIdRegex, 'Not a valid question ID string'),
+            title: z.string().min(1, 'Question title missing'),
+            description: z.string().default(''),
+            required: z.boolean().default(false)
         });
 
     static textQuestion = z
-        .strictObject({
+        .looseObject({
             ...Schema.commonQuestionProps.shape,
             type: z.literal('text'),
-            min: z.number().min(0),
-            max: z.number().min(0)
+            min: z.number().min(0).default(0),
+            max: z.number().min(0).default(0)
         });
 
     static scaleKind = z.union([
@@ -49,15 +45,15 @@ export class Schema {
     ]);
 
     static scaleQuestion = z
-        .strictObject({
+        .looseObject({
             ...Schema.commonQuestionProps.shape,
             type: z.literal('scale'),
-            kind: Schema.scaleKind,
-            min: z.number().min(1),
-            max: z.number().min(5),
-            minLabel: z.string().min(1),
-            midLabel: z.string(),
-            maxLabel: z.string().min(1)
+            kind: Schema.scaleKind.default("otf"),
+            min: z.number().min(1).default(1),
+            max: z.number().min(10).default(5),
+            minLabel: z.string().default(''),
+            midLabel: z.string().default(''),
+            maxLabel: z.string().default('')
         });
 
     static multiOptionQuestionTypes = z.union([
@@ -67,10 +63,10 @@ export class Schema {
     ]);
 
     static multiOptionQuestion = z
-        .strictObject({
+        .looseObject({
             ...Schema.commonQuestionProps.shape,
-            type: Schema.multiOptionQuestionTypes,
-            options: z.array(Schema.questionOption)
+            type: Schema.multiOptionQuestionTypes.default('multi'),
+            options: z.array(Schema.questionOption).default([])
         });
 
     static question = z.union([
@@ -82,26 +78,22 @@ export class Schema {
     static surveyQuestionList = z.array(Schema.question);
 
     static surveyConfig = z
-        .strictObject({
-            id: z.string().regex(Schema.surveyIdRegex, {
-                error: 'Not a valid survey ID string'
-            }),
-            owner: z.string().min(1),
-            title: z.string().min(1),
-            intro: z.string(),
-            outro: z.string(),
-            allowMultiple: z.boolean(),
-            createDate: z.number(),
+        .looseObject({
+            id: z.string().regex(Schema.surveyIdRegex, 'Not a valid survey ID string'),
+            owner: z.string().min(1, 'Survey Owner missing'),
+            title: z.string().min(1, 'Survey Title missing'),
+            intro: z.string().default(''),
+            outro: z.string().min(1, 'Survey Outro missing'),
+            allowMultiple: z.boolean().default(false),
+            createDate: z.number().default(() => Date.now()),
             publishDate: z.number().nullable(),
-            closeDate: z.number().nullable(),
-            responseCount: z.number()
+            closeDate: z.number().nullable()
         });
 
     static surveyConfigWithQuestions = z
-        .strictObject({
+        .looseObject({
             ...Schema.surveyConfig.shape,
             questions: Schema.surveyQuestionList
         });
 
-    static stringArray = z.array(z.string());
 }

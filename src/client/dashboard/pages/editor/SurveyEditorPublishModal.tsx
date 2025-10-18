@@ -68,6 +68,8 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
                 survey.publishDate = Date.now();
             }
 
+            // BUG: Check to make sure the close date is AFTER the publish date
+            // Maybe set a "min-open" period / time too?
             if (!options.noCloseDate) {
                 if (isNaN(options.closeDate)) {
                     setState({ processing: false, error: true });

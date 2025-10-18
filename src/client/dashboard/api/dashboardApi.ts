@@ -1,5 +1,5 @@
 ﻿/*!
-* API to fetch survey list from server.
+* API endpoints for the survey dashboard.
 *
 * Author:  u/Beach-Brews
 * License: BSD-3-Clause
@@ -11,7 +11,7 @@ import { ApiResponse } from '../../../shared/types/api';
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
     // Fetch survey list from API
     const resp = await fetch('/api/dash/survey/list');
-    if (!resp.ok) return [];
+    if (!resp.ok) throw new Error('Failed to fetch survey list');
     const apiResponse = await resp.json() as ApiResponse<SurveyDto[]> | undefined;
 
     // If empty, return empty
@@ -30,9 +30,9 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
     return list;
 };
 
-export const getSurveyById = async (id: string): Promise<SurveyDto | undefined> => {
+export const getSurveyById = async (id: string): Promise<SurveyDto | null> => {
     const resp = await fetch(`/api/dash/survey/${id}`);
-    return resp.ok ? (await resp.json() as ApiResponse<SurveyDto>)?.result ?? undefined : undefined;
+    return resp.ok ? (await resp.json() as ApiResponse<SurveyDto>)?.result ?? null : null;
 };
 
 export const deleteSurveyById = async (id: string): Promise<boolean> => {

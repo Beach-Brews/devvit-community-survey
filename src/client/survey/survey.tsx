@@ -1,13 +1,11 @@
-/*import './index.css';
+import './index.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from './App';
+import { SurveyPost } from './SurveyPost';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <SurveyPost />
   </StrictMode>
 );
-*/
-window.location.href = "dashboard.html" + window.location.search;

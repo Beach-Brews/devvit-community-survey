@@ -18,7 +18,7 @@ export const successResponse =
 
 export const messageResponse =
     (res: Response, status: number, message: string, code?: number): void => {
-        const obj = {message: message, code: code ?? status, result: null } as MessageResponse;
+        const obj = {message: message, code: code ?? status, result: undefined } as MessageResponse;
         res.status(status).json(obj);
     };
 

@@ -7,3 +7,8 @@
 
 export type SyncHandler<T> = () => T;
 export type AsyncHandler<T> = () => Promise<T>;
+
+export enum PostType {
+    Survey,
+    Dashboard
+}

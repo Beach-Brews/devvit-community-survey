@@ -9,12 +9,14 @@ import { redis } from '@devvit/web/server';
 import { Schema } from './Schema';
 import { SurveyDto, SurveyQuestionList } from '../../../shared/redis/SurveyDto';
 import { Logger } from '../../util/Logger';
+import { createSurveyPost } from '../../util/publishUtils';
 
 const RedisKeys = {
     userList: () => `usr:all`,
     userSurveyList: (userId: string) => `usr:${userId}:svs`,
     surveyConfig: (surveyId: string) => `sv:${surveyId}:conf`,
-    surveyQuestions: (surveyId: string) => `sv:${surveyId}:qns`
+    surveyQuestions: (surveyId: string) => `sv:${surveyId}:qns`,
+    surveyPublishQueue: () => `sv:pub`
 };
 
 const getSurveyIdsForUser =
@@ -24,16 +26,15 @@ const getSurveyIdsForUser =
 
 const addSurveyIdToUserList =
     async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
+        // Confirm input is a valid surveyId
+        if (!Schema.surveyIdRegex.test(surveyId))
+            throw Error('Invalid Survey ID: ' + surveyId);
 
+        // Create logger
         const logger = await Logger.Create('Dash Redis - User List Add');
         logger.traceStart('Start User List Add');
 
         try {
-
-            // Confirm input is a valid surveyId
-            if (!Schema.surveyIdRegex.test(surveyId))
-                throw Error('Invalid Survey ID: ' + surveyId);
-
             // TODO: Should I add a 5-second lock?
 
             // Write configId to user hash
@@ -100,7 +101,8 @@ export const getSurveyListForUser =
         // Finally, parse each config
         const asyncParse = configs
             .filter(s => s !== null)
-            .map(async (s) => (await Schema.surveyConfig.parseAsync(JSON.parse(s))) satisfies SurveyDto);
+            .map(async (s) =>
+                (await Schema.surveyConfig.parseAsync(JSON.parse(s))) satisfies SurveyDto);
         return Promise.all(asyncParse);
     };
 
@@ -133,7 +135,7 @@ export const getSurveyById =
     };
 
 export const upsertSurvey =
-    async (userId: string, surveyId: string, surveyData: string): Promise<boolean> => {
+    async (userId: string, surveyId: string, surveyData: string): Promise<[boolean, string | null]> => {
         // Create logger
         const logger = await Logger.Create('Dash Redis - Upsert');
         logger.traceStart('Start Upsert');
@@ -179,10 +181,26 @@ export const upsertSurvey =
             if (isNew)
                 await addSurveyIdToUserList(userId, surveyId, txn);
 
-            // Commit transaction
+            // If no publish date provided, return
+            if (config.publishDate == null) {
+                await txn.exec();
+                return [isNew, null];
+            }
+
+            // If the publishDate within the next 60 seconds, publish immediately!
+            const publishNow = config.publishDate <= Date.now() + 60000;
+            if (publishNow) {
+                await txn.exec();
+                const post = await createSurveyPost(config);
+                return [isNew, post.id];
+            }
+
+            // Otherwise, add a key to the publishing queue
+            const surveyPublishQueueKey = RedisKeys.surveyPublishQueue();
+            await txn.hSet(surveyPublishQueueKey, { [surveyId]: config.publishDate.toString() });
             await txn.exec();
 
-            return isNew;
+            return [isNew, null];
 
         } catch (e) {
 
@@ -257,4 +275,42 @@ export const deleteSurveyById =
         await txn.exec();
 
         return true;
+    };
+
+export const publishQueuedSurveys =
+    async () => {
+        // Create logger
+        const logger = await Logger.Create('Dash Redis - Publish Surveys');
+        logger.traceStart('Start Publish');
+
+        try {
+            // Get all the keys in the publishing queue
+            const publishQueue = await redis.hGetAll(RedisKeys.surveyPublishQueue());
+            logger.debug(`Found ${publishQueue.length} surveys in publish queue`);
+
+            // Filter any with a date in the future
+            const now = Date.now();
+            const promiseSurveys = Object.entries(publishQueue)
+                .filter(e => parseInt(e[1]) <= now)
+                .map(async (e) => await getSurveyById(e[0]));
+
+            // Publish each survey
+            const surveyList = (await Promise.all(promiseSurveys))
+                .filter(s => s !== null);
+            logger.debug(`Found ${surveyList.length} surveys to publish`);
+
+            // Publish each survey
+            for (const survey of surveyList) {
+                const post = await createSurveyPost(survey);
+                logger.info(`Published survey (${survey.id}) - ${survey.title} - PostID: ${post.id}`);
+            }
+
+        } catch (e) {
+
+            logger.error('Failed to publish new surveys: ', e);
+            throw e;
+
+        } finally {
+            logger.traceEnd();
+        }
     };

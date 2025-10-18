@@ -13,7 +13,8 @@
     "entrypoints": {
       "default": {
         "entry": "index.html",
-        "height": "tall"
+        "height": "tall",
+        "inline": true
       },
       "dashboard": {
         "entry": "dashboard.html"

@@ -26,6 +26,8 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
 
     const [survey, setSurvey] = useState<SurveyDto>(props.survey ?? genSurvey());
 
+    if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
+
     const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
         await surveyDashboardApi.saveSurvey(s);
         if (close)
@@ -54,7 +56,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
 
     const modifySurveyQuestion = useCallback((question: SurveyQuestionDto, action?: 'up' | 'down' | 'delete') => {
         setSurvey(s => {
-            const ql = s.questions;
+            const ql = s.questions ?? [];
             const idx = ql.findIndex(q => q.id == question.id);
             if (idx >= 0) {
                 switch (action) {
@@ -148,8 +150,8 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             return {
                 ...s,
                 questions: [
-                    ...s.questions,
-                    q ? {...q, id: genQuestionId() } : genQuestion(s.questions.length)
+                    ...s.questions ?? [],
+                    q ? {...q, id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
                 ]
             };
         });
@@ -159,7 +161,8 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         ctx.setModal(<SurveyEditorPublishModal survey={survey} />);
     };
 
-    const maxReached = survey.questions.length == Constants.MAX_QUESTION_COUNT;
+    const questionCount = survey.questions.length;
+    const maxReached = questionCount == Constants.MAX_QUESTION_COUNT;
 
     return (
         <>
@@ -194,7 +197,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${512-survey.intro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.intro.length} / 512</div>
                         </div>
                     </div>
-                    {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==survey.questions.length-1} duplicateAction={!maxReached ? onAddQuestion : undefined} />)}
+                    {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==questionCount-1} duplicateAction={!maxReached ? onAddQuestion : undefined} />)}
                     <div className="flex justify-center">
                         <button disabled={maxReached} onClick={() => onAddQuestion()} className="w-1/2 lg:w-1/3 border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex justify-center gap-2 items-center cursor-pointer disabled:pointer-events-none disabled:opacity-50">
                             {maxReached

@@ -12,7 +12,8 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 index: resolve(__dirname, 'index.html'),
-                dashboard: resolve(__dirname, 'dashboard.html')
+                dashboard: resolve(__dirname, 'dashboard.html'),
+                survey: resolve(__dirname, 'survey.html')
             },
             output: {
                 entryFileNames: '[name].js',
