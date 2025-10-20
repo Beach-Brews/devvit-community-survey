@@ -10,7 +10,7 @@ import { DocumentArrowDownIcon, DocumentArrowUpIcon, PencilSquareIcon, Presentat
 import { CalendarIcon, NoSymbolIcon, PencilIcon, RssIcon } from '@heroicons/react/24/solid';
 import { DashboardContext } from '../../DashboardContext';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { formatDateTime } from '../../shared/dateFormat';
+import { formatDateTime } from '../../../shared/dateFormat';
 import { SurveyDeleteConfirmModal } from './SurveyDeleteConfirmModal';
 
 export interface SurveyListCardProps {

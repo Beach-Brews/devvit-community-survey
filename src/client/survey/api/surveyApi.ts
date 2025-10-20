@@ -25,27 +25,97 @@ export const getPostSurvey = async (): Promise<SurveyWithQuestionsDto | null> =>
                 createDate: Date.now(),
                 publishDate: Date.now(),
                 closeDate: null,
-                questions: [{
-                    type: 'multi',
-                    id: genQuestionId(),
-                    required: false,
-                    title: 'Test Multi Choice',
-                    description: 'This is a multi choice question',
-                    options: [
-                        {
-                            label: 'First Choice',
-                            value: genOptionId()
-                        },
-                        {
-                            label: 'Second Choice',
-                            value: genOptionId()
-                        },
-                        {
-                            label: 'Third Choice',
-                            value: genOptionId()
-                        }
-                    ]
-                }]
+                questions: [
+                    {
+                        type: 'multi',
+                        id: genQuestionId(),
+                        required: false,
+                        title: 'Test Multi Choice',
+                        description: 'This is a multi choice question',
+                        options: [
+                            {
+                                label: 'First Choice',
+                                value: genOptionId()
+                            },
+                            {
+                                label: 'Second Choice',
+                                value: genOptionId()
+                            },
+                            {
+                                label: 'Third Choice',
+                                value: genOptionId()
+                            }
+                        ]
+                    },
+                    {
+                        type: 'checkbox',
+                        id: genQuestionId(),
+                        required: true,
+                        title: 'Test Checkbox',
+                        description: 'This is a checkbox question',
+                        options: [
+                            {
+                                label: 'First Choice',
+                                value: genOptionId()
+                            },
+                            {
+                                label: 'Second Choice',
+                                value: genOptionId()
+                            },
+                            {
+                                label: 'Third Choice',
+                                value: genOptionId()
+                            }
+                        ]
+                    },
+                    {
+                        type: 'rank',
+                        id: genQuestionId(),
+                        required: false,
+                        title: 'Test Rank',
+                        description: 'This is a rank question',
+                        options: [
+                            {
+                                label: 'First Choice',
+                                value: genOptionId()
+                            },
+                            {
+                                label: 'Second Choice',
+                                value: genOptionId()
+                            },
+                            {
+                                label: 'Third Choice',
+                                value: genOptionId()
+                            }
+                        ]
+                    },
+                    {
+                        type: 'scale',
+                        kind: 'otf',
+                        id: genQuestionId(),
+                        required: false,
+                        title: 'Test Scale One to Five',
+                        description: 'This is a scale question, with choices between 1 and 5',
+                        min: 1,
+                        minLabel: 'Lower',
+                        midLabel: 'Middle',
+                        max: 5,
+                        maxLabel: 'Upper'
+                    },
+                    {
+                        type: 'scale',
+                        kind: 'ott',
+                        id: genQuestionId(),
+                        required: false,
+                        title: 'Test Scale One to Ten',
+                        description: 'This is a scale question, with choices between 1 and 10',
+                        min: 1,
+                        minLabel: 'Lower',
+                        midLabel: 'Middle',
+                        max: 10,
+                        maxLabel: 'Upper'
+                    }
+                ]
             } satisfies SurveyWithQuestionsDto;
             res(dto);
         }, 2000);

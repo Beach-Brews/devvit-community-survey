@@ -29,6 +29,7 @@ export const IntroPanel = () => {
                     Start Survey
                 </button>
             </div>
+            <div className="text-neutral-700 dark:text-neutral-300">{ctx.survey.questions.length} total questions</div>
         </div>
     );
 };

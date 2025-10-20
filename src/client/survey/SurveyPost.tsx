@@ -14,6 +14,7 @@ import { ErrorPanel } from './panels/ErrorPanel';
 import { IntroPanel } from './panels/IntroPanel';
 import { QuestionPanel } from './panels/QuestionPanel';
 import { OutroPanel } from './panels/OutroPanel';
+import { navigateTo } from '@devvit/web/client';
 
 export const SurveyPost = () => {
 
@@ -48,7 +49,7 @@ export const SurveyPost = () => {
         // Otherwise, load from context
         switch (panelContext.panel) {
             case PanelType.Intro: return (<IntroPanel />);
-            case PanelType.Question: return (<QuestionPanel />);
+            case PanelType.Question: return (<QuestionPanel key={`pnl_${panelContext.number}`} />);
             case PanelType.Outro: return (<OutroPanel />);
             default: throw new Error(`Unknown panel type: ${panelContext.panel}`);
         }
@@ -56,8 +57,14 @@ export const SurveyPost = () => {
 
     return (
         <SurveyContext value={context}>
-            <div className="p-4 h-full">
-                {getPanel()}
+            <div className="h-full flex flex-col justify-between">
+                <div className="p-4 flex-grow">
+                    {getPanel()}
+                </div>
+                <footer className="w-full p-4 text-xs flex justify-between items-center">
+                    <div className="max-w-1/2"><span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span></div>
+                    <div className="max-w-1/2">Pre-Alpha</div>
+                </footer>
             </div>
         </SurveyContext>
     );

@@ -18,6 +18,7 @@ export const LoadingPanel = () => {
                     Loading Survey
                 </button>
             </div>
+            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/3"></div>
         </div>
     );
 };

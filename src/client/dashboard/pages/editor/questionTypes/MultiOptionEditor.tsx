@@ -11,7 +11,7 @@ import { QuestionOptionDto } from '../../../../../shared/redis/SurveyDto';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import { genOptionId } from '../../../../../shared/redis/uuidGenerator';
 import { Constants } from '../../../../../shared/constants';
-import { BulletIcon, CheckboxIcon, RankIcon } from '../../../shared/components/CustomIcons';
+import { BulletIcon, CheckboxIcon, RankIcon } from '../../../../shared/components/CustomIcons';
 
 export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
     // Check that the option type is valid
