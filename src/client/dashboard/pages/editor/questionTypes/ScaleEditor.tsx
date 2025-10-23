@@ -8,7 +8,7 @@
 import { CommonQuestionEditorProps } from './commonEditorTypes';
 import React, { ChangeEvent, JSX } from 'react';
 import { ScaleKind } from '../../../../../shared/redis/SurveyDto';
-import { BulletIcon } from '../../../shared/components/CustomIcons';
+import { BulletIcon } from '../../../../shared/components/CustomIcons';
 
 export const ScaleEditor = (props: CommonQuestionEditorProps) => {
     // Check that the option type is valid
@@ -46,32 +46,44 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
             </div>
             <div className="flex justify-between gap-4 items-center">
                 <div className="w-1/3 flex flex-col">
-                    <label htmlFor={`q_${q.id}_min`}>Min Label</label>
+                    <div className="w-full flex justify-between">
+                        <label htmlFor={`q_${q.id}_min`}>Min Label</label>
+                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${32-q.minLabel.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.minLabel.length} / 32</div>
+                    </div>
                     <input
                         id={`q_${q.id}_min`}
                         onChange={(e) => onInputChange(e)}
                         name="minLabel"
                         value={q.minLabel}
+                        maxLength={32}
                         className="w-full p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                     />
                 </div>
                 <div className="w-1/3 flex flex-col">
-                    <label htmlFor={`q_${q.id}_mid`}>Mid Label</label>
+                    <div className="w-full flex justify-between">
+                        <label htmlFor={`q_${q.id}_mid`}>Mid Label</label>
+                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${32-q.midLabel.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.midLabel.length} / 32</div>
+                    </div>
                     <input
                         id={`q_${q.id}_mid`}
                         onChange={(e) => onInputChange(e)}
                         name="midLabel"
                         value={q.midLabel}
+                        maxLength={32}
                         className="w-full p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                     />
                 </div>
                 <div className="w-1/3 flex flex-col">
-                    <label htmlFor={`q_${q.id}_max`}>Max Label</label>
+                    <div className="w-full flex justify-between">
+                        <label htmlFor={`q_${q.id}_max`}>Max Label</label>
+                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${32-q.maxLabel.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.maxLabel.length} / 32</div>
+                    </div>
                     <input
                         id={`q_${q.id}_max`}
                         onChange={(e) => onInputChange(e)}
                         name="maxLabel"
                         value={q.maxLabel}
+                        maxLength={32}
                         className="w-full p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                     />
                 </div>

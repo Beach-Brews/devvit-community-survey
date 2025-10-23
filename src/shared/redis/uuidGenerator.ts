@@ -39,7 +39,7 @@ export const genQuestion = (order: number): SurveyQuestionDto => {
         id: genQuestionId(),
         title: `New Question #${order+1}`,
         description: '',
-        required: false,
+        required: true,
         type: 'multi',
         options: [ genOption(0) ]
     };

@@ -23,9 +23,9 @@ export const IntroPanel = () => {
     return (
         <div className="flex flex-col gap-4 justify-center items-center h-full">
             <div className="text-4xl font-bold">{ctx.survey.title}</div>
-            <div className="text-xl text-center">{ctx.survey.intro}</div>
+            {ctx.survey.intro && (<div className="text-xl text-center">{ctx.survey.intro}</div>)}
             <div className="mt-8 w-full flex justify-center">
-                <button onClick={onStartSurvey} className="w-1/2 bg-blue-100 dark:bg-blue-900 px-8 py-2 rounded-xl cursor-pointer">
+                <button onClick={onStartSurvey} className="w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 px-8 py-2 rounded-xl cursor-pointer">
                     Start Survey
                 </button>
             </div>

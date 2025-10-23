@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import { ChangeEvent, FocusEvent } from 'react';
+import React, { ChangeEvent, FocusEvent } from 'react';
 import { CommonQuestionEditorProps } from './commonEditorTypes';
 import { QuestionOptionDto } from '../../../../../shared/redis/SurveyDto';
 import { XCircleIcon } from '@heroicons/react/24/outline';
@@ -93,11 +93,13 @@ export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
                             onBlur={(e) => onOptionBlur(e, i)}
                             name={`option${i}`}
                             value={o.label}
+                            maxLength={64}
                             className="p-2 w-4/5 border-b-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                         />
+                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${64-o.label.length <= 15 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{o.label.length} / 64</div>
                         <button
                             onClick={() => onDeleteOption(i)}
-                            className="mt-4 p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200"
+                            className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200"
                         >
                             <XCircleIcon className="size-6" />
                         </button>

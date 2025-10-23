@@ -11,7 +11,7 @@ import { ChangeEvent, useCallback, useContext, useState } from 'react';
 import { CalendarDaysIcon } from '@heroicons/react/24/solid';
 import { saveSurvey } from '../../api/dashboardApi';
 import { DashboardContext } from '../../DashboardContext';
-import { BulletIcon } from '../../shared/components/CustomIcons';
+import { BulletIcon } from '../../../shared/components/CustomIcons';
 
 export interface SurveyEditorPublishModalProps {
     survey: SurveyDto;

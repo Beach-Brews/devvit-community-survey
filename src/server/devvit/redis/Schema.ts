@@ -28,7 +28,7 @@ export class Schema {
             id: z.string().regex(Schema.questionIdRegex, 'Not a valid question ID string'),
             title: z.string().min(1, 'Question title missing'),
             description: z.string().default(''),
-            required: z.boolean().default(false)
+            required: z.boolean().default(true)
         });
 
     static textQuestion = z
@@ -50,7 +50,7 @@ export class Schema {
             type: z.literal('scale'),
             kind: Schema.scaleKind.default("otf"),
             min: z.number().min(1).default(1),
-            max: z.number().min(10).default(5),
+            max: z.number().max(10).default(5),
             minLabel: z.string().default(''),
             midLabel: z.string().default(''),
             maxLabel: z.string().default('')

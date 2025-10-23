@@ -57,11 +57,11 @@ export const SurveyPost = () => {
 
     return (
         <SurveyContext value={context}>
-            <div className="h-full flex flex-col justify-between">
-                <div className="p-4 flex-grow">
+            <div className="h-full max-h-full flex flex-col justify-between">
+                <div className="p-4 flex-grow h-[0%]">
                     {getPanel()}
                 </div>
-                <footer className="w-full p-4 text-xs flex justify-between items-center">
+                <footer className="w-full p-4 text-xs flex justify-between items-center ">
                     <div className="max-w-1/2"><span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span></div>
                     <div className="max-w-1/2">Pre-Alpha</div>
                 </footer>

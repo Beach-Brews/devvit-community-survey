@@ -13,7 +13,8 @@ export default defineConfig({
             input: {
                 index: resolve(__dirname, 'index.html'),
                 dashboard: resolve(__dirname, 'dashboard.html'),
-                survey: resolve(__dirname, 'survey.html')
+                survey: resolve(__dirname, 'survey.html'),
+                surveyCont: resolve(__dirname, 'survey-container.html')
             },
             output: {
                 entryFileNames: '[name].js',

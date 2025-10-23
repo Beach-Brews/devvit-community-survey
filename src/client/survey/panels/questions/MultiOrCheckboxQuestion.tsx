@@ -65,7 +65,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     };
 
     return (
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-2">
             {props.question.options.map((o, i) => {
                 return (
                     <li key={`sqo_${o.value}`} className="flex gap-2 items-center cursor-pointer" onClick={() => void onOptionClick(i)}>

@@ -2,13 +2,20 @@
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-//import { SurveyDashboard } from './dashboard/SurveyDashboard';
-//import { SurveyPost } from './survey/SurveyPost';
+import { SurveyDashboardInline } from './dashboard/SurveyDashboardInline';
+import { SurveyPost } from './survey/SurveyPost';
+import { context } from '@devvit/web/client';
+import { PostType } from '../shared/types/general';
+
+const renderApp = () => {
+    const postType = context.postData?.postType;
+    return postType === PostType[PostType.Dashboard]
+        ? <SurveyDashboardInline />
+        : <SurveyPost />;
+};
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <div>
-            This is the index. Choose either dashboard or survey for now.
-        </div>
+        {renderApp()}
     </StrictMode>
 );

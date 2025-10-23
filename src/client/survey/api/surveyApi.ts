@@ -6,12 +6,15 @@
 */
 
 import { SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
-import { genOptionId, genQuestionId, genSurveyId } from '../../../shared/redis/uuidGenerator';
-//import { ApiResponse } from '../../../shared/types/api';
+import { ApiResponse } from '../../../shared/types/api';
+//import { genOptionId, genQuestionId, genSurveyId } from '../../../shared/redis/uuidGenerator';
 
 export const getPostSurvey = async (): Promise<SurveyWithQuestionsDto | null> => {
-    //const resp = await fetch('/api/post/survey');
-    //return resp.ok ? (await resp.json() as ApiResponse<SurveyDto>)?.result ?? null : null;
+    /**/
+    const resp = await fetch('/api/post/survey');
+    return resp.ok ? (await resp.json() as ApiResponse<SurveyWithQuestionsDto>)?.result ?? null : null;
+    /**/
+    /*
     return await new Promise((res, _rej) => {
         setTimeout(() => {
             const dto = {
@@ -73,7 +76,7 @@ export const getPostSurvey = async (): Promise<SurveyWithQuestionsDto | null> =>
                         id: genQuestionId(),
                         required: false,
                         title: 'Test Rank',
-                        description: 'This is a rank question',
+                        description: 'This is a rank question that has a really long description that I hope increases the page size enough to test whether this should be max of 100% or of 100vh. It isn\'t really clear whether screen is outside the iframe size or not.This is a rank question that has a really long description that I hope increases the page size enough to test whether this should be max of 100% or of 100vh. It isn\'t really clear whether screen is outside the iframe size or not.This is a rank question that has a really long description that I hope increases the page size enough to test whether this should be max of 100% or of 100vh. It isn\'t really clear whether screen is outside the iframe size or not.',
                         options: [
                             {
                                 label: 'First Choice',
@@ -93,7 +96,7 @@ export const getPostSurvey = async (): Promise<SurveyWithQuestionsDto | null> =>
                         type: 'scale',
                         kind: 'otf',
                         id: genQuestionId(),
-                        required: false,
+                        required: true,
                         title: 'Test Scale One to Five',
                         description: 'This is a scale question, with choices between 1 and 5',
                         min: 1,
@@ -120,4 +123,5 @@ export const getPostSurvey = async (): Promise<SurveyWithQuestionsDto | null> =>
             res(dto);
         }, 2000);
     });
+    */
 };

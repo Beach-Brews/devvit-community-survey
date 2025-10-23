@@ -1,5 +1,5 @@
 ﻿/*!
-* Displays the options a user can choose for a multiple choice or checkbox question.
+* Displays the options a user can choose for a rank question.
 *
 * Author:  u/Beach-Brews
 * License: BSD-3-Clause
@@ -44,7 +44,7 @@ export const RankQuestion = (props: QuestionProps) => {
     };
 
     return (
-        <ul className="flex flex-col gap-4 w-full">
+        <ul className="flex flex-col gap-2 w-full">
             {valueOrder.map((o, i) => {
                 return (
                     <li key={`sqo_${o.value}`} className="flex gap-4 items-center">
