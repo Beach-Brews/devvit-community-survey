@@ -15,6 +15,8 @@ import { IntroPanel } from './panels/IntroPanel';
 import { QuestionPanel } from './panels/QuestionPanel';
 import { OutroPanel } from './panels/OutroPanel';
 import { navigateTo } from '@devvit/web/client';
+import { Constants } from '../../shared/constants';
+import { ClosedPanel } from './panels/ClosedPanel';
 
 export const SurveyPost = () => {
 
@@ -46,6 +48,10 @@ export const SurveyPost = () => {
         if (survey === null)
             return (<ErrorPanel />);
 
+        // If the survey is now closed
+        if (survey.closeDate && survey.closeDate <= Date.now())
+            return (<ClosedPanel />);
+
         // Otherwise, load from context
         switch (panelContext.panel) {
             case PanelType.Intro: return (<IntroPanel />);
@@ -63,7 +69,7 @@ export const SurveyPost = () => {
                 </div>
                 <footer className="w-full p-4 text-xs flex justify-between items-center ">
                     <div className="max-w-1/2"><span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span></div>
-                    <div className="max-w-1/2">Pre-Alpha</div>
+                    <div className="max-w-1/2">{Constants.SURVEY_VERSION_DISPLAY}</div>
                 </footer>
             </div>
         </SurveyContext>

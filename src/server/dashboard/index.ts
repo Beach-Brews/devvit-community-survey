@@ -18,8 +18,27 @@ import {
 } from '../util/apiUtils';
 import * as dashRedis from '../devvit/redis/dashboard';
 import { Logger } from '../util/Logger';
+import { isMod } from '../util/userUtils';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
+
+    router.get<void, ApiResponse<SurveyDto>[]>(
+        "/api/dash/is-mod",
+        async (_req, res) => {
+            const logger = await Logger.Create('Dashboard API - User Details');
+            logger.traceStart('Api Start');
+
+            try {
+                return successResponse(res, await isMod());
+
+            } catch(e) {
+                logger.error('Error executing API: ', e);
+                messageResponse(res, 500, 'There was an error processing this request');
+            } finally {
+                logger.traceEnd();
+            }
+        }
+    );
 
     router.get<void, ApiResponse<SurveyDto>[]>(
         "/api/dash/survey/list",

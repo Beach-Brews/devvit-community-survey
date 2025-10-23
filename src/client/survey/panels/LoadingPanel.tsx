@@ -7,7 +7,7 @@
 
 export const LoadingPanel = () => {
     return (
-        <div className="flex flex-col gap-4 justify-center items-center h-full text-neutral-700 dark:text-neutral-300">
+        <div className="flex flex-col gap-4 justify-center items-center animate-pulse h-full text-neutral-700 dark:text-neutral-300">
             <div className="h-10 bg-neutral-300 rounded-full dark:bg-neutral-700 w-2/3"></div>
             <div className="w-full flex flex-col gap-2 justify-center items-center">
                 <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-3/4"></div>

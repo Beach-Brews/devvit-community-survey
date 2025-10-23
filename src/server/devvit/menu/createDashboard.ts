@@ -33,17 +33,8 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
 
             // Create the new Dashboard post
             const post = await reddit.submitCustomPost({
-                splash: {
-                    appDisplayName: 'Survey Dashboard',
-                    heading: 'Survey Dashboard',
-                    description: 'Create, edit and manage surveys',
-                    buttonLabel: 'Launch Dashboard',
-                    // TODO: entry: 'dashboard'
-                    // TODO: backgroundUri: 'icon.png'
-                    // TODO: appIconUri: ''
-                },
                 subredditName: context.subredditName,
-                title: 'Survey Dashboard',
+                title: 'Community Survey - Dashboard',
                 postData: {
                     postType: PostType[PostType.Dashboard]
                 },
@@ -55,6 +46,7 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
             // Immediately remove it from sub feed
             // TODO: How do I remove this, but also have it render?
             //await post.remove(false);
+            await post.hide();
 
             res.json({
                 navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${post.id}`,

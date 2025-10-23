@@ -24,10 +24,10 @@
     "type-check": "tsc --build"
   },
   "dependencies": {
-    "@devvit/web": "0.12.1-next-2025-09-30-22-32-26-48b2ae857.0",
+    "@devvit/web": "0.12.2-next-2025-10-22-23-22-22-a74816f2f.0",
     "@heroicons/react": "^2.2.0",
     "clsx": "2.1.1",
-    "devvit": "0.12.1-next-2025-09-30-22-32-26-48b2ae857.0",
+    "devvit": "0.12.2-next-2025-10-22-23-22-22-a74816f2f.0",
     "express": "5.1.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

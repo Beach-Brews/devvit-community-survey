@@ -8,7 +8,7 @@ import { context } from '@devvit/web/client';
 import { PostType } from '../shared/types/general';
 
 const renderApp = () => {
-    const postType = context.postData?.postType;
+    const postType = context?.postData?.postType ?? PostType[PostType.Dashboard];
     return postType === PostType[PostType.Dashboard]
         ? <SurveyDashboardInline />
         : <SurveyPost />;

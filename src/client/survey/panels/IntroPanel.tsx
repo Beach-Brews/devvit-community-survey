@@ -30,6 +30,8 @@ export const IntroPanel = () => {
                 </button>
             </div>
             <div className="text-neutral-700 dark:text-neutral-300">{ctx.survey.questions.length} total questions</div>
+            {/* TODO: Add close date if defined */}
+            {/* TODO: Add view results if allowed */}
         </div>
     );
 };

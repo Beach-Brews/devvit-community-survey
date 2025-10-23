@@ -8,6 +8,11 @@
 import { SurveyDto } from '../../../shared/redis/SurveyDto';
 import { ApiResponse } from '../../../shared/types/api';
 
+export const isUserMod = async (): Promise<boolean | null> => {
+    const resp = await fetch(`/api/dash/is-mod`);
+    return resp.ok ? (await resp.json() as ApiResponse<boolean>)?.result ?? null : null;
+};
+
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
     // Fetch survey list from API
     const resp = await fetch('/api/dash/survey/list');
