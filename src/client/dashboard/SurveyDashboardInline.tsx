@@ -66,8 +66,8 @@ export const SurveyDashboardInline = () => {
                     {/* TODO: Discuss issue with auto post removal */}
                     {isMod === false && (
                         <>
-                            <div className="font-bold text-4xl">Survey Coming Soon!</div>
-                            <div className="text-lg">
+                            <div className="font-bold text-2xl text-center">Surveys Coming Soon!</div>
+                            <div className="text-lg text-center">
                                 This post is for moderators to configure surveys for this community. A new post will be
                                 created when a survey is accepting responses! Check back soon.
                             </div>
@@ -77,7 +77,7 @@ export const SurveyDashboardInline = () => {
                     {/* ===== Moderator Launch Dashboard State ===== */}
                     {isMod === true && (
                         <>
-                            <div className="font-bold text-4xl">Community Survey - Dashboard</div>
+                            <div className="font-bold text-2xl text-center">Community Survey - Dashboard</div>
                             <button className="cursor-pointer px-4 py-2 rounded-md text-white bg-blue-700 dark:bg-blue-900" onClick={launchDashboard}>Launch Dashboard</button>
                         </>
                     )}

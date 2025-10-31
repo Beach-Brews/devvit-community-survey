@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import React, { ChangeEvent, FocusEvent } from 'react';
+import { ChangeEvent, FocusEvent } from 'react';
 import { CommonQuestionEditorProps } from './commonEditorTypes';
 import { QuestionOptionDto } from '../../../../../shared/redis/SurveyDto';
 import { XCircleIcon } from '@heroicons/react/24/outline';

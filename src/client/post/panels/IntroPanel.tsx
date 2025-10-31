@@ -9,7 +9,11 @@
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 
-export const IntroPanel = () => {
+export interface IntroPanelProps {
+    isAnonymous: boolean
+}
+
+export const IntroPanel = (props: IntroPanelProps) => {
 
     // Assert context
     const ctx = useContext(SurveyContext);
@@ -22,11 +26,11 @@ export const IntroPanel = () => {
 
     return (
         <div className="flex flex-col gap-4 justify-center items-center h-full">
-            <div className="text-4xl font-bold">{ctx.survey.title}</div>
+            <div className="text-4xl font-bold text-center">{ctx.survey.title}</div>
             {ctx.survey.intro && (<div className="text-xl text-center">{ctx.survey.intro}</div>)}
             <div className="mt-8 w-full flex justify-center">
-                <button onClick={onStartSurvey} className="w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 px-8 py-2 rounded-xl cursor-pointer">
-                    Start Survey
+                <button disabled={props.isAnonymous} onClick={!props.isAnonymous ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${props.isAnonymous ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
+                    {props.isAnonymous ? 'Login to Take Survey' : 'Start Survey'}
                 </button>
             </div>
             <div className="text-neutral-700 dark:text-neutral-300">{ctx.survey.questions.length} total questions</div>

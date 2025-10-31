@@ -6,7 +6,6 @@
 */
 
 import { QuestionProps } from './QuestionProps';
-import { useCallback, useEffect, useState } from 'react';
 import { BulletIcon } from '../../../shared/components/CustomIcons';
 
 export const ScaleQuestion = (props: QuestionProps) => {
@@ -17,25 +16,12 @@ export const ScaleQuestion = (props: QuestionProps) => {
 
     // State for which option is chosen
     const question = props.question;
-    const [selectedValue, setSelectedValue] = useState<number | undefined>(undefined);
-
-    // Handle saving response to Redis
-    const saveSelections = useCallback(async (s: number) => {
-        // TODO: Save
-        console.log(s);
-    }, []);
-
-    // Trigger valid selection om parent
-    const setValidResponse = props.setValidResponse;
-    useEffect(() => {
-        setValidResponse(selectedValue !== undefined);
-        if (selectedValue !== undefined)
-            void saveSelections(selectedValue);
-    }, [selectedValue, setValidResponse, saveSelections]);
+    const parsedValue = props.response?.[0] ? parseInt(props.response[0]) : undefined;
+    const selectedValue = parsedValue && !isNaN(parsedValue) ? parsedValue : undefined;
 
     // Handle on change selection
     const onSelect = async (val: number) => {
-        setSelectedValue(val);
+        props.setResponse([val.toString()]);
     };
 
     // Create the items, based on the min-max
@@ -45,8 +31,8 @@ export const ScaleQuestion = (props: QuestionProps) => {
     }
 
     return (
-        <div className="flex flex-col gap-4 w-full">
-            <div className="flex justify-between gap-4 w-full">
+        <div className="flex flex-col gap-4 w-full max-w-[500px]">
+            <div className="text-sm md:text-base flex justify-between gap-4 w-full">
                 <div className="w-1/3">{question.minLabel}</div>
                 <div className="w-1/3 text-center">{question.midLabel}</div>
                 <div className="w-1/3 text-right">{question.maxLabel}</div>

@@ -4,7 +4,7 @@ import { Logger } from './util/Logger';
 import { LogLevel } from './util/AppSettings';
 import { registerInternalRoutes } from './devvit';
 import { registerDashboardRoutes } from './dashboard';
-import { registerSurveyRoutes } from './survey';
+import { registerPostRoutes } from './post';
 
 const app = express();
 
@@ -21,7 +21,7 @@ const router = express.Router();
 registerDashboardRoutes(router);
 
 // Register survey routes
-registerSurveyRoutes(router);
+registerPostRoutes(router);
 
 // Register all internal devvit routes (menus, triggers, tasks, etc.)
 registerInternalRoutes(router);

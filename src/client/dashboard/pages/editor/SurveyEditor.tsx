@@ -29,6 +29,8 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
 
     const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
+        // TODO: Show survey is saving + successfully saved
+        // TODO: Handle save failed
         await surveyDashboardApi.saveSurvey(s);
         if (close)
             ctx.setPageContext({page: 'list'});

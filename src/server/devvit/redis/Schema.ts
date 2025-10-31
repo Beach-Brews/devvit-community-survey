@@ -5,27 +5,22 @@
 * License: BSD-3-Clause
 */
 
-import {z} from 'zod';
-
-export type SurveyConfig = z.input<typeof Schema.surveyConfig>;
+import { z } from 'zod';
+import { OptionIdRegex, QuestionIdRegex, SurveyIdRegex } from '../../../shared/redis/uuidGenerator';
 
 export class Schema {
 
     /* ==================== Question Config ==================== */
 
-    static surveyIdRegex = /^sv_[0-9a-zA-Z]{10}$/;
-    static questionIdRegex = /^sq_[0-9a-zA-Z]{10}$/;
-    static optionIdRegex = /^sqo_[0-9a-zA-Z]{10}$/;
-
     static questionOption = z
         .looseObject({
             label: z.string().min(1, 'Option label missing'),
-            value: z.string().regex(Schema.optionIdRegex, 'Not a valid option ID string')
+            value: z.string().regex(OptionIdRegex, 'Not a valid option ID string')
         });
 
     static commonQuestionProps = z
         .looseObject({
-            id: z.string().regex(Schema.questionIdRegex, 'Not a valid question ID string'),
+            id: z.string().regex(QuestionIdRegex, 'Not a valid question ID string'),
             title: z.string().min(1, 'Question title missing'),
             description: z.string().default(''),
             required: z.boolean().default(true)
@@ -79,7 +74,7 @@ export class Schema {
 
     static surveyConfig = z
         .looseObject({
-            id: z.string().regex(Schema.surveyIdRegex, 'Not a valid survey ID string'),
+            id: z.string().regex(SurveyIdRegex, 'Not a valid survey ID string'),
             owner: z.string().min(1, 'Survey Owner missing'),
             title: z.string().min(1, 'Survey Title missing'),
             intro: z.string().default(''),
@@ -96,4 +91,5 @@ export class Schema {
             questions: Schema.surveyQuestionList
         });
 
+    static stringArray = z.array(z.string());
 }

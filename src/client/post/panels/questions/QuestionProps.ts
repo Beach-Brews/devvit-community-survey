@@ -10,5 +10,6 @@ import { Dispatch, SetStateAction } from 'react';
 
 export interface QuestionProps {
     question: SurveyQuestionDto;
-    setValidResponse: Dispatch<SetStateAction<boolean>>;
+    response: string[] | undefined;
+    setResponse: Dispatch<SetStateAction<string[] | undefined>>;
 }

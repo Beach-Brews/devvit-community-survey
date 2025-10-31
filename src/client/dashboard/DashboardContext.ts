@@ -8,7 +8,7 @@
 import { createContext, Dispatch, ReactElement, SetStateAction } from 'react';
 
 export type DashboardListPageContext = {
-    page: 'list';
+    page: 'list' | 'debug';
 };
 export type DashboardSurveyIdPageContext = {
     page: 'edit' | 'results';

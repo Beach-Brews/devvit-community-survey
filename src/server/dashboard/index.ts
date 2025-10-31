@@ -19,10 +19,13 @@ import {
 import * as dashRedis from '../devvit/redis/dashboard';
 import { Logger } from '../util/Logger';
 import { isMod } from '../util/userUtils';
+import { registerDashboardDebugRoutes } from './debug';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
-    router.get<void, ApiResponse<SurveyDto>[]>(
+    registerDashboardDebugRoutes(router);
+
+    router.get<void, ApiResponse<boolean>>(
         "/api/dash/is-mod",
         async (_req, res) => {
             const logger = await Logger.Create('Dashboard API - User Details');
@@ -40,7 +43,7 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
         }
     );
 
-    router.get<void, ApiResponse<SurveyDto>[]>(
+    router.get<void, ApiResponse<SurveyDto[]>>(
         "/api/dash/survey/list",
         async (_req, res) => {
             const logger = await Logger.Create('Dashboard API - List All');
@@ -71,9 +74,6 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 const userId = await errorIfNoUserId(res);
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
-
-                // TODO: Potentially check if user ID matches? Security risk of other mods modifying another's survey if ID known.
-                // Might be "expected" if future allows all mods to modify all surveys.
 
                 const item = await dashRedis.closeSurveyById(req.params.surveyId);
                 if (!item)
@@ -122,9 +122,6 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
 
-                // TODO: Potentially check if user ID matches? Security risk of other mods modifying another's survey if ID known.
-                // Might be "expected" if future allows all mods to modify all surveys.
-
                 // Upsert
                 const [isNew, postId] = await dashRedis.upsertSurvey(userId, req.params.surveyId, req.body);
                 if (postId) {
@@ -150,9 +147,6 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 const userId = await errorIfNoUserId(res);
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
-
-                // TODO: Potentially check if user ID matches? Security risk of other mods modifying another's survey if ID known.
-                // Might be "expected" if future allows all mods to modify all surveys.
 
                 const success = await dashRedis.deleteSurveyById(req.params.surveyId);
                 if (!success)

@@ -44,7 +44,6 @@ export const SurveyListPage = () => {
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey Dashboard</h1>
                 <div className="my-4 flex gap-4">
-
                     <button
                         className="border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex gap-2 items-center cursor-pointer"
                         onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}

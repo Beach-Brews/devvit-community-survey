@@ -7,17 +7,10 @@
 
 import { redis } from '@devvit/web/server';
 import { Schema } from './Schema';
-import { SurveyDto, SurveyQuestionList } from '../../../shared/redis/SurveyDto';
+import { SurveyDto, SurveyQuestionList, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
 import { Logger } from '../../util/Logger';
 import { createSurveyPost } from '../../util/publishUtils';
-
-const RedisKeys = {
-    userList: () => `usr:all`,
-    userSurveyList: (userId: string) => `usr:${userId}:svs`,
-    surveyConfig: (surveyId: string) => `sv:${surveyId}:conf`,
-    surveyQuestions: (surveyId: string) => `sv:${surveyId}:qns`,
-    surveyPublishQueue: () => `sv:pub`
-};
+import { RedisKeys } from './RedisKeys';
 
 const getSurveyIdsForUser =
     async (userId: string): Promise<string[]> => {
@@ -26,9 +19,6 @@ const getSurveyIdsForUser =
 
 const addSurveyIdToUserList =
     async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
-        // Confirm input is a valid surveyId
-        if (!Schema.surveyIdRegex.test(surveyId))
-            throw Error('Invalid Survey ID: ' + surveyId);
 
         // Create logger
         const logger = await Logger.Create('Dash Redis - User List Add');
@@ -107,7 +97,8 @@ export const getSurveyListForUser =
     };
 
 export const getSurveyById =
-    async (surveyId: string, getQuestions: boolean = true): Promise<SurveyDto | null> => {
+    async (surveyId: string, getQuestions: boolean = true): Promise<SurveyDto | SurveyWithQuestionsDto | null> => {
+
         // Add survey config to key list to start
         const dataKeys = [RedisKeys.surveyConfig(surveyId)];
 
@@ -124,18 +115,20 @@ export const getSurveyById =
         // Parse out survey dto
         const surveyDto: SurveyDto = (await Schema.surveyConfig.parseAsync(JSON.parse(surveyData[0]))) satisfies SurveyDto;
 
+        // Todo: Get response count via hLen
+
         // Add questions
         if (getQuestions && surveyData.length > 1 && surveyData[1]) {
             surveyDto.questions = (await Schema.surveyQuestionList.parseAsync(JSON.parse(surveyData[1]))) satisfies SurveyQuestionList;
+            return surveyDto as SurveyWithQuestionsDto;
         }
-
-        // Todo: Get response count via hLen
 
         return surveyDto;
     };
 
 export const upsertSurvey =
     async (userId: string, surveyId: string, surveyData: string): Promise<[boolean, string | null]> => {
+
         // Create logger
         const logger = await Logger.Create('Dash Redis - Upsert');
         logger.traceStart('Start Upsert');
@@ -214,6 +207,7 @@ export const upsertSurvey =
 
 export const closeSurveyById =
     async (surveyId: string): Promise<boolean> => {
+
         // Get redis key
         const configKey = RedisKeys.surveyConfig(surveyId);
 
@@ -247,6 +241,7 @@ export const closeSurveyById =
 
 export const deleteSurveyById =
     async (surveyId: string): Promise<boolean> => {
+
         // Get the survey, to get user id
         const survey = await getSurveyById(surveyId, false);
 
@@ -270,6 +265,8 @@ export const deleteSurveyById =
 
         // Remove from list
         await removeSurveyIdFromUserList(survey.owner, surveyId, txn);
+
+        // TODO: How do I clear responses?
 
         // Commit
         await txn.exec();

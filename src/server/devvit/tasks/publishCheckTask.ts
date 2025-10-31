@@ -8,6 +8,7 @@
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
 import { Logger } from "../../util/Logger";
+import { publishQueuedSurveys } from '../redis/dashboard';
 
 export const registerPublishCheckTask: PathFactory = (router: Router) => {
     router.post('/internal/cron/publish-check', async (_req, res): Promise<void> => {
@@ -15,8 +16,7 @@ export const registerPublishCheckTask: PathFactory = (router: Router) => {
         logger.traceStart("/internal/menu/publish-check");
 
         try {
-
-            // TODO: Process redis for surveys to publish (post)
+            await publishQueuedSurveys();
             res.status(200).json({ status: 'ok' });
 
         } catch (error) {

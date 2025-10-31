@@ -5,14 +5,14 @@
 * License: BSD-3-Clause
 */
 
-import { SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
 import { ApiResponse } from '../../../shared/types/api';
+import { InitializeSurveyResponse } from '../../../shared/types/postApi';
 //import { genOptionId, genQuestionId, genSurveyId } from '../../../shared/redis/uuidGenerator';
 
-export const getPostSurvey = async (): Promise<SurveyWithQuestionsDto | null> => {
+export const initializeSurvey = async (): Promise<InitializeSurveyResponse | null> => {
     /**/
     const resp = await fetch('/api/post/survey');
-    return resp.ok ? (await resp.json() as ApiResponse<SurveyWithQuestionsDto>)?.result ?? null : null;
+    return resp.ok ? (await resp.json() as ApiResponse<InitializeSurveyResponse>)?.result ?? null : null;
     /**/
     /*
     return await new Promise((res, _rej) => {

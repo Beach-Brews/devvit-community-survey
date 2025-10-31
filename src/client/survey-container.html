@@ -11,10 +11,19 @@
       <link rel="stylesheet" href="index.css" />
   </head>
   <body class="h-full text-neutral-900 bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-950">
-    <div class="relative overflow-hidden pointer-cursor   isolate bg-neutral-background xs:rounded-4 mt-xs">
-        <div style="max-width: 375px; height: 512px; min-height: 512px; max-height: 512px; overflow: hidden" class=" box-border overflow-hidden relative shrink-0 flex flex-col p-0 items-stretch border-0 rounded-dx-sm pointer-events-none [&>:not(.pointer-events-none)]:pointer-events-auto ">
+    <div class="relative overflow-hidden pointer-cursor isolate bg-neutral-background xs:rounded-4 mt-xs">
+        <div id="post-container" style="max-width: 375px; height: 512px; min-height: 512px; max-height: 512px; overflow: hidden" class=" box-border overflow-hidden relative shrink-0 flex flex-col p-0 items-stretch border-0 rounded-dx-sm pointer-events-none [&>:not(.pointer-events-none)]:pointer-events-auto ">
             <div style="width: 100%; height: 100%;" class="flex box-border relative shrink-0 "><iframe class="border-1 rounded-md" style="flex-grow: 1; max-width: 100%; max-height: 100%" src="survey.html"></iframe></div>
         </div>
     </div>
+    <div>
+        <input id="width-control" type="number" value="375" />
+    </div>
+    <script>
+        const ctl = document.getElementById('width-control');
+        ctl.addEventListener('change', () => {
+            document.getElementById('post-container').style.maxWidth = `${ctl.value}px`;
+        });
+    </script>
   </body>
 </html>
