@@ -46,8 +46,8 @@ export const SurveyDashboard = () => {
                         })()}
                     </div>
                     <footer className="p-2 text-xs flex justify-between items-center rounded-t-lg bg-neutral-200 dark:bg-neutral-700">
-                        <div className="max-w-1/3">Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Feedback and Support</div>
-                        <div className="max-w-1/3"><button onClick={() => context.setPageContext({page: 'debug'})}><BugAntIcon className="size-3" /></button> {Constants.SURVEY_VERSION_DISPLAY}</div>
+                        <div className="max-w-1/2">Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Feedback and Support</div>
+                        <div className="max-w-1/2"><button onClick={() => context.setPageContext({page: 'debug'})}><BugAntIcon className="size-3" /></button> {Constants.SURVEY_VERSION_DISPLAY}</div>
                     </footer>
                 </div>
                 {modal}

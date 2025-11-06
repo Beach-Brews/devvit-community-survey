@@ -10,6 +10,7 @@ import { redis } from '@devvit/web/server';
 import { RedisKeys } from './RedisKeys';
 import { Schema } from './Schema';
 import { SurveyQuestionDto } from '../../../shared/redis/SurveyDto';
+import { UserResponsesDto } from '../../../shared/types/postApi';
 
 export { getSurveyById } from './dashboard';
 
@@ -143,6 +144,50 @@ export const upsertQuestionResponse =
         } catch (e) {
 
             logger.error('Failed to upsert: ', e);
+            throw e;
+
+        } finally {
+            logger.traceEnd();
+        }
+    };
+
+export const getUserLastResponse =
+    async (userId: string, surveyId: string): Promise<UserResponsesDto | undefined> => {
+
+        // Create logger
+        const logger = await Logger.Create('Post Redis - Get Last Response');
+        logger.traceStart('Start Last Response');
+
+        try {
+            logger.debug(userId, surveyId);
+
+            // Get keys
+            const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
+
+            // Get all values
+            const userResponses = await redis.hGetAll(userResponseKey);
+
+            // If no values, no response
+            const responses = Object.entries(userResponses);
+            if (responses.length <= 0) {
+                return undefined;
+            }
+
+            // Parse each response as a string[]
+            const parsed = await Promise.all(responses
+                .map(async (r) =>
+                    [r[0], await Schema.stringArray.parseAsync(r[1])] as [string, string[]])
+            );
+
+            // Reduce to an object
+            return parsed.reduce((r: UserResponsesDto, i: [string, string[]]) => {
+                r[i[0]] = i[1];
+                return r;
+            }, {} as UserResponsesDto);
+
+        } catch (e) {
+
+            logger.error('Failed to get existing response: ', e);
             throw e;
 
         } finally {

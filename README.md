@@ -17,6 +17,7 @@ Here are a few future features that are planned.
 
 ### Dashboard
 * Survey list filter / pagination
+* Update notice + release notes from wiki page?
 * Survey settings
   * Background colors
   * Allow multiple submissions

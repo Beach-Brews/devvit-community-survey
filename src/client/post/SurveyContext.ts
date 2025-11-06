@@ -7,6 +7,7 @@
 
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
+import { UserResponsesDto } from '../../shared/types/postApi';
 
 export enum PanelType {
     Intro,
@@ -23,6 +24,8 @@ export interface SurveyContextProps {
     panelContext: SurveyPanelContext;
     setPanelContext: Dispatch<SetStateAction<SurveyPanelContext>>;
     survey: SurveyWithQuestionsDto;
+    lastResponse: UserResponsesDto | undefined;
+    setLastResponse: Dispatch<SetStateAction<UserResponsesDto | undefined>>;
 }
 
 export const SurveyContext = createContext<SurveyContextProps | undefined>(undefined);

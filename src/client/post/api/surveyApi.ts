@@ -7,7 +7,6 @@
 
 import { ApiResponse } from '../../../shared/types/api';
 import { InitializeSurveyResponse } from '../../../shared/types/postApi';
-//import { genOptionId, genQuestionId, genSurveyId } from '../../../shared/redis/uuidGenerator';
 
 export const initializeSurvey = async (): Promise<InitializeSurveyResponse | null> => {
     /**/
@@ -17,17 +16,31 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
     /*
     return await new Promise((res, _rej) => {
         setTimeout(() => {
+            const options = [
+                {
+                    label: 'First Choice',
+                    value: genOptionId()
+                },
+                {
+                    label: 'Second Choice',
+                    value: genOptionId()
+                },
+                {
+                    label: 'Third Choice',
+                    value: genOptionId()
+                }
+            ];
             const dto = {
                 id: genSurveyId(),
                 owner: 't2_asdfasdf',
                 title: 'Testing Survey',
                 intro: 'Please test this survey',
                 outro: 'Thanks for testing!',
-                responseCount: 0,
+                responseCount: 1622,
                 allowMultiple: false,
                 createDate: Date.now(),
                 publishDate: Date.now(),
-                closeDate: null,
+                closeDate: Date.now() + 24*3600000,
                 questions: [
                     {
                         type: 'multi',
@@ -35,20 +48,7 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
                         required: false,
                         title: 'Test Multi Choice',
                         description: 'This is a multi choice question',
-                        options: [
-                            {
-                                label: 'First Choice',
-                                value: genOptionId()
-                            },
-                            {
-                                label: 'Second Choice',
-                                value: genOptionId()
-                            },
-                            {
-                                label: 'Third Choice',
-                                value: genOptionId()
-                            }
-                        ]
+                        options: options
                     },
                     {
                         type: 'checkbox',
@@ -56,20 +56,7 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
                         required: true,
                         title: 'Test Checkbox',
                         description: 'This is a checkbox question',
-                        options: [
-                            {
-                                label: 'First Choice',
-                                value: genOptionId()
-                            },
-                            {
-                                label: 'Second Choice',
-                                value: genOptionId()
-                            },
-                            {
-                                label: 'Third Choice',
-                                value: genOptionId()
-                            }
-                        ]
+                        options: options
                     },
                     {
                         type: 'rank',
@@ -77,20 +64,7 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
                         required: false,
                         title: 'Test Rank',
                         description: 'This is a rank question that has a really long description that I hope increases the page size enough to test whether this should be max of 100% or of 100vh. It isn\'t really clear whether screen is outside the iframe size or not.This is a rank question that has a really long description that I hope increases the page size enough to test whether this should be max of 100% or of 100vh. It isn\'t really clear whether screen is outside the iframe size or not.This is a rank question that has a really long description that I hope increases the page size enough to test whether this should be max of 100% or of 100vh. It isn\'t really clear whether screen is outside the iframe size or not.',
-                        options: [
-                            {
-                                label: 'First Choice',
-                                value: genOptionId()
-                            },
-                            {
-                                label: 'Second Choice',
-                                value: genOptionId()
-                            },
-                            {
-                                label: 'Third Choice',
-                                value: genOptionId()
-                            }
-                        ]
+                        options: options
                     },
                     {
                         type: 'scale',
@@ -120,8 +94,16 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
                     }
                 ]
             } satisfies SurveyWithQuestionsDto;
-            res(dto);
+            res({
+                survey: dto,
+                user: {
+                    isMod: true,
+                    userId: 't2_asdfg12345',
+                    username: 'beach-brews',
+                    snoovar: ''
+                }
+            } satisfies InitializeSurveyResponse);
         }, 2000);
     });
-    */
+    /**/
 };

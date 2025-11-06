@@ -24,7 +24,6 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
 
     // Handle saving response to Redis
     const setChosenValues = (s: boolean[]) => {
-        // TODO: Save
         const values = s.map((v, i) => (v ? options[i]?.value : undefined))
             .filter((v) => typeof v === 'string');
         props.setResponse(values);
@@ -58,10 +57,10 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     };
 
     return (
-        <ul className="flex flex-col">
+        <ul className={`flex flex-col ${optionCount > 7 ? 'gap-1 text-sm' : 'gap-2 text-sm md:text-base'}`}>
             {props.question.options.map((o, i) => {
                 return (
-                    <li key={`sqo_${o.value}`} className="text-sm md:text-base flex gap-2 items-center cursor-pointer" onClick={() => void onOptionClick(i)}>
+                    <li key={`sqo_${o.value}`} className="flex gap-2 items-center cursor-pointer" onClick={() => void onOptionClick(i)}>
                         {optionIcon(i)}
                         <div className="line-clamp-1">{o.label}</div>
                     </li>

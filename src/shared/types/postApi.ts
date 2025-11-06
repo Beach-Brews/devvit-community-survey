@@ -14,7 +14,10 @@ export type UserInfoDto = {
     snoovar: string | undefined;
 };
 
+export type UserResponsesDto = { [key: string]: string[] };
+
 export type InitializeSurveyResponse = {
     survey: SurveyWithQuestionsDto;
     user: UserInfoDto;
+    lastResponse: UserResponsesDto | undefined;
 };

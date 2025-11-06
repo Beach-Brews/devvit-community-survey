@@ -53,6 +53,8 @@ const addSurveyIdToUserList =
         }
     };
 
+// @ts-expect-error TODO: Remove ignore (once delete is complete)
+// noinspection JSUnusedLocalSymbols
 const removeSurveyIdFromUserList =
     async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
 
@@ -86,13 +88,24 @@ export const getSurveyListForUser =
         const configs = await redis.mGet(surveyIds.map(i => RedisKeys.surveyConfig(i)));
         logger.debug('Got Configs from Redis: ', configs);
 
-        // TODO: Get response counts via hLen
+        // Get response count for each result
+        const responseCountPromise = surveyIds
+            .map(async (sid) =>
+                [sid, await redis.hLen(RedisKeys.surveyResponseUserList(sid))] as const
+            );
+        const responseCounts = new Map(await Promise.all(responseCountPromise));
+        logger.debug('Got response counts from Redis: ', responseCounts);
 
         // Finally, parse each config
         const asyncParse = configs
             .filter(s => s !== null)
-            .map(async (s) =>
-                (await Schema.surveyConfig.parseAsync(JSON.parse(s))) satisfies SurveyDto);
+            .map(async (s) => {
+                const dto: SurveyDto = await Schema.surveyConfig.parseAsync(JSON.parse(s)) satisfies SurveyDto;
+                const responseCount = responseCounts.get(dto.id);
+                if (responseCount)
+                    dto.responseCount = responseCount;
+                return dto;
+            });
         return Promise.all(asyncParse);
     };
 
@@ -107,6 +120,7 @@ export const getSurveyById =
             dataKeys.push(RedisKeys.surveyQuestions(surveyId));
 
         // Fetch both the survey config and question list (if asked)
+        // TODO: Refactor BEFORE RELEASE to use hGetAll?
         const surveyData = await redis.mGet(dataKeys);
 
         // If first key missing, return null (not found)
@@ -115,7 +129,9 @@ export const getSurveyById =
         // Parse out survey dto
         const surveyDto: SurveyDto = (await Schema.surveyConfig.parseAsync(JSON.parse(surveyData[0]))) satisfies SurveyDto;
 
-        // Todo: Get response count via hLen
+        // Get number of responses
+        const resultKey = RedisKeys.surveyResponseUserList(surveyId);
+        surveyDto.responseCount = await  redis.hLen(resultKey);
 
         // Add questions
         if (getQuestions && surveyData.length > 1 && surveyData[1]) {
@@ -165,6 +181,7 @@ export const upsertSurvey =
             await txn.multi();
 
             // Upsert config + questions (if defined)
+            // TODO: Should I move to an hSet, so closeDate or others can be easily accessed? await txn.hSet(configKey, config);
             await txn.set(configKey, JSON.stringify(config));
 
             if (questions)
@@ -242,6 +259,10 @@ export const closeSurveyById =
 export const deleteSurveyById =
     async (surveyId: string): Promise<boolean> => {
 
+        // TODO: Finish this method, as deleting will orphan results at the moment
+        throw new Error(`Deleting is currently incomplete: ${surveyId}`);
+        
+/*
         // Get the survey, to get user id
         const survey = await getSurveyById(surveyId, false);
 
@@ -254,7 +275,7 @@ export const deleteSurveyById =
         const questionKey = RedisKeys.surveyQuestions(surveyId);
 
         // TODO: Should I add a 5-second lock?
-
+        
         // Start transaction
         const txn = await redis.watch(userSurveyListKey, configKey, questionKey);
         await txn.multi();
@@ -266,12 +287,16 @@ export const deleteSurveyById =
         // Remove from list
         await removeSurveyIdFromUserList(survey.owner, surveyId, txn);
 
-        // TODO: How do I clear responses?
+        // TODO: How do I clear all responses?
+        // Might need a job to process deletions, since there could be thousands
+
+        // TODO: Also remove post (do I even store the post? Should I say the post was deleted?)
 
         // Commit
         await txn.exec();
 
         return true;
+ */
     };
 
 export const publishQueuedSurveys =

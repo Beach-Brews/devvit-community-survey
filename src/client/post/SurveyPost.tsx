@@ -16,18 +16,19 @@ import { OutroPanel } from './panels/OutroPanel';
 import { navigateTo } from '@devvit/web/client';
 import { Constants } from '../../shared/constants';
 import { ClosedPanel } from './panels/ClosedPanel';
-import { InitializeSurveyResponse } from '../../shared/types/postApi';
+import { InitializeSurveyResponse, UserResponsesDto } from '../../shared/types/postApi';
 
 export const SurveyPost = () => {
 
     // State for loading survey context
     const [panelContext, setPanelContext] = useState<SurveyPanelContext>({panel: PanelType.Intro});
     const [postInit, setPostInit] = useState<InitializeSurveyResponse | null | undefined>(undefined);
+    const [lastResponse, setLastResponse] = useState<UserResponsesDto | undefined>(undefined);
     const survey = postInit?.survey;
     const user = postInit?.user;
 
     // Prevents default URL from changing on re-rendering
-    const [anonymousRandom] = useState<number>(Math.floor(Math.random() * 8));
+    const [defaultSnoo] = useState<string>(`https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
 
     // Load survey from backend
     useEffect(() => {
@@ -35,6 +36,7 @@ export const SurveyPost = () => {
             try {
                 const postInit = await initializeSurvey();
                 setPostInit(postInit);
+                setLastResponse(postInit?.lastResponse)
             } catch (error) {
                 console.error('[Survey Post] Failed to load survey: ', error);
                 setPostInit(null);
@@ -45,7 +47,7 @@ export const SurveyPost = () => {
 
     // Ensure context is only defined if the survey is defined
     const context: SurveyContextProps | undefined = survey
-        ? { panelContext, setPanelContext, survey }
+        ? { panelContext, setPanelContext, survey, lastResponse, setLastResponse }
         : undefined;
 
     // Determine the panel to render
@@ -81,13 +83,16 @@ export const SurveyPost = () => {
                     <div className="w-1/2 flex gap-1 items-center">
                         {user?.userId && (
                             <>
-                                <img src={user.snoovar} alt={`snoovar for ${user.username}`} className="w-8 h-8 rounded-full" /> {user.username}
+                                <div  className="w-8 h-8 object-contain overflow-hidden rounded-full"><img src={user?.snoovar !== undefined && user.snoovar.length > 0 ? user.snoovar : defaultSnoo} alt={`snoovar for ${user.username}`} /></div> {user.username}
                             </>
                         )}
-                        {postInit !== null && !user?.userId && (
+                        {postInit && !user?.userId && (
                             <>
-                                <img src={`https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${anonymousRandom}.png`} alt="default snoovar" className="w-8 h-8 rounded-full" /> Anonymous
+                                <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" /> Anonymous
                             </>
+                        )}
+                        {postInit === undefined && (
+                            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2 animate-pulse "></div>
                         )}
                     </div>
                     <div className="w-1/2 flex flex-col items-end justify-end">

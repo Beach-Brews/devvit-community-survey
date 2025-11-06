@@ -52,16 +52,21 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
 
                 // Get survey configuration
                 const found = await postRedis.getSurveyById(surveyId);
-                if (!found || !found.questions) return surveyNotFoundResponse(res, surveyId);
-
-                // Get responses (if user has any)
-                // TODO: Add current / last response to response
+                if (!found || !found.questions) {
+                    logger.error('Survey or Survey Questions not found with ID: ', surveyId);
+                    return surveyNotFoundResponse(res, surveyId);
+                }
 
                 // Get user info
                 const userInfo = await reddit.getCurrentUser();
                 const [userIsMod, snoovar] = userInfo
                     ? await Promise.all([isMod(userInfo), userInfo.getSnoovatarUrl()])
                     : [false, undefined];
+
+                // Get responses (if user has any)
+                const lastResponse = userInfo?.id !== undefined
+                    ? await postRedis.getUserLastResponse(userInfo.id, surveyId)
+                    : undefined;
 
                 successResponse(res, {
                     survey: found as SurveyWithQuestionsDto,
@@ -70,7 +75,8 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                         username: userInfo?.username ?? 'anonymous',
                         userId: userInfo?.id,
                         snoovar: snoovar
-                    }
+                    },
+                    lastResponse: lastResponse
                 } satisfies InitializeSurveyResponse);
             } catch (e) {
                 logger.error('Error executing API: ', e);
@@ -110,6 +116,19 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 if (!req?.params?.questionId) {
                     logger.error('No question ID.');
                     return messageResponse(res, 400, 'Missing questionID', 132);
+                }
+
+                // Get survey to check if closed. PERF: In hindsight, maybe made sense to make this a hash too....
+                const surveyDto = await postRedis.getSurveyById(surveyId, false);
+                if (!surveyDto) {
+                    logger.error('No Survey found with ID: ', surveyId);
+                    return surveyNotFoundResponse(res, surveyId);
+                }
+
+                // Confirm survey close date (if specified) is not in the past
+                if (surveyDto.closeDate && surveyDto.closeDate < Date.now()) {
+                    logger.warn('Attempt to respond to closed survey by user blocked: ', surveyId, userId);
+                    return messageResponse(res, 400, 'This survey is closed and no longer accepting responses', 122);
                 }
 
                 // Run the upsert
