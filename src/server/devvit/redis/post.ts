@@ -10,9 +10,10 @@ import { redis } from '@devvit/web/server';
 import { RedisKeys } from './RedisKeys';
 import { Schema } from './Schema';
 import { SurveyQuestionDto } from '../../../shared/redis/SurveyDto';
-import { UserResponsesDto } from '../../../shared/types/postApi';
+import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
+import * as dashRedis from './dashboard';
 
-export { getSurveyById } from './dashboard';
+export { getSurveyById, getQuestionResponseById } from './dashboard';
 
 const addUserToSurveyList =
     async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
@@ -39,27 +40,6 @@ const addUserToSurveyList =
         } finally {
             logger.traceEnd();
         }
-    };
-
-export const getQuestionById =
-    async (surveyId: string, questionId: string): Promise<SurveyQuestionDto | null> => {
-
-        // Get survey question config
-        const questionsKey = RedisKeys.surveyQuestions(surveyId);
-        const questionData = await redis.get(questionsKey);
-
-        // Throw if not found
-        if (!questionData) {
-            throw new Error(`No survey found with ID: ${surveyId}`);
-        }
-
-        // Parse questions and find uestion with ID
-        // PERF: Hindsight, maybe should store each question in a hash? Then order saved separately?
-        const parsedQuestions = await Schema.surveyQuestionList.parseAsync(JSON.parse(questionData))
-        const questionConfig = parsedQuestions
-            ?.find(q => q.id == questionId);
-
-        return questionConfig ? questionConfig satisfies SurveyQuestionDto : null;
     };
 
 const scoreForOp =
@@ -97,7 +77,7 @@ export const upsertQuestionResponse =
             // TODO: Should I add a 5-second lock?
 
             // Get question config, so score can be computed properly
-            const questionDto = await getQuestionById(surveyId, questionId);
+            const questionDto = await dashRedis.getQuestionById(surveyId, questionId);
             if (!questionDto) {
                 // noinspection ExceptionCaughtLocallyJS
                 throw new Error(`No question found with ID: ${surveyId}:${questionId}`);
@@ -121,13 +101,17 @@ export const upsertQuestionResponse =
             // Save user response
             await txn.hSet(userResponseKey, { [questionId]: JSON.stringify(data) });
 
-            // IF new, decrease scores from previous response
+            // IF modifying previous response, decrease scores from previous response
             if (existingResponse) {
                 const existingArr = await Schema.stringArray.parseAsync(JSON.parse(existingResponse)) as string[];
                 for (const [i, op] of existingArr.entries()) {
                     const score = await scoreForOp(questionDto, op, i);
                     await txn.zIncrBy(questionResponseKey, op, -1 * score);
                 }
+
+            } else {
+                // Otherwise, increase the response count
+                await txn.zIncrBy(questionResponseKey, 'total', 1);
             }
 
             // Then update scores for new response
@@ -174,10 +158,17 @@ export const getUserLastResponse =
             }
 
             // Parse each response as a string[]
-            const parsed = await Promise.all(responses
-                .map(async (r) =>
-                    [r[0], await Schema.stringArray.parseAsync(r[1])] as [string, string[]])
-            );
+            const parsed = (await Promise.all(responses
+                .map(async (r) => {
+                    try {
+                        return [r[0], await Schema.stringArray.parseAsync(JSON.parse(r[1]))] as [string, string[]];
+                    } catch (error) {
+                        logger.error(`Failed to parse response for question ${r[0]}: "${r[1]}" ===`, error);
+                        return null;
+                    }
+                })
+            ))
+            .filter(r => r !== null);
 
             // Reduce to an object
             return parsed.reduce((r: UserResponsesDto, i: [string, string[]]) => {

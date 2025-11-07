@@ -7,7 +7,7 @@
 
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
-import { UserResponsesDto } from '../../shared/types/postApi';
+import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 
 export enum PanelType {
     Intro,

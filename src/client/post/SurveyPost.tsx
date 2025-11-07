@@ -16,7 +16,8 @@ import { OutroPanel } from './panels/OutroPanel';
 import { navigateTo } from '@devvit/web/client';
 import { Constants } from '../../shared/constants';
 import { ClosedPanel } from './panels/ClosedPanel';
-import { InitializeSurveyResponse, UserResponsesDto } from '../../shared/types/postApi';
+import { UserResponsesDto } from '../../shared/redis/ResponseDto';
+import { InitializeSurveyResponse } from '../../shared/types/postApi';
 
 export const SurveyPost = () => {
 

@@ -8,9 +8,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { DashboardContext, DashboardSurveyIdPageContext } from '../../DashboardContext';
-import { SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { getSurveyById } from '../../api/dashboardApi';
+import { getSurveyResultSummary } from '../../api/dashboardApi';
 import { navigateTo } from '@devvit/web/client';
+import { SurveyResultSummaryDto } from '../../../../shared/redis/ResponseDto';
+import { SurveyResultsLoading } from './SurveyResultsLoading';
+import { SurveyResultCard } from './SurveyResultCard';
 
 export const SurveyResultsPage = () => {
     const ctx = useContext(DashboardContext);
@@ -18,34 +20,31 @@ export const SurveyResultsPage = () => {
 
     const surveyId = (ctx.pageContext as DashboardSurveyIdPageContext).surveyId;
 
-    const [loading, setLoading] = useState<boolean>(true);
-    const [surveyInfo, setSurveyInfo] = useState<SurveyDto | null>(null);
+    const [surveySummary, setSurveySummary] = useState<SurveyResultSummaryDto | null | undefined>(undefined);
+    
     useEffect(() => {
-        if (surveyId == null) return;
+        if (!surveyId) return;
         (async () => {
-            const surveyDto = await getSurveyById(surveyId);
-            if (surveyDto)
-                setSurveyInfo(surveyDto);
-            setLoading(false);
+            setSurveySummary(await getSurveyResultSummary(surveyId));
         })().catch(() => {
-            setLoading(false);
+            setSurveySummary(null);
         });
     }, [surveyId]);
 
-    if (surveyId == null) {
+    const SurveyResultsError = () => {
         return (
             <div className="col-span-1 md:col-span-2 flex justify-center">
                 <p className="border-1 px-4 py-2 bg-red-100 dark:bg-red-950 rounded-md border-red-300 dark:border-red-700">
-                    There was an error loading the survey editor. Please try again later. Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Support.
+                    There was an error loading the survey results. Please try again later. Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Support.
                 </p>
             </div>
         );
     }
 
     return (
-        <div>
+        <>
             <div className="flex justify-between items-center border-b">
-                <h1 className="text-md lg:text-2xl font-bold">Survey Editor</h1>
+                <h1 className="text-md lg:text-2xl font-bold">Survey Results{surveySummary ? ' - ' + surveySummary.survey.title : ''}</h1>
                 <div className="my-4">
                     <button
                         className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer"
@@ -56,14 +55,20 @@ export const SurveyResultsPage = () => {
                     </button>
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-                {surveyInfo
-                    ? <div>Viewing results of survey {surveyInfo.title}</div>
-                    : loading
-                        ? <div>Loading...</div>
-                        : <div>ERROR NOT FOUND</div>
+            <div className="my-4">
+                {(!surveyId || surveySummary === null)
+                    ? <SurveyResultsError />
+                    : surveySummary === undefined
+                        ? <SurveyResultsLoading />
+                        : (
+                            <div className="flex flex-col gap-4">
+                                {surveySummary.survey.questions?.map(q =>
+                                    <SurveyResultCard key={q.id} question={q} response={surveySummary.results[q.id]} />
+                                )}
+                            </div>
+                        )
                 }
             </div>
-        </div>
+        </>
     );
 };

@@ -21,6 +21,8 @@ import * as postRedis from '../devvit/redis/post';
 import { context, reddit } from '@devvit/web/server';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
 import { isMod } from '../util/userUtils';
+import { QuestionResponseDto } from '../../shared/redis/ResponseDto';
+import * as dashRedis from '../devvit/redis/dashboard';
 
 export const registerPostRoutes: PathFactory = (router: Router) => {
     router.route('/api/post/survey')
@@ -51,7 +53,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 }
 
                 // Get survey configuration
-                const found = await postRedis.getSurveyById(surveyId);
+                const found = await postRedis.getSurveyById(surveyId, true);
                 if (!found || !found.questions) {
                     logger.error('Survey or Survey Questions not found with ID: ', surveyId);
                     return surveyNotFoundResponse(res, surveyId);
@@ -135,6 +137,43 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 await postRedis.upsertQuestionResponse(userId, surveyId, req.params.questionId, JSON.parse(req.body));
 
                 messageResponse(res, 200, 'Response saved');
+
+            } catch(e) {
+                logger.error('Error executing API: ', e);
+                messageResponse(res, 500, 'There was an error processing this request');
+            } finally {
+                logger.traceEnd();
+            }
+        });
+
+    router.route('/api/post/survey/result/:questionId')
+        .get<QuestionIdParam, ApiResponse<QuestionResponseDto>>(async (req, res) => {
+            const logger = await Logger.Create(`Dashboard API - Get Survey Result`);
+            logger.traceStart('Api Start');
+
+            try {
+                // Error if postData is undefined
+                if (!context.postData) {
+                    logger.error('PostData missing from context.');
+                    return messageResponse(res, 400, 'Missing context', 131);
+                }
+
+                // Get postType and surveyId from postData
+                const { questionId } = req.params;
+                const { surveyId } = context.postData;
+                logger.debug(surveyId, questionId);
+
+                // Check surveyId
+                if (!surveyId || typeof surveyId !== 'string') {
+                    logger.error(`SurveyID missing from context (or not a string): ${surveyId ?? 'undefined'}`);
+                    return messageResponse(res, 400, 'SurveyID missing from context', 133);
+                }
+
+                const found = await dashRedis.getQuestionResponseById(surveyId, questionId);
+                if (!found)
+                    return messageResponse(res, 404, `No question found with ID: ${surveyId} - ${questionId}`);
+
+                successResponse(res, found);
 
             } catch(e) {
                 logger.error('Error executing API: ', e);

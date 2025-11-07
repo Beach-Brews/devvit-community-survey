@@ -6,6 +6,7 @@
  */
 
 import { SurveyWithQuestionsDto } from '../redis/SurveyDto';
+import { UserResponsesDto } from '../redis/ResponseDto';
 
 export type UserInfoDto = {
     isMod: boolean;
@@ -13,8 +14,6 @@ export type UserInfoDto = {
     userId: string | undefined;
     snoovar: string | undefined;
 };
-
-export type UserResponsesDto = { [key: string]: string[] };
 
 export type InitializeSurveyResponse = {
     survey: SurveyWithQuestionsDto;

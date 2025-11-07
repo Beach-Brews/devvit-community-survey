@@ -13,7 +13,7 @@ import { RankQuestion } from './questions/RankQuestion';
 import { ScaleQuestion } from './questions/ScaleQuestion';
 import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
-import { UserResponsesDto } from '../../../shared/types/postApi';
+import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
 
 export const QuestionPanel = () => {
 

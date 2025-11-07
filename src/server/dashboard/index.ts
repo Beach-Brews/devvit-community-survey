@@ -7,8 +7,8 @@
 
 import { PathFactory } from '../PathFactory';
 import { Router } from 'express';
-import { SurveyDto } from '../../shared/redis/SurveyDto';
-import { ApiResponse, MessageResponse, SurveyIdParam } from '../../shared/types/api';
+import { SurveyDto, SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
+import { ApiResponse, MessageResponse, QuestionIdParam, SurveyIdParam } from '../../shared/types/api';
 import {
     errorIfNotMod,
     errorIfNoUserId,
@@ -20,6 +20,7 @@ import * as dashRedis from '../devvit/redis/dashboard';
 import { Logger } from '../util/Logger';
 import { isMod } from '../util/userUtils';
 import { registerDashboardDebugRoutes } from './debug';
+import { QuestionResponseDto, SurveyResultSummaryDto } from '../../shared/redis/ResponseDto';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
@@ -90,7 +91,7 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
         });
 
     router.route('/api/dash/survey/:surveyId')
-        .get<SurveyIdParam, ApiResponse<SurveyDto>>(async (req, res) => {
+        .get<SurveyIdParam, ApiResponse<SurveyWithQuestionsDto>>(async (req, res) => {
             const logger = await Logger.Create(`Dashboard API - Get Survey ${req?.params?.surveyId ?? '{invalid_id}'}`);
             logger.traceStart('Api Start');
 
@@ -99,8 +100,8 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
 
-                const found = await dashRedis.getSurveyById(req.params.surveyId);
-                if (!found)
+                const found = await dashRedis.getSurveyById(req.params.surveyId, true);
+                if (!found || !found.questions)
                     return surveyNotFoundResponse(res, req.params.surveyId);
 
                 successResponse(res, found);
@@ -153,6 +154,56 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                     return surveyNotFoundResponse(res, req.params.surveyId);
 
                 messageResponse(res, 200, 'Deleted survey');
+
+            } catch(e) {
+                logger.error('Error executing API: ', e);
+                messageResponse(res, 500, 'There was an error processing this request');
+            } finally {
+                logger.traceEnd();
+            }
+        });
+
+    router.route('/api/dash/survey/:surveyId/results')
+        .get<SurveyIdParam, ApiResponse<SurveyResultSummaryDto>>(async (req, res) => {
+            const logger = await Logger.Create(`Dashboard API - Get Survey Summary`);
+            logger.traceStart('Api Start');
+
+            try {
+                const { surveyId } = req.params;
+                logger.debug(surveyId);
+
+                if (await errorIfNotMod(res)) return;
+
+                const found = await dashRedis.getSurveyResultSummary(surveyId);
+                if (!found)
+                    return surveyNotFoundResponse(res, surveyId);
+
+                successResponse(res, found);
+
+            } catch(e) {
+                logger.error('Error executing API: ', e);
+                messageResponse(res, 500, 'There was an error processing this request');
+            } finally {
+                logger.traceEnd();
+            }
+        });
+
+    router.route('/api/dash/survey/:surveyId/result/:questionId')
+        .get<SurveyIdParam & QuestionIdParam, ApiResponse<QuestionResponseDto>>(async (req, res) => {
+            const logger = await Logger.Create(`Dashboard API - Get Survey Result`);
+            logger.traceStart('Api Start');
+
+            try {
+                const { surveyId, questionId } = req.params;
+                logger.debug(surveyId, questionId);
+
+                if (await errorIfNotMod(res)) return;
+
+                const found = await dashRedis.getQuestionResponseById(surveyId, questionId);
+                if (!found)
+                    return messageResponse(res, 404, `No question found with ID: ${surveyId} - ${questionId}`);
+
+                successResponse(res, found);
 
             } catch(e) {
                 logger.error('Error executing API: ', e);

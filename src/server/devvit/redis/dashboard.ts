@@ -7,10 +7,16 @@
 
 import { redis } from '@devvit/web/server';
 import { Schema } from './Schema';
-import { SurveyDto, SurveyQuestionList, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
+import {
+    SurveyDto,
+    SurveyQuestionDto,
+    SurveyQuestionList,
+    SurveyWithQuestionsDto,
+} from '../../../shared/redis/SurveyDto';
 import { Logger } from '../../util/Logger';
 import { createSurveyPost } from '../../util/publishUtils';
 import { RedisKeys } from './RedisKeys';
+import { QuestionResponseDto, ResponseValuesDto, SurveyResultListDto, SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 
 const getSurveyIdsForUser =
     async (userId: string): Promise<string[]> => {
@@ -110,7 +116,7 @@ export const getSurveyListForUser =
     };
 
 export const getSurveyById =
-    async (surveyId: string, getQuestions: boolean = true): Promise<SurveyDto | SurveyWithQuestionsDto | null> => {
+    async (surveyId: string, getQuestions: boolean): Promise<SurveyDto | SurveyWithQuestionsDto | null> => {
 
         // Add survey config to key list to start
         const dataKeys = [RedisKeys.surveyConfig(surveyId)];
@@ -308,13 +314,13 @@ export const publishQueuedSurveys =
         try {
             // Get all the keys in the publishing queue
             const publishQueue = await redis.hGetAll(RedisKeys.surveyPublishQueue());
-            logger.debug(`Found ${publishQueue.length} surveys in publish queue`);
+            logger.debug(`Found ${publishQueue?.length ?? 0} surveys in publish queue`);
 
             // Filter any with a date in the future
             const now = Date.now();
             const promiseSurveys = Object.entries(publishQueue)
                 .filter(e => parseInt(e[1]) <= now)
-                .map(async (e) => await getSurveyById(e[0]));
+                .map(async (e) => await getSurveyById(e[0], false));
 
             // Publish each survey
             const surveyList = (await Promise.all(promiseSurveys))
@@ -330,6 +336,125 @@ export const publishQueuedSurveys =
         } catch (e) {
 
             logger.error('Failed to publish new surveys: ', e);
+            throw e;
+
+        } finally {
+            logger.traceEnd();
+        }
+    };
+
+export const getQuestionById =
+    async (surveyId: string, questionId: string): Promise<SurveyQuestionDto | null> => {
+        // Create logger
+        const logger = await Logger.Create('Dash Redis - Get Question');
+        logger.traceStart('Start Fetch');
+
+        try {
+            // Get survey question config
+            const questionsKey = RedisKeys.surveyQuestions(surveyId);
+            const questionData = await redis.get(questionsKey);
+
+            // Throw if not found
+            if (!questionData) {
+                throw new Error(`No survey found with ID: ${surveyId}`);
+            }
+
+            // Parse questions and find uestion with ID
+            // PERF: Hindsight, maybe should store each question in a hash? Then order saved separately?
+            const parsedQuestions = await Schema.surveyQuestionList.parseAsync(JSON.parse(questionData))
+            const questionConfig = parsedQuestions
+                ?.find(q => q.id == questionId);
+
+            return questionConfig ? questionConfig satisfies SurveyQuestionDto : null;
+
+        } catch (e) {
+
+            logger.error(`Failed to get question with ID ${questionId}: `, e);
+            throw e;
+
+        } finally {
+            logger.traceEnd();
+        }
+    };
+
+export const getQuestionResponseById =
+    async (surveyId: string, questionId: string): Promise<QuestionResponseDto | null> => {
+        // Create logger
+        const logger = await Logger.Create('Dash Redis - Get Question Response');
+        logger.traceStart('Start Response Fetch');
+
+        try {
+            logger.debug(surveyId, questionId);
+
+            // Fetch results for question
+            const questionResponseKey = RedisKeys.surveyQuestionResponse(surveyId, questionId);
+            const responses = await redis.zCard(questionResponseKey);
+            const ranks = responses > 0
+                ? await redis.zRange(questionResponseKey, 0, responses)
+                : [];
+            let total = 0;
+            const mappedRanks = ranks.reduce((r: ResponseValuesDto, i: {member: string, score: number}) => {
+                if (i.member == 'title') {
+                    total = i.score;
+                } else {
+                    r[i.member] = i.score;
+                }
+                return r;
+            }, {} as ResponseValuesDto);
+
+            return {
+                responses: mappedRanks,
+                total: total
+            } satisfies QuestionResponseDto;
+
+        } catch (e) {
+
+            logger.error(`Failed to get response for question ${questionId}: `, e);
+            throw e;
+
+        } finally {
+            logger.traceEnd();
+        }
+    };
+
+export const getSurveyResultSummary =
+    async (surveyId: string): Promise<SurveyResultSummaryDto | null> => {
+        // Create logger
+        const logger = await Logger.Create('Dash Redis - Get Survey Result Summary');
+        logger.traceStart('Start Response Fetch');
+
+        try {
+            logger.debug(surveyId);
+
+            // First get survey config (with questions) to get all question IDs
+            const config = await getSurveyById(surveyId, true);
+            if (!config || !config.questions) {
+                logger.warn(`Could not find a survey with ID: ${surveyId}`);
+                return null;
+            }
+
+            // Fetch results for each question
+            const responses = await Promise.all(
+                config.questions.map(async (q) =>
+                    [q.id, await getQuestionResponseById(surveyId, q.id)] as [string, QuestionResponseDto | null]
+                )
+            );
+
+            // Reduce to a single object
+            const resultList = responses.reduce((r: SurveyResultListDto, i: [string, QuestionResponseDto | null]) => {
+                if (i[1])
+                    r[i[0]] = i[1];
+                return r;
+            }, {} as SurveyResultListDto);
+
+            return {
+                survey: config,
+                results: resultList
+            } as SurveyResultSummaryDto;
+
+        } catch (e) {
+
+            logger.error(`Failed to get survey summary for ${surveyId}: `, e);
             throw e;
 
         } finally {

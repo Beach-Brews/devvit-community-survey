@@ -22,8 +22,8 @@ export const IntroPanel = (props: IntroPanelProps) => {
     if (!ctx) throw Error('Context undefined.');
 
     // Handler for starting survey
+    const responses = ctx.lastResponse ? Object.keys(ctx.lastResponse).length : 0;
     const onStartSurvey = () => {
-        const responses = ctx.lastResponse ? Object.keys(ctx.lastResponse).length : 0;
         const startIndex = responses > 0 && responses < ctx.survey.questions.length
             ? responses
             : 0;
@@ -52,9 +52,9 @@ export const IntroPanel = (props: IntroPanelProps) => {
                     <button disabled={props.isAnonymous} onClick={!props.isAnonymous ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${props.isAnonymous ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
                         {props.isAnonymous
                             ? 'Login to Take Survey'
-                            : ctx.lastResponse === undefined
+                            : responses <= 0
                                 ? 'Start Survey'
-                                : Object.keys(ctx.lastResponse).length < ctx.survey.questions.length
+                                : responses < ctx.survey.questions.length
                                     ? 'Continue Survey'
                                     : 'Change Responses'
                         }

@@ -5,8 +5,9 @@
 * License: BSD-3-Clause
 */
 
-import { SurveyDto } from '../../../shared/redis/SurveyDto';
+import { SurveyDto, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
 import { ApiResponse } from '../../../shared/types/api';
+import { SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 
 export const isUserMod = async (): Promise<boolean | null> => {
     const resp = await fetch(`/api/dash/is-mod`);
@@ -35,9 +36,9 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
     return list;
 };
 
-export const getSurveyById = async (id: string): Promise<SurveyDto | null> => {
+export const getSurveyById = async (id: string): Promise<SurveyWithQuestionsDto | null> => {
     const resp = await fetch(`/api/dash/survey/${id}`);
-    return resp.ok ? (await resp.json() as ApiResponse<SurveyDto>)?.result ?? null : null;
+    return resp.ok ? (await resp.json() as ApiResponse<SurveyWithQuestionsDto>)?.result ?? null : null;
 };
 
 export const deleteSurveyById = async (id: string): Promise<boolean> => {
@@ -54,3 +55,9 @@ export const saveSurvey = async (survey: SurveyDto): Promise<boolean> => {
     const resp = await fetch(`/api/dash/survey/${survey.id}`, { method: "post", body: JSON.stringify(survey)});
     return resp.ok;
 };
+
+export const getSurveyResultSummary =
+    async (surveyId: string): Promise<SurveyResultSummaryDto | null> => {
+        const resp = await fetch(`/api/dash/survey/${surveyId}/results`);
+        return resp.ok ? (await resp.json() as ApiResponse<SurveyResultSummaryDto>)?.result ?? null : null;
+    };

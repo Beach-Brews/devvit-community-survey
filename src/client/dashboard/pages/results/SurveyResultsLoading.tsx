@@ -1,11 +1,11 @@
 ﻿/*!
-* Placeholder skeleton for loading survey editor.
+* Placeholder skeleton for loading survey results.
 *
 * Author:  u/Beach-Brews
 * License: BSD-3-Clause
 */
 
-export const SurveyEditorLoading = () => {
+export const SurveyResultsLoading = () => {
     return (
         <div className="flex flex-col gap-4">
             <div className="text-sm p-2 flex flex-col justify-between gap-2 animate-pulse text-neutral-700 dark:text-neutral-300 rounded-md bg-white shadow-md dark:bg-neutral-900 dark:shadow-neutral-800">
