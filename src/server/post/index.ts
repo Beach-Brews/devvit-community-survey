@@ -146,7 +146,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
             }
         });
 
-    router.route('/api/post/survey/result/:questionId')
+    router.route('/api/post/survey/results/:questionId')
         .get<QuestionIdParam, ApiResponse<QuestionResponseDto>>(async (req, res) => {
             const logger = await Logger.Create(`Dashboard API - Get Survey Result`);
             logger.traceStart('Api Start');

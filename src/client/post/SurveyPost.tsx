@@ -18,6 +18,7 @@ import { Constants } from '../../shared/constants';
 import { ClosedPanel } from './panels/ClosedPanel';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
+import { ResultPanel } from './panels/ResultPanel';
 
 export const SurveyPost = () => {
 
@@ -37,7 +38,7 @@ export const SurveyPost = () => {
             try {
                 const postInit = await initializeSurvey();
                 setPostInit(postInit);
-                setLastResponse(postInit?.lastResponse)
+                setLastResponse(postInit?.lastResponse);
             } catch (error) {
                 console.error('[Survey Post] Failed to load survey: ', error);
                 setPostInit(null);
@@ -70,6 +71,7 @@ export const SurveyPost = () => {
             case PanelType.Intro: return (<IntroPanel isAnonymous={!user?.userId} />);
             case PanelType.Question: return (<QuestionPanel key={`pnl_${panelContext.number}`} />);
             case PanelType.Outro: return (<OutroPanel />);
+            case PanelType.Result: return (<ResultPanel />);
             default: throw new Error(`Unknown panel type: ${panelContext.panel}`);
         }
     };

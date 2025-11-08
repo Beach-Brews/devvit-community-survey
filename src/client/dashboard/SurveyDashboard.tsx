@@ -28,7 +28,7 @@ export const SurveyDashboard = () => {
 
     return (
         <DashboardContext.Provider value={context}>
-            <div className="w-full min-h-screen">
+            <div className="w-full h-screen overflow-auto">
                 <div className="container max-w-screen-lg min-h-screen mx-auto flex flex-col justify-between relative z-0">
                     <div className="px-4">
                         {(() => {

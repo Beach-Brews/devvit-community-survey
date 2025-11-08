@@ -5,16 +5,16 @@
 * License: BSD-3-Clause
 */
 
-import { DashResultProps } from './DashResultProps';
+import { PostResultProps } from './PostResultProps';
 
-export const ScaleResult = (props: DashResultProps) => {
+export const ScaleResult = (props: PostResultProps) => {
     const question = props.question;
     if (question.type != 'scale')
         throw new Error(`Unexpected question type of ${props.question.type}. Expected 'scale'.`);
 
     const options = question.max - question.min + 1;
     return (
-        <div className="w-full p-2 border border-neutral-500 rounded-md flex flex-col items-center gap-2">
+        <>
             <div style={{gridTemplateColumns: `repeat(${options}, minmax(0, 1fr))`}} className="w-full grid items-center gap-2">
                 {
                     Array.from({ length: options }, (_, i) => i + question.min).map(o => {
@@ -35,6 +35,6 @@ export const ScaleResult = (props: DashResultProps) => {
             <div className="w-full mt-4">
                     Total: {props.response.total.toLocaleString()}
             </div>
-        </div>
+        </>
     );
 };

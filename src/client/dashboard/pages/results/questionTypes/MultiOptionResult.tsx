@@ -21,6 +21,8 @@ export const MultiOptionResult = (props: DashResultProps) => {
         ? question.options.sort(sortCallback)
         : question.options;
 
+    const resultTextThreshold = 75;
+
     return (
         <div className="w-full p-2 border border-neutral-500 rounded-md grid grid-cols-[auto_1fr] items-center gap-2">
             {
@@ -30,21 +32,19 @@ export const MultiOptionResult = (props: DashResultProps) => {
                     return (
                         <>
                             <div key={o.value + '_label'} className="max-w-[150px] text-right">{o.label}</div>
-                            <div key={o.value + '_result'} >
-                                <div className="w-full p-2 flex justify-start items-center gap-2 font-bold">
-                                    <div style={{ width: `${percentage}%` }} className="min-w-1 h-6 bg-blue-200 dark:bg-blue-800 border border-blue-400 dark:border-blue-600 rounded-md flex justify-end items-center">
-                                        {percentage > 15 && (
-                                            <div className="px-2">
-                                                {score.toLocaleString()} ({percentage}%)
-                                            </div>
-                                        )}
-                                    </div>
-                                    {percentage < 15 && (
-                                        <div>
+                            <div key={o.value + '_result'} className="w-full p-2 flex justify-start items-center gap-2 font-bold">
+                                <div style={{ width: `${percentage}%` }} className="min-w-1 h-6 bg-blue-200 dark:bg-blue-800 border border-blue-400 dark:border-blue-600 rounded-md flex justify-end items-center whitespace-nowrap">
+                                    {percentage >= resultTextThreshold && (
+                                        <div className="px-2">
                                             {score.toLocaleString()} ({percentage}%)
                                         </div>
                                     )}
                                 </div>
+                                {percentage < resultTextThreshold && (
+                                    <div className="whitespace-nowrap">
+                                        {score.toLocaleString()} ({percentage}%)
+                                    </div>
+                                )}
                             </div>
                         </>
                     );

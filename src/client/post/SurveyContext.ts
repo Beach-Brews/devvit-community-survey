@@ -12,12 +12,15 @@ import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 export enum PanelType {
     Intro,
     Question,
-    Outro
+    Outro,
+    Result
 }
 
 export type SurveyPanelContext = {
     panel: PanelType;
     number?: number;
+    prev?: PanelType;
+    showResultNav?: boolean;
 };
 
 export interface SurveyContextProps {

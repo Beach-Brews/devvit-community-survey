@@ -66,6 +66,10 @@ export const QuestionPanel = () => {
         ctx.setPanelContext({ panel: PanelType.Question, number: qNo - 1 })
     };
 
+    const showResults = () => {
+        ctx.setPanelContext({ panel: PanelType.Result, number: qNo, prev: PanelType.Question, showResultNav: false });
+    };
+
     // Helper to render the question type controllers
     const renderQuestionInput = () => {
         switch (question.type) {
@@ -87,7 +91,7 @@ export const QuestionPanel = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-grow flex flex-col gap-2">
+            <div className="flex-grow h-[0%] flex flex-col gap-2">
                 <div className="text-base md:text-lg font-bold relative">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
                 {question.description && (<div className="text-sm md:text-base line-clamp-4">{question.description}</div>)}
                 <div className={`flex ${question.type === 'scale' ? ' justify-center' : 'justify-start'} items-center w-full`}>
@@ -98,10 +102,10 @@ export const QuestionPanel = () => {
                 <div className="flex justify-between items-center w-full">
                     <div className="flex justify-center w-1/5">
                         {qNo > 0 && (
-                            <div onClick={onPrevious} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                            <button onClick={onPrevious} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
                                 <ArrowUturnLeftIcon className="size-5" />
                                 <span className="hidden md:block">Previous</span>
-                            </div>
+                            </button>
                         )}
                     </div>
                     <div className="flex justify-center items-center w-3/5">
@@ -110,7 +114,7 @@ export const QuestionPanel = () => {
                         </button>
                     </div>
                     <div className="flex justify-center w-1/5">
-                        <div className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                        <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
                             <PresentationChartBarIcon className="size-5" />
                             <span className="hidden md:block">Results</span>
                         </div>
