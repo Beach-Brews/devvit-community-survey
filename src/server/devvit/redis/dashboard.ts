@@ -392,9 +392,11 @@ export const getQuestionResponseById =
             const ranks = responses > 0
                 ? await redis.zRange(questionResponseKey, 0, responses)
                 : [];
+            logger.debug(responses, ranks);
+
             let total = 0;
             const mappedRanks = ranks.reduce((r: ResponseValuesDto, i: {member: string, score: number}) => {
-                if (i.member == 'title') {
+                if (i.member == 'total') {
                     total = i.score;
                 } else {
                     r[i.member] = i.score;

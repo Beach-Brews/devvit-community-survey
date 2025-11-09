@@ -6,6 +6,14 @@ A way to provide more advanced polls and surveys directly in Reddit without havi
 
 {Future notes on getting started}
 
+## Alpha Features
+* Basic surveys
+
+## Beta Plans
+* Better Accessibility
+* Text Inputs / Comments
+* More settings (required setting, result visibility, account karma)
+
 ## Future Features
 
 Here are a few future features that are planned.
