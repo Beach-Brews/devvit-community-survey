@@ -8,13 +8,15 @@
 import { PathFactory } from '../PathFactory';
 import { Router } from 'express';
 import { registerCreateDashboardMenu } from './menu/createDashboard';
-import { registerPublishCheckTask } from './tasks/publishCheckTask';
+import { registerTaskRunnerTask } from './tasks/taskRunnerTask';
 import { registerAppUpgradeTrigger } from './triggers/upgradeTrigger';
 import { registerAppInstallTrigger } from './triggers/installTrigger';
+import { registerDeleteSurveyTask } from './tasks/deleteSurveyTask';
 
 export const registerInternalRoutes: PathFactory = (router: Router) => {
     registerCreateDashboardMenu(router);
-    registerPublishCheckTask(router);
+    registerTaskRunnerTask(router);
+    registerDeleteSurveyTask(router);
     registerAppInstallTrigger(router);
     registerAppUpgradeTrigger(router);
 };

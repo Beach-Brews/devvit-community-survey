@@ -30,7 +30,7 @@ export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
         props.modifyQuestion(q);
     };
 
-    // When an option is choosen to be deleted via the (x) button
+    // When an option is chosen to be deleted via the (x) button
     const onDeleteOption = (idx: number) => {
         // Create a new option list
         const newList: QuestionOptionDto[] = [];

@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { redis } from '@devvit/web/server';
+import { reddit, redis, scheduler } from '@devvit/web/server';
 import { Schema } from './Schema';
 import {
     SurveyDto,
@@ -17,6 +17,7 @@ import { Logger } from '../../util/Logger';
 import { createSurveyPost } from '../../util/publishUtils';
 import { RedisKeys } from './RedisKeys';
 import { QuestionResponseDto, ResponseValuesDto, SurveyResultListDto, SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
+import { Constants } from '../../../shared/constants';
 
 const getSurveyIdsForUser =
     async (userId: string): Promise<string[]> => {
@@ -56,23 +57,6 @@ const addSurveyIdToUserList =
 
         } finally {
             logger.traceEnd();
-        }
-    };
-
-// @ts-expect-error TODO: Remove ignore (once delete is complete)
-// noinspection JSUnusedLocalSymbols
-const removeSurveyIdFromUserList =
-    async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
-
-        // TODO: Should I add a 5-second lock?
-
-        // Delete from user survey hash
-        const userListKey = RedisKeys.userSurveyList(userId);
-        if (txn) {
-            // @ts-expect-error Ignore txn type
-            await txn.hDel(userListKey, [surveyId]);
-        } else {
-            await redis.hDel(userListKey, [surveyId]);
         }
     };
 
@@ -137,7 +121,11 @@ export const getSurveyById =
 
         // Get number of responses
         const resultKey = RedisKeys.surveyResponseUserList(surveyId);
-        surveyDto.responseCount = await  redis.hLen(resultKey);
+        surveyDto.responseCount = await redis.hLen(resultKey);
+
+        // Check if queued for delete
+        const deleteKey = RedisKeys.surveyDeleteQueue();
+        surveyDto.deleteQueued = (await redis.hGet(deleteKey, surveyId)) !== undefined;
 
         // Add questions
         if (getQuestions && surveyData.length > 1 && surveyData[1]) {
@@ -265,10 +253,6 @@ export const closeSurveyById =
 export const deleteSurveyById =
     async (surveyId: string): Promise<boolean> => {
 
-        // TODO: Finish this method, as deleting will orphan results at the moment
-        throw new Error(`Deleting is currently incomplete: ${surveyId}`);
-        
-/*
         // Get the survey, to get user id
         const survey = await getSurveyById(surveyId, false);
 
@@ -276,71 +260,32 @@ export const deleteSurveyById =
         if (!survey) return false;
 
         // Get redis keys
-        const userSurveyListKey = RedisKeys.userSurveyList(survey.owner);
-        const configKey = RedisKeys.surveyConfig(surveyId);
-        const questionKey = RedisKeys.surveyQuestions(surveyId);
+        const pubQueueKey = RedisKeys.surveyPublishQueue();
+        const deleteQueueKey = RedisKeys.surveyDeleteQueue();
+        const postListKey = RedisKeys.surveyPostList(surveyId);
 
-        // TODO: Should I add a 5-second lock?
-        
-        // Start transaction
-        const txn = await redis.watch(userSurveyListKey, configKey, questionKey);
-        await txn.multi();
+        // Remove from publish queue
+        await redis.hDel(pubQueueKey, [surveyId]);
 
-        // Delete two main keys
-        await txn.del(configKey);
-        await txn.del(questionKey);
+        // Add to delete queue
+        await redis.hSet(deleteQueueKey, {[surveyId]: '1'});
 
-        // Remove from list
-        await removeSurveyIdFromUserList(survey.owner, surveyId, txn);
+        // For each post, delete post
+        const posts = await redis.hGetAll(postListKey);
+        for (const postId of Object.keys(posts)) {
+            const post = await reddit.getPostById(postId as `t3_{string}`);
+            if (post)
+                await post.remove();
+        }
 
-        // TODO: How do I clear all responses?
-        // Might need a job to process deletions, since there could be thousands
-
-        // TODO: Also remove post (do I even store the post? Should I say the post was deleted?)
-
-        // Commit
-        await txn.exec();
+        // Finally, schedule job
+        await scheduler.runJob({
+            name: Constants.DELETE_JOB_NAME,
+            data: { surveyId },
+            runAt: new Date()
+        });
 
         return true;
- */
-    };
-
-export const publishQueuedSurveys =
-    async () => {
-        // Create logger
-        const logger = await Logger.Create('Dash Redis - Publish Surveys');
-        logger.traceStart('Start Publish');
-
-        try {
-            // Get all the keys in the publishing queue
-            const publishQueue = await redis.hGetAll(RedisKeys.surveyPublishQueue());
-            logger.debug(`Found ${publishQueue?.length ?? 0} surveys in publish queue`);
-
-            // Filter any with a date in the future
-            const now = Date.now();
-            const promiseSurveys = Object.entries(publishQueue)
-                .filter(e => parseInt(e[1]) <= now)
-                .map(async (e) => await getSurveyById(e[0], false));
-
-            // Publish each survey
-            const surveyList = (await Promise.all(promiseSurveys))
-                .filter(s => s !== null);
-            logger.debug(`Found ${surveyList.length} surveys to publish`);
-
-            // Publish each survey
-            for (const survey of surveyList) {
-                const post = await createSurveyPost(survey);
-                logger.info(`Published survey (${survey.id}) - ${survey.title} - PostID: ${post.id}`);
-            }
-
-        } catch (e) {
-
-            logger.error('Failed to publish new surveys: ', e);
-            throw e;
-
-        } finally {
-            logger.traceEnd();
-        }
     };
 
 export const getQuestionById =
@@ -356,6 +301,7 @@ export const getQuestionById =
 
             // Throw if not found
             if (!questionData) {
+                // noinspection ExceptionCaughtLocallyJS
                 throw new Error(`No survey found with ID: ${surveyId}`);
             }
 

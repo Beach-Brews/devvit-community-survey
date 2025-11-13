@@ -43,6 +43,15 @@ export const QuestionPanel = () => {
     // Helper to determine if response is valid
     const validResponse = !question.required || (!!response && response.length > 0);
 
+    // Show description panel if need be
+    const showDescriptionText = question.description.length < 200 && (
+        (question.type != 'multi' && question.type != 'checkbox' && question.type != 'rank') ||
+        (question.options.length < 7)
+    );
+    const showFullDescription = () => {
+        ctx.setPanelContext({ panel: PanelType.QuestionDescription, number: qNo, prev: PanelType.Question });
+    };
+
     // Move to next panel if not saving and response is valid
     const onNext = async () => {
         if (!validResponse) return;
@@ -63,7 +72,7 @@ export const QuestionPanel = () => {
     };
 
     const onPrevious = () => {
-        ctx.setPanelContext({ panel: PanelType.Question, number: qNo - 1 })
+        ctx.setPanelContext({ panel: PanelType.Question, number: qNo - 1 });
     };
 
     const showResults = () => {
@@ -93,7 +102,11 @@ export const QuestionPanel = () => {
         <div className="flex flex-col h-full">
             <div className="flex-grow h-[0%] flex flex-col gap-2">
                 <div className="text-base md:text-lg font-bold relative">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
-                {question.description && (<div className="text-sm md:text-base line-clamp-4">{question.description}</div>)}
+                {question.description && (
+                    <div className={`text-sm md:text-base line-clamp-4 ${showDescriptionText ? '' : 'underline cursor-pointer'}`} onClick={showDescriptionText ? undefined : showFullDescription}>
+                        {showDescriptionText ? question.description : 'Show question prompt'}
+                    </div>
+                )}
                 <div className={`flex ${question.type === 'scale' ? ' justify-center' : 'justify-start'} items-center w-full`}>
                     {renderQuestionInput()}
                 </div>

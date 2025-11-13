@@ -42,21 +42,56 @@ const addUserToSurveyList =
         }
     };
 
+const assertDataValid = (data: string[], question: SurveyQuestionDto): void => {
+    // Error if a value is required, but one not given (or skip if no values and not required.
+    if (data.length == 0 || !data[0]) {
+        if (question.required)
+            throw new Error(`Question is required, but no values given.`);
+        return;
+    }
+
+    switch (question.type) {
+        case 'multi':
+            if (data.length > 1)
+                throw new Error(`Multi response received ${data.length} responses, but should be one.`);
+            return;
+
+        case 'checkbox':
+            if (data.length > question.options.length)
+                throw new Error(`Checkbox response received ${data.length} responses, but only ${question.options.length} are configured.`);
+            return;
+
+        case 'rank':
+            if (data.length != question.options.length)
+                throw new Error(`Rank response received ${data.length} responses, but expected ${question.options.length}.`);
+            return;
+
+        case 'scale': {
+            if (data.length > 1)
+                throw new Error(`Scale response received ${data.length} responses, but should be one.`);
+            const intVal = parseInt(data[0]);
+            if (isNaN(intVal) || intVal < question.min || intVal > question.max)
+                throw new Error(`Scale value ${data[0]} is outside expected range ${question.min} - ${question.max}`)
+            return;
+        }
+    }
+};
+
 const scoreForOp =
     async (questionDto: SurveyQuestionDto, option: string, index: number): Promise<number> => {
         switch (questionDto.type) {
             case 'multi':
             case 'checkbox':
+                if (!questionDto.options.some(o => o.value == option))
+                    throw new Error(`${questionDto.type} value ${option} does not exist.`);
                 return 1;
 
-            case 'scale': {
-                const intVal = parseInt(option);
-                if (isNaN(intVal) || intVal < questionDto.min || intVal > questionDto.max)
-                    throw new Error(`Scale value ${option} is outside expected range ${questionDto.min} - ${questionDto.max}`)
+            case 'scale':
                 return 1;
-            }
 
             case 'rank':
+                if (!questionDto.options.some(o => o.value == option))
+                    throw new Error(`${questionDto.type} value ${option} does not exist.`);
                 return questionDto.options.length - index;
 
             case 'text':
@@ -113,6 +148,9 @@ export const upsertQuestionResponse =
                 // Otherwise, increase the response count
                 await txn.zIncrBy(questionResponseKey, 'total', 1);
             }
+
+            // Assert response data array makes sense for question type
+            assertDataValid(data, questionDto);
 
             // Then update scores for new response
             for (const [i, op] of data.entries()) {

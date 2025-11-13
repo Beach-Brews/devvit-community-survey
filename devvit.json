@@ -45,9 +45,12 @@
   },
   "scheduler": {
     "tasks": {
-      "publish-check": {
-        "endpoint": "/internal/cron/publish-check",
+      "task-runner": {
+        "endpoint": "/internal/cron/task-runner",
         "cron": "* * * * *"
+      },
+      "delete-survey": {
+        "endpoint": "/internal/task/delete-survey"
       }
     }
   },

@@ -19,6 +19,7 @@ import { ClosedPanel } from './panels/ClosedPanel';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
 import { ResultPanel } from './panels/ResultPanel';
+import { QuestionDescriptionPanel } from './panels/QuestionDescriptionPanel';
 
 export const SurveyPost = () => {
 
@@ -72,7 +73,10 @@ export const SurveyPost = () => {
             case PanelType.Question: return (<QuestionPanel key={`pnl_${panelContext.number}`} />);
             case PanelType.Outro: return (<OutroPanel />);
             case PanelType.Result: return (<ResultPanel />);
-            default: throw new Error(`Unknown panel type: ${panelContext.panel}`);
+            case PanelType.QuestionDescription: return (<QuestionDescriptionPanel />);
+            default:
+                console.error(`[Survey Post] - Unknown panel type: ${panelContext.panel}`);
+                return (<ErrorPanel />);
         }
     };
 
@@ -82,7 +86,7 @@ export const SurveyPost = () => {
                 <div className="p-2 flex-grow h-[0%]">
                     {getPanel()}
                 </div>
-                <footer className="w-full p-2 text-xs flex justify-between">
+                <footer className="w-full p-2 pt-0 text-xs flex justify-between">
                     <div className="w-1/2 flex gap-1 items-center">
                         {user?.userId && (
                             <>

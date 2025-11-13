@@ -57,7 +57,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     };
 
     return (
-        <ul className={`flex flex-col ${optionCount > 7 ? 'gap-1 text-sm' : 'gap-2 text-sm md:text-base'}`}>
+        <ul className={`flex flex-col ${optionCount > 7 ? 'gap-2 text-base' : 'gap-2 text-base'}`}>
             {props.question.options.map((o, i) => {
                 return (
                     <li key={`sqo_${o.value}`} className="flex gap-2 items-center cursor-pointer" onClick={() => void onOptionClick(i)}>

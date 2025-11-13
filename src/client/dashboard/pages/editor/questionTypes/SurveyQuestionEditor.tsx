@@ -14,6 +14,7 @@ import { ArrowDownCircleIcon, ArrowUpCircleIcon, DocumentDuplicateIcon, TrashIco
 import { DashboardContext } from '../../../DashboardContext';
 import { DashboardModal } from '../../../shared/components/DashboardModal';
 import { genOption } from '../../../../../shared/redis/uuidGenerator';
+import { debugEnabled } from '../../../shared/debugUtils';
 
 export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
     const ctx = useContext(DashboardContext);
@@ -119,7 +120,8 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
     };
 
     return (
-        <div className="flex p-4 pr-0 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
+        <div className="relative flex p-4 pr-0 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
+            {debugEnabled() && (<div className="text-[0.5rem] absolute bottom-4 right-4">{q.id}</div>)}
             <div className="w-full text-sm flex flex-col gap-4">
                 <div>
                     <input name="title" placeholder="Question Title" maxLength={50} value={q.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />

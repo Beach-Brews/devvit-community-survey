@@ -13,7 +13,8 @@ export enum PanelType {
     Intro,
     Question,
     Outro,
-    Result
+    Result,
+    QuestionDescription
 }
 
 export type SurveyPanelContext = {

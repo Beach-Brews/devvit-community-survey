@@ -12,7 +12,7 @@ const genUid = () => {
         + Math.random().toString(36).substring(2, 7));
 }
 
-export const UserIdRegex = /^t2_[0-9a-zA-Z]{10}$/;
+export const UserIdRegex = /^t2_[0-9a-zA-Z]{4,}$/;
 export const SurveyIdRegex = /^sv_[0-9a-zA-Z]{10}$/;
 export const QuestionIdRegex = /^sq_[0-9a-zA-Z]{10}$/;
 export const OptionIdRegex = /^sqo_[0-9a-zA-Z]{10}$/;

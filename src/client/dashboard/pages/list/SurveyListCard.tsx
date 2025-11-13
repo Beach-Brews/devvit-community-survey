@@ -25,17 +25,20 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
     const { survey } = props;
 
     const now = Date.now();
+    const isDeleted = survey.deleteQueued === true;
     const isClosed = survey.closeDate && survey.closeDate < now;
     const isPublished = survey.publishDate && survey.publishDate <= now;
     const isScheduled = survey.publishDate && survey.publishDate > now;
 
-    const status = isClosed
-        ? (<div className="flex items-center px-1 gap-1 text-rose-700 dark:text-rose-300">closed <NoSymbolIcon className="size-3" /></div>)
-        : isPublished
-            ? (<div className="flex items-center px-1 gap-1 text-green-700 dark:text-green-300">live <RssIcon className="size-3" /></div>)
-            : isScheduled
-                ? (<div className="flex items-center px-1 gap-1 text-blue-700 dark:text-blue-300">scheduled <CalendarIcon className="size-3" /></div>)
-                : (<div className="flex items-center px-1 gap-1 text-neutral-700 dark:text-neutral-300">draft <PencilIcon className="size-3" /></div>);
+    const status = isDeleted
+        ? (<div className="flex items-center px-1 gap-1 text-rose-700 dark:text-rose-300">delete queued <TrashIcon className="size-3" /></div>)
+        : isClosed
+            ? (<div className="flex items-center px-1 gap-1 text-rose-700 dark:text-rose-300">closed <NoSymbolIcon className="size-3" /></div>)
+            : isPublished
+                ? (<div className="flex items-center px-1 gap-1 text-green-700 dark:text-green-300">live <RssIcon className="size-3" /></div>)
+                : isScheduled
+                    ? (<div className="flex items-center px-1 gap-1 text-blue-700 dark:text-blue-300">scheduled <CalendarIcon className="size-3" /></div>)
+                    : (<div className="flex items-center px-1 gap-1 text-neutral-700 dark:text-neutral-300">draft <PencilIcon className="size-3" /></div>);
 
     const editSurvey = () => {
         ctx.setPageContext({page: 'edit', surveyId: survey.id});
@@ -55,21 +58,21 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
             <div className="flex justify-between items-center">
                 <div className="px-1 text-[0.70rem] uppercase font-bold">{status}</div>
                 <div className="flex gap-1">
-                    {!isPublished && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={editSurvey}><PencilSquareIcon className="size-5" /></div>)}
-                    {(!isPublished || isClosed) && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={deleteSurvey}><TrashIcon className="size-5" /></div>)}
-                    {isPublished && !isClosed && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={closeSurvey}><StopCircleIcon className="size-5" /></div>)}
+                    {!isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={editSurvey}><PencilSquareIcon className="size-5" /></div>)}
+                    {(!isPublished || isClosed) && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={deleteSurvey}><TrashIcon className="size-5" /></div>)}
+                    {isPublished && !isClosed && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={closeSurvey}><StopCircleIcon className="size-5" /></div>)}
                 </div>
             </div>
-            <div className="px-1 text-2xl text-neutral-900 dark:text-neutral-100">{survey.title}</div>
+            <div className={`px-1 text-2xl text-neutral-900 dark:text-neutral-100${isDeleted ? ' opacity-30 line-through' : ''}`}>{survey.title}</div>
             <div className="flex justify-between items-center min-h-6">
-                {(isPublished
+                {(!isDeleted && isPublished
                     ? <div className="flex gap-2 items-center cursor-pointer rounded-lg px-1 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurveyResults}><PresentationChartBarIcon className="size-5" /><span>{survey.responseCount?.toLocaleString()}</span></div>
                     : <div></div>
                 )}
-                {!isScheduled && !isPublished && (<div className="flex items-center px-1">Not Scheduled</div>)}
-                {isScheduled && !isPublished && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowUpIcon className="size-5" /></div> {formatDateTime(survey.publishDate)}</div>)}
-                {isPublished && survey.closeDate && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowDownIcon className="size-5" /></div> {formatDateTime(survey.closeDate)}</div>)}
-                {isPublished && !survey.closeDate && (<div className="flex items-center px-1">No Close Date</div>)}
+                {!isDeleted && !isScheduled && !isPublished && (<div className="flex items-center px-1">Not Scheduled</div>)}
+                {!isDeleted && isScheduled && !isPublished && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowUpIcon className="size-5" /></div> {formatDateTime(survey.publishDate)}</div>)}
+                {!isDeleted && isPublished && survey.closeDate && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowDownIcon className="size-5" /></div> {formatDateTime(survey.closeDate)}</div>)}
+                {!isDeleted && isPublished && !survey.closeDate && (<div className="flex items-center px-1">No Close Date</div>)}
             </div>
         </div>
     );

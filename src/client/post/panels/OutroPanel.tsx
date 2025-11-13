@@ -18,9 +18,18 @@ export const OutroPanel = () => {
         ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Outro, showResultNav: true });
     };
 
+    const restartSurvey = () => {
+        ctx.setPanelContext({ panel: PanelType.Question, number: 0 });
+    };
+
+    const outroText = ctx.survey.outro;
+
     return (
       <div className="flex flex-col gap-4 justify-center items-center h-full">
-          <div className="text-xl text-center">{ctx.survey.outro}</div>
+          <div className={`${outroText.length > 180 ? 'text-lg' : 'text-xl'} text-center`}>{outroText && outroText.length > 0 ? outroText : 'Thank you for your response.'}</div>
+          <button onClick={restartSurvey} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
+              Change Responses
+          </button>
           <button onClick={showResults} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
               View Results
           </button>

@@ -25,7 +25,7 @@ export const messageResponse =
 export const errorIfNotMod =
     async (res: Response): Promise<boolean> => {
         if (await isMod()) return false;
-        messageResponse(res, 401, 'You are not a moderator', 788);
+        messageResponse(res, 403, 'You are not a moderator', 788);
         return true;
     };
 

@@ -137,7 +137,7 @@ export const ResultPanel = () => {
                 </button>
             </div>
             {question?.title
-                ? (<div>{question.title}</div>)
+                ? (<div className="font-bold">{question.title}</div>)
                 : (<div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-2/3"></div>)
             }
             <div className="relative flex-grow h-[0%] w-full p-2 border border-neutral-500 rounded-md">

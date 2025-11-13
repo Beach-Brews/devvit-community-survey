@@ -9,5 +9,6 @@ export const Constants = {
     MAX_QUESTION_COUNT: 25,
     MAX_OPTION_COUNT: 10,
     SURVEY_AUTOSAVE_DEBOUNCE: 2000,
-    SURVEY_VERSION_DISPLAY: 'Pre-Alpha'
+    SURVEY_VERSION_DISPLAY: 'Pre-Alpha',
+    DELETE_JOB_NAME: 'delete-survey'
 };

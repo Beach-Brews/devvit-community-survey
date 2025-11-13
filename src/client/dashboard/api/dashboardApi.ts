@@ -8,10 +8,11 @@
 import { SurveyDto, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
 import { ApiResponse } from '../../../shared/types/api';
 import { SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
+import { UserInfoDto } from '../../../shared/types/postApi';
 
-export const isUserMod = async (): Promise<boolean | null> => {
-    const resp = await fetch(`/api/dash/is-mod`);
-    return resp.ok ? (await resp.json() as ApiResponse<boolean>)?.result ?? null : null;
+export const getUserInfo = async (): Promise<UserInfoDto | null> => {
+    const resp = await fetch(`/api/dash/user-info`);
+    return resp.ok ? (await resp.json() as ApiResponse<UserInfoDto>)?.result ?? null : null;
 };
 
 export const getSurveyList = async (): Promise<SurveyDto[]> => {
@@ -27,6 +28,7 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
     // Sort based on status
     const now = Date.now();
     const sStatus = (s: SurveyDto): number => {
+        if (s.deleteQueued) return 5;
         if (s.closeDate && s.closeDate < now) return 1;
         if (s.publishDate && s.publishDate <= now) return 2;
         return s.publishDate && s.publishDate > now ? 3 : 4;

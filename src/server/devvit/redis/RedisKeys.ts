@@ -17,11 +17,16 @@ export const RedisKeys = {
         assertSurveyId(surveyId);
         return `sv:${surveyId}:conf`;
     },
+    surveyPostList: (surveyId: string) => {
+        assertSurveyId(surveyId);
+        return `sv:${surveyId}:posts`;
+    },
     surveyQuestions: (surveyId: string) => {
         assertSurveyId(surveyId);
         return `sv:${surveyId}:qns`;
     },
     surveyPublishQueue: () => `sv:pub`,
+    surveyDeleteQueue: () => `sv:del`,
 
     surveyResponseUserList: (surveyId: string) => {
         assertSurveyId(surveyId);

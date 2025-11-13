@@ -21,19 +21,32 @@ import { Logger } from '../util/Logger';
 import { isMod } from '../util/userUtils';
 import { registerDashboardDebugRoutes } from './debug';
 import { QuestionResponseDto, SurveyResultSummaryDto } from '../../shared/redis/ResponseDto';
+import { reddit } from '@devvit/web/server';
+import { UserInfoDto } from '../../shared/types/postApi';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
     registerDashboardDebugRoutes(router);
 
-    router.get<void, ApiResponse<boolean>>(
-        "/api/dash/is-mod",
+    router.get<void, ApiResponse<UserInfoDto>>(
+        "/api/dash/user-info",
         async (_req, res) => {
             const logger = await Logger.Create('Dashboard API - User Details');
             logger.traceStart('Api Start');
 
             try {
-                return successResponse(res, await isMod());
+                // Get user info
+                const userInfo = await reddit.getCurrentUser();
+                const [userIsMod, snoovar] = userInfo
+                    ? await Promise.all([isMod(userInfo), userInfo.getSnoovatarUrl()])
+                    : [false, undefined];
+
+                return successResponse(res, {
+                    isMod: userIsMod,
+                    username: userInfo?.username ?? 'anonymous',
+                    userId: userInfo?.id,
+                    snoovar: snoovar
+                } satisfies UserInfoDto);
 
             } catch(e) {
                 logger.error('Error executing API: ', e);
