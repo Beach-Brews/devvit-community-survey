@@ -13,7 +13,7 @@ type KeyTypes = 'get' | undefined;
 
 type KeyForm = {
     key: string;
-    type: KeyTypes
+    action: KeyTypes
 }
 
 type KeyDebugRequestDto = {
@@ -38,7 +38,9 @@ const keys = [
     `usr:$userId:svs`,
     `sv:$surveyId:conf`,
     `sv:$surveyId:qns`,
+    `sv:$surveyId:posts`,
     `sv:pub`,
+    `sv:del`,
     `sv:$surveyId:usr`,
     `sv:$surveyId:qn:$questionId`,
     `usr:$userId:svr:$surveyId`
@@ -56,7 +58,7 @@ export const DebugPage = () => {
     const ctx = useContext(DashboardContext);
     if (!ctx) throw Error('Context undefined.');
 
-    const [form, setForm] = useState<KeyForm>({ key: '', type: 'get' });
+    const [form, setForm] = useState<KeyForm>({ key: '', action: 'get' });
     const [varForm, setVarForm] = useState<{[key: string]: string}>({});
     const [results, setResults] = useState<KeyDebugResponseDto | undefined>(undefined);
 
@@ -178,7 +180,7 @@ export const DebugPage = () => {
                 <div className="w-3/4 flex flex-col gap-4">
                     <div className="flex gap-4">
                         <input name="key" placeholder="Key" maxLength={50} value={form.key} onChange={onInputChange} className="p-2 w-full text-2xl border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                        <select name="type" value={form.type} onChange={onInputChange} className="border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
+                        <select name="action" value={form.action} onChange={onInputChange} className="border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
                             <option value="get">get</option>
                         </select>
                         <button onClick={sendRequest} className="cursor-pointer p-2 border rounded-lg border-neutral-500"><ArrowUpOnSquareIcon className="size-6" /></button>

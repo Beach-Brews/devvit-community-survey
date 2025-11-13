@@ -53,7 +53,8 @@ export const registerDashboardDebugRoutes: PathFactory = (router: Router) => {
 
                 // Get key type
                 const response = {
-                    key: await redis.type(keyInfo.key)
+                    key: keyInfo.key,
+                    type: await redis.type(keyInfo.key)
                 } as KeyDebugResponseDto;
 
                 // Fetch based on key type

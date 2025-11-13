@@ -65,7 +65,9 @@ export const SurveyPost = () => {
 
         // If the survey is now closed
         if (survey.closeDate && survey.closeDate <= Date.now())
-            return (<ClosedPanel />);
+            return panelContext.panel === PanelType.Result
+                ? (<ResultPanel />)
+                : (<ClosedPanel />);
 
         // Otherwise, load from context
         switch (panelContext.panel) {

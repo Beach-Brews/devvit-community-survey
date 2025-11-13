@@ -79,9 +79,13 @@ export const getSurveyListForUser =
         logger.debug('Got Configs from Redis: ', configs);
 
         // Get response count for each result
+        const deleteQueueKey = RedisKeys.surveyDeleteQueue();
         const responseCountPromise = surveyIds
             .map(async (sid) =>
-                [sid, await redis.hLen(RedisKeys.surveyResponseUserList(sid))] as const
+                [sid, [
+                    await redis.hLen(RedisKeys.surveyResponseUserList(sid)),
+                    (await redis.hGet(deleteQueueKey, sid)) !== undefined
+                ]] as const
             );
         const responseCounts = new Map(await Promise.all(responseCountPromise));
         logger.debug('Got response counts from Redis: ', responseCounts);
@@ -92,8 +96,10 @@ export const getSurveyListForUser =
             .map(async (s) => {
                 const dto: SurveyDto = await Schema.surveyConfig.parseAsync(JSON.parse(s)) satisfies SurveyDto;
                 const responseCount = responseCounts.get(dto.id);
-                if (responseCount)
-                    dto.responseCount = responseCount;
+                if (responseCount) {
+                    dto.responseCount = responseCount[0];
+                    dto.deleteQueued = responseCount[1];
+                }
                 return dto;
             });
         return Promise.all(asyncParse);

@@ -69,6 +69,7 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
                     ? <div className="flex gap-2 items-center cursor-pointer rounded-lg px-1 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurveyResults}><PresentationChartBarIcon className="size-5" /><span>{survey.responseCount?.toLocaleString()}</span></div>
                     : <div></div>
                 )}
+                {ctx.userInfo.allowDev && (<div className="flex items-center px-1">{survey.id}</div>)}
                 {!isDeleted && !isScheduled && !isPublished && (<div className="flex items-center px-1">Not Scheduled</div>)}
                 {!isDeleted && isScheduled && !isPublished && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowUpIcon className="size-5" /></div> {formatDateTime(survey.publishDate)}</div>)}
                 {!isDeleted && isPublished && survey.closeDate && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowDownIcon className="size-5" /></div> {formatDateTime(survey.closeDate)}</div>)}

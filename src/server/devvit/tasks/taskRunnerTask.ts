@@ -71,7 +71,7 @@ const checkDeleteQueue =
             const jobs = await scheduler.listJobs();
             const deleteRunning = jobs.some(j => j.name == Constants.DELETE_JOB_NAME);
             if (deleteRunning) {
-                logger.info('Delete currently in progress. Skipping.');
+                logger.debug('Delete currently in progress. Skipping.');
                 return;
             }
 
@@ -81,11 +81,12 @@ const checkDeleteQueue =
             // Skip if nothing
             const surveyId = queue.fieldValues?.[0]?.field;
             if (!surveyId) {
-                logger.info('No surveys queued for deletion.');
+                logger.debug('No surveys queued for deletion.');
                 return;
             }
 
             // Queue up a job!
+            logger.info('Found survey queued for deletion, but no job scheduled. Scheduling to run now.');
             await scheduler.runJob({
                 name: Constants.DELETE_JOB_NAME,
                 data: { surveyId },

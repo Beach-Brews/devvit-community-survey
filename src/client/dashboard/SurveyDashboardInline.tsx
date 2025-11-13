@@ -66,7 +66,7 @@ export const SurveyDashboardInline = () => {
 
                     {/* ===== Non-Moderator State ===== */}
                     {/* TODO: Discuss not being able to access webview posts when post is deleted. Menu item launch would be cool. */}
-                    {!allowDashboard && (
+                    {userInfo && !allowDashboard && (
                         <>
                             <div className="font-bold text-2xl text-center">Surveys Coming Soon!</div>
                             <div className="text-lg text-center">
@@ -77,7 +77,7 @@ export const SurveyDashboardInline = () => {
                     )}
 
                     {/* ===== Moderator Launch Dashboard State ===== */}
-                    {allowDashboard && (
+                    {userInfo && allowDashboard && (
                         <>
                             <div className="font-bold text-2xl text-center">Survey Dashboard</div>
                             <button className="cursor-pointer px-4 py-2 rounded-md text-white bg-blue-700 dark:bg-blue-900" onClick={launchDashboard}>Launch Dashboard</button>
@@ -92,7 +92,7 @@ export const SurveyDashboardInline = () => {
                             <div  className="w-8 h-8 object-contain overflow-hidden rounded-full"><img src={userInfo?.snoovar !== undefined && userInfo.snoovar.length > 0 ? userInfo.snoovar : defaultSnoo} alt={`snoovar for ${userInfo.username}`} /></div> {userInfo.username}
                         </>
                     )}
-                    {userInfo?.userId && (
+                    {userInfo !== undefined && !userInfo?.userId && (
                         <>
                             <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" /> Anonymous
                         </>

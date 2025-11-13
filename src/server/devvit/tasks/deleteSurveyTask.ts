@@ -104,12 +104,13 @@ const deleteQuestionResponses = async (ctx: DeleteTaskContext) => {
 
 export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
     router.post('/internal/task/delete-survey', async (req, res): Promise<void> => {
-        const logger = await Logger.Create("Task - Publish Check");
+        const logger = await Logger.Create("Task - Delete Survey");
         logger.traceStart("/internal/task/delete-survey");
 
         try {
             // Confirm survey ID was provided
-            const surveyId = req.body.surveyId ?? JSON.parse(req.body)?.surveyId;
+            const surveyId = req.body?.data?.surveyId;
+            logger.debug(`Survey ID: ${surveyId}`);
             if (!surveyId || typeof surveyId !== 'string') {
                 // noinspection ExceptionCaughtLocallyJS
                 throw new Error(`Survey ID missing or not a string: ${req.body}`);
