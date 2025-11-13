@@ -164,8 +164,7 @@ export const upsertSurvey =
             const questionKey = RedisKeys.surveyQuestions(surveyId);
 
             // Determine if survey exists or not
-            // TODO: Discuss adding hExists with Reddit
-            const isNew = !(await redis.hGet(userSurveyListKey, surveyId));
+            const isNew = (await redis.exists(configKey)) == 0;
             logger.debug(isNew ? 'Inserting new survey' : 'Updating existing survey');
 
             // TODO: Should I add a 5-second lock?

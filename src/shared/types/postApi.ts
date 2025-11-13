@@ -10,6 +10,7 @@ import { UserResponsesDto } from '../redis/ResponseDto';
 
 export type UserInfoDto = {
     isMod: boolean;
+    allowDev: boolean;
     username: string;
     userId: string | undefined;
     snoovar: string | undefined;

@@ -8,7 +8,8 @@
 import { PathFactory } from '../PathFactory';
 import { Router } from 'express';
 import { Logger } from '../util/Logger';
-import { context, reddit, redis } from '@devvit/web/server';
+import { redis } from '@devvit/web/server';
+import { debugEnabled } from '../util/debugUtils';
 
 type KeyDebugRequestDto = {
     key?: string | undefined;
@@ -24,13 +25,6 @@ type KeyDebugResponseDto = {
     error?: string | undefined;
 };
 
-const isMod = async () => {
-    const user = await reddit.getCurrentUser();
-    if (!user || !context.subredditName) return false;
-    const modPermissions = await user.getModPermissionsForSubreddit(context.subredditName);
-    return modPermissions.length > 0;
-};
-
 export const registerDashboardDebugRoutes: PathFactory = (router: Router) => {
 
     router.post<void, KeyDebugResponseDto, string>(
@@ -40,10 +34,10 @@ export const registerDashboardDebugRoutes: PathFactory = (router: Router) => {
             logger.traceStart('Api Start');
 
             try {
-                if (!(await isMod())) {
+                if (!(await debugEnabled())) {
                     res.status(403).json({
                         type: 'error',
-                        error: 'You are not a moderator'
+                        error: 'The debug console setting is off'
                     });
                     return;
                 }

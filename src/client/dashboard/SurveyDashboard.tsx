@@ -14,9 +14,13 @@ import { SurveyResultsPage } from './pages/results/SurveyResultsPage';
 import { Constants } from '../../shared/constants';
 import { BugAntIcon } from '@heroicons/react/24/solid';
 import { DebugPage } from './pages/debug/DebugPage';
-import { debugEnabled } from './shared/debugUtils';
+import { UserInfoDto } from '../../shared/types/postApi';
 
-export const SurveyDashboard = () => {
+interface SurveyDashboardProps {
+    userInfo: UserInfoDto;
+}
+
+export const SurveyDashboard = (props: SurveyDashboardProps) => {
     const [pageContext, setPageContext] = useState<DashboardPageContext>({page: 'list'});
     const [modal, setModal] = useState<DashboardModalContent>(undefined);
 
@@ -24,11 +28,12 @@ export const SurveyDashboard = () => {
         pageContext,
         setPageContext,
         modal,
-        setModal
+        setModal,
+        userInfo: props.userInfo
     };
 
     const debugButton = () => {
-        return debugEnabled() ? (
+        return props.userInfo.allowDev ? (
             <button className="cursor-pointer mr-2" onClick={() => dashContext.setPageContext({page: 'debug'})}>
                 <BugAntIcon className="size-4" />
             </button>
@@ -41,6 +46,11 @@ export const SurveyDashboard = () => {
                 <div className="container max-w-screen-lg min-h-screen mx-auto flex flex-col justify-between relative z-0">
                     <div className="px-4">
                         {(() => {
+                            if (!props.userInfo.isMod) {
+                                return props.userInfo.allowDev
+                                    ? <DebugPage />
+                                    : undefined;
+                            }
                             switch (pageContext.page) {
                                 case 'edit':
                                     return <SurveyEditorPage />;
@@ -56,7 +66,7 @@ export const SurveyDashboard = () => {
                     </div>
                     <footer className="p-2 text-xs flex justify-between items-center rounded-t-lg bg-neutral-200 dark:bg-neutral-700">
                         <div className="max-w-1/2">Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Feedback and Support</div>
-                        <div className="max-w-1/2">{debugButton()}{Constants.SURVEY_VERSION_DISPLAY}</div>
+                        <div className="max-w-1/2 flex items-center">{debugButton()}{Constants.SURVEY_VERSION_DISPLAY}</div>
                     </footer>
                 </div>
                 {modal}

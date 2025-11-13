@@ -6,6 +6,7 @@
 */
 
 import { createContext, Dispatch, ReactElement, SetStateAction } from 'react';
+import { UserInfoDto } from '../../shared/types/postApi';
 
 export type DashboardListPageContext = {
     page: 'list' | 'debug';
@@ -24,6 +25,7 @@ export interface DashboardContextProps {
     setPageContext: Dispatch<SetStateAction<DashboardPageContext>>;
     modal: DashboardModalContent;
     setModal: Dispatch<SetStateAction<DashboardModalContent>>;
+    userInfo: UserInfoDto;
 }
 
 export const DashboardContext = createContext<DashboardContextProps | undefined>(undefined);

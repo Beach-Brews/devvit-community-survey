@@ -23,6 +23,7 @@ import { registerDashboardDebugRoutes } from './debug';
 import { QuestionResponseDto, SurveyResultSummaryDto } from '../../shared/redis/ResponseDto';
 import { reddit } from '@devvit/web/server';
 import { UserInfoDto } from '../../shared/types/postApi';
+import { debugEnabled } from '../util/debugUtils';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
@@ -43,6 +44,7 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
                 return successResponse(res, {
                     isMod: userIsMod,
+                    allowDev: await debugEnabled(),
                     username: userInfo?.username ?? 'anonymous',
                     userId: userInfo?.id,
                     snoovar: snoovar

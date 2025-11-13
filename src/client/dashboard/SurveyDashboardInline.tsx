@@ -18,8 +18,7 @@ export const SurveyDashboardInline = () => {
     // Create state for mod status. Undefined = loading, Null = error
     const [userInfo, setUserInfo] = useState<UserInfoDto | null | undefined>(undefined);
     const [defaultSnoo] = useState<string>(`https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
-    const allowDashboard = userInfo?.isMod;
-    // TODO: Add debugEnabled, but if setting is turned on for mods to allow me to see debug without adding me as a mod.
+    const allowDashboard = userInfo?.isMod || userInfo?.allowDev || false;
 
     // Make API call on initial load
     useEffect(() => {
@@ -36,8 +35,8 @@ export const SurveyDashboardInline = () => {
 
     // If user is a mod and expanded mode is active, render the dashboard
     const renderMode: WebViewMode = getWebViewMode();
-    if (allowDashboard && renderMode === 'expanded') {
-        return (<SurveyDashboard />);
+    if (userInfo && allowDashboard && renderMode === 'expanded') {
+        return (<SurveyDashboard userInfo={userInfo} />);
     }
 
     // Handler for launching into expanded mode
@@ -50,7 +49,7 @@ export const SurveyDashboardInline = () => {
             <div className="p-4 flex-grow h-[0%]">
                 <div className="flex flex-col gap-4 justify-center items-center h-full">
                     {/* ===== Loading State ===== */}
-                    {allowDashboard === undefined && (
+                    {userInfo === undefined && (
                         <>
                             <div className="animate-pulse h-10 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2"></div>
                             <div className="animate-pulse h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/4"></div>
@@ -58,7 +57,7 @@ export const SurveyDashboardInline = () => {
                     )}
 
                     {/* ===== Error State ===== */}
-                    {allowDashboard === null && (
+                    {userInfo === null && (
                         <>
                             <img className="w-1/2" src="snoo-facepalm.png" alt="Snoo Error" />
                             <div className="text-xl text-center">Sorry, there was an error loading the survey.<br />Please try again later.</div>
@@ -66,8 +65,8 @@ export const SurveyDashboardInline = () => {
                     )}
 
                     {/* ===== Non-Moderator State ===== */}
-                    {/* TODO: Discuss issue with auto post removal */}
-                    {allowDashboard === false && (
+                    {/* TODO: Discuss not being able to access webview posts when post is deleted. Menu item launch would be cool. */}
+                    {!allowDashboard && (
                         <>
                             <div className="font-bold text-2xl text-center">Surveys Coming Soon!</div>
                             <div className="text-lg text-center">
@@ -78,7 +77,7 @@ export const SurveyDashboardInline = () => {
                     )}
 
                     {/* ===== Moderator Launch Dashboard State ===== */}
-                    {allowDashboard === true && (
+                    {allowDashboard && (
                         <>
                             <div className="font-bold text-2xl text-center">Survey Dashboard</div>
                             <button className="cursor-pointer px-4 py-2 rounded-md text-white bg-blue-700 dark:bg-blue-900" onClick={launchDashboard}>Launch Dashboard</button>

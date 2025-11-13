@@ -56,10 +56,16 @@
   },
   "settings": {
     "subreddit": {
+      "devConsole": {
+        "type": "boolean",
+        "label": "Developer Console",
+        "helpText": "Allows the developer read-only access to a developer console. Leave this setting off unless receiving support.",
+        "defaultValue": false
+      },
       "logLevel": {
         "type": "select",
         "label": "Log Level",
-        "helpText": "Controls the level of log messages for performance.",
+        "helpText": "Controls the level of log messages. Warn (default) should be used for performance reasons. The app developer may have you change the log level if receiving support.",
         "defaultValue": "Warn",
         "options": [
           {

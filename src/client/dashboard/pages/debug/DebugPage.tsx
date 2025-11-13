@@ -165,15 +165,14 @@ export const DebugPage = () => {
         <>
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey - DEBUG</h1>
-                <div className="my-4 flex gap-4">
-                    <button
-                        className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer"
-                        onClick={() => ctx.setPageContext({page: 'list'})}
-                    >
-                        <ArrowLeftIcon className="size-6" />
-                        <div>Close</div>
-                    </button>
-                </div>
+                {ctx.userInfo.isMod && (
+                    <div className="my-4 flex gap-4">
+                        <button className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer" onClick={() => ctx.setPageContext({page: 'list'})}>
+                            <ArrowLeftIcon className="size-6" />
+                            <div>Close</div>
+                        </button>
+                    </div>
+                )}
             </div>
             <div className="flex gap-4 my-4">
                 <div className="w-3/4 flex flex-col gap-4">

@@ -14,7 +14,6 @@ import { genQuestion, genQuestionId, genSurvey } from '../../../../shared/redis/
 import { DashboardContext } from '../../DashboardContext';
 import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
-import { debugEnabled } from '../../shared/debugUtils';
 
 export interface SurveyEditorProps {
     survey: SurveyDto | null;
@@ -191,7 +190,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             <div className="my-4">
                 <div className="flex flex-col gap-8">
                     <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
-                        {debugEnabled() && (<div className="text-[0.5rem] absolute bottom-4 left-4">{survey.id}</div>)}
+                        {ctx.userInfo.allowDev && (<div className="text-[0.5rem] absolute bottom-4 left-4">{survey.id}</div>)}
                         <div>
                             <input name="title" placeholder="Survey Title" maxLength={50} value={survey.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full text-2xl border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
                             <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${50-survey.title.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.title.length} / 50</div>
