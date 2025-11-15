@@ -14,7 +14,8 @@ export enum PanelType {
     Question,
     Outro,
     Result,
-    QuestionDescription
+    QuestionDescription,
+    Delete
 }
 
 export type SurveyPanelContext = {

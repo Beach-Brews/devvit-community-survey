@@ -22,7 +22,7 @@ import { context, reddit } from '@devvit/web/server';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
 import { isMod } from '../util/userUtils';
 import { QuestionResponseDto } from '../../shared/redis/ResponseDto';
-import * as dashRedis from '../devvit/redis/dashboard';
+import { debugEnabled } from '../util/debugUtils';
 
 export const registerPostRoutes: PathFactory = (router: Router) => {
     router.route('/api/post/survey')
@@ -74,6 +74,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                     survey: found as SurveyWithQuestionsDto,
                     user: {
                         isMod: userIsMod,
+                        allowDev: await debugEnabled(),
                         username: userInfo?.username ?? 'anonymous',
                         userId: userInfo?.id,
                         snoovar: snoovar
@@ -87,6 +88,46 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 logger.traceEnd();
             }
         });
+
+    router.delete<string, MessageResponse>(
+        '/api/post/survey/response',
+        async (_req, res) => {
+            const logger = await Logger.Create(`Post API - Delete Response`);
+            logger.traceStart('Api Start');
+
+            try {
+                // Error if user is undefined
+                const userId = await errorIfNoUserId(res);
+                if (!userId) return;
+
+                // Error if postData is undefined
+                if (!context.postData) {
+                    logger.error('PostData missing from context.');
+                    return messageResponse(res, 400, 'Missing context', 131);
+                }
+
+                // Get postType and surveyId from postData
+                const { surveyId } = context.postData;
+
+                // Check surveyId
+                if (!surveyId || typeof surveyId !== 'string') {
+                    logger.error(`SurveyID missing from context (or not a string): ${surveyId ?? 'undefined'}`);
+                    return messageResponse(res, 400, 'SurveyID missing from context', 133);
+                }
+
+                // Run delete
+                await postRedis.deleteUserResponse(userId, surveyId);
+
+                messageResponse(res, 200, 'Response deleted');
+
+            } catch(e) {
+                logger.error('Error executing API: ', e);
+                messageResponse(res, 500, 'There was an error processing this request');
+            } finally {
+                logger.traceEnd();
+            }
+        }
+    );
 
     router.post<QuestionIdParam, MessageResponse>(
         '/api/post/survey/:questionId',
@@ -120,7 +161,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                     return messageResponse(res, 400, 'Missing questionID', 132);
                 }
 
-                // Get survey to check if closed. PERF: In hindsight, maybe made sense to make this a hash too....
+                // Get survey to check if closed.
                 const surveyDto = await postRedis.getSurveyById(surveyId, false);
                 if (!surveyDto) {
                     logger.error('No Survey found with ID: ', surveyId);
@@ -169,7 +210,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                     return messageResponse(res, 400, 'SurveyID missing from context', 133);
                 }
 
-                const found = await dashRedis.getQuestionResponseById(surveyId, questionId);
+                const found = await postRedis.getQuestionResponseById(surveyId, questionId);
                 if (!found)
                     return messageResponse(res, 404, `No question found with ID: ${surveyId} - ${questionId}`);
 

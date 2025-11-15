@@ -41,7 +41,6 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                 <select value={q.kind} onChange={onChangeKind} className="border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white px-2 py-1 [&_option]:dark:bg-neutral-900 [&_option]:dark:text-neutral-300">
                     <option value="otf">1 - 5</option>
                     <option value="ott">1 - 10</option>
-                    {/*TODO: Add rating and free-select (slider)*/}
                 </select>
             </div>
             <div className="flex justify-between gap-4 items-center">

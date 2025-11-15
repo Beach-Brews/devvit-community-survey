@@ -12,6 +12,7 @@ import { Schema } from './Schema';
 import { SurveyQuestionDto } from '../../../shared/redis/SurveyDto';
 import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
 import * as dashRedis from './dashboard';
+import { getSurveyById } from './dashboard';
 
 export { getSurveyById, getQuestionResponseById } from './dashboard';
 
@@ -118,6 +119,9 @@ export const upsertQuestionResponse =
                 throw new Error(`No question found with ID: ${surveyId}:${questionId}`);
             }
 
+            // Assert response data array makes sense for question type
+            assertDataValid(data, questionDto);
+
             // Get keys
             const userListKey = RedisKeys.surveyResponseUserList(surveyId);
             const questionResponseKey = RedisKeys.surveyQuestionResponse(surveyId, questionId);
@@ -149,9 +153,6 @@ export const upsertQuestionResponse =
                 await txn.zIncrBy(questionResponseKey, 'total', 1);
             }
 
-            // Assert response data array makes sense for question type
-            assertDataValid(data, questionDto);
-
             // Then update scores for new response
             for (const [i, op] of data.entries()) {
                 const score = await scoreForOp(questionDto, op, i);
@@ -166,6 +167,83 @@ export const upsertQuestionResponse =
         } catch (e) {
 
             logger.error('Failed to upsert: ', e);
+            throw e;
+
+        } finally {
+            logger.traceEnd();
+        }
+    };
+
+export const deleteUserResponse =
+    async (userId: string, surveyId: string): Promise<boolean> => {
+
+        // Create logger
+        const logger = await Logger.Create('Post Redis - Delete Response');
+        logger.traceStart('Start Delete');
+
+        try {
+            logger.debug(userId, surveyId);
+
+            // Confirm survey exists
+            const surveyDto = await getSurveyById(surveyId, true);
+            if (!surveyDto?.questions) {
+                // noinspection ExceptionCaughtLocallyJS
+                throw new Error(`No survey found with ID ${surveyId}`);
+            }
+
+            // Get keys
+            const userListKey = RedisKeys.surveyResponseUserList(surveyId);
+            const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
+
+            // Get the user's response
+            const userResponses = await redis.hGetAll(userResponseKey);
+            const parsedResponses = await Promise.all(
+                Object.entries(userResponses).map(async (r) => {
+                    return [
+                        r[0],
+                        RedisKeys.surveyQuestionResponse(surveyId, r[0]),
+                        await Schema.stringArray.parseAsync(JSON.parse(r[1])) as string[],
+                        surveyDto.questions?.find(q => q.id == r[0])
+                    ] as [string, string, string[], SurveyQuestionDto | undefined];
+                })
+            );
+
+            // Start transaction
+            const txn = await redis.watch(userListKey, userResponseKey);
+
+            // Delete response from each question
+            for (const q of parsedResponses) {
+                // q0 - QuestionId
+                // q1 - Question response redis key
+                // q2 - User responses
+                // q3 - QuestionDto
+
+                if (!q[3]) {
+                    logger.warn(`Failed to find a question with ID ${q[0]} in survey ${surveyId}. User ${userId} response not removed from aggregate.`);
+                    continue;
+                }
+
+                for (const [i, op] of q[2].entries()) {
+                    const score = await scoreForOp(q[3], op, i);
+                    await txn.zIncrBy(q[1], op, -1 * score);
+                }
+                await txn.zIncrBy(q[1], 'total', -1);
+            }
+
+            // Delete user response key
+            await txn.del(userResponseKey);
+
+            // Remove user from survey list
+            await txn.hDel(userListKey, [userId]);
+
+            // Commit
+            await txn.exec();
+
+            return true;
+
+        } catch (e) {
+
+            logger.error('Failed to delete response: ', e);
             throw e;
 
         } finally {

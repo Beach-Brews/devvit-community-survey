@@ -19,6 +19,7 @@ import { ClosedPanel } from './panels/ClosedPanel';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
 import { ResultPanel } from './panels/ResultPanel';
+import { DeletePanel } from './panels/DeletePanel';
 import { QuestionDescriptionPanel } from './panels/QuestionDescriptionPanel';
 
 export const SurveyPost = () => {
@@ -67,7 +68,9 @@ export const SurveyPost = () => {
         if (survey.closeDate && survey.closeDate <= Date.now())
             return panelContext.panel === PanelType.Result
                 ? (<ResultPanel />)
-                : (<ClosedPanel />);
+                : panelContext.panel === PanelType.Delete
+                    ? (<DeletePanel />)
+                    : (<ClosedPanel />);
 
         // Otherwise, load from context
         switch (panelContext.panel) {
@@ -75,6 +78,7 @@ export const SurveyPost = () => {
             case PanelType.Question: return (<QuestionPanel key={`pnl_${panelContext.number}`} />);
             case PanelType.Outro: return (<OutroPanel />);
             case PanelType.Result: return (<ResultPanel />);
+            case PanelType.Delete: return (<DeletePanel />);
             case PanelType.QuestionDescription: return (<QuestionDescriptionPanel />);
             default:
                 console.error(`[Survey Post] - Unknown panel type: ${panelContext.panel}`);

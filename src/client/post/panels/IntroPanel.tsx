@@ -34,6 +34,10 @@ export const IntroPanel = (props: IntroPanelProps) => {
         ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true });
     };
 
+    const onDelete = () => {
+        ctx.setPanelContext({ panel: PanelType.Delete, prev: PanelType.Intro });
+    };
+
     return (
         <div className="flex flex-col gap-4 justify-between items-center h-full">
             <div className="w-full flex justify-between">
@@ -65,6 +69,13 @@ export const IntroPanel = (props: IntroPanelProps) => {
                     </button>
                 </div>
                 <div className="text-neutral-700 dark:text-neutral-300">{ctx.survey.questions.length} total questions</div>
+                {responses > 0 && (
+                    <div className="mt-8 w-full flex justify-center">
+                        <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
+                            Delete Response
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

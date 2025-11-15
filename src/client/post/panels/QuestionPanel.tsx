@@ -14,6 +14,7 @@ import { ScaleQuestion } from './questions/ScaleQuestion';
 import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
 import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
+import { upsertResponse } from '../api/surveyApi';
 
 export const QuestionPanel = () => {
 
@@ -59,7 +60,7 @@ export const QuestionPanel = () => {
         // Only save response if a response was provided
         const lastResponse = ctx.lastResponse ?? {} as UserResponsesDto;
         if (response) {
-            await fetch('/api/post/survey/' + question.id, { method: 'POST', body: JSON.stringify(response) });
+            await upsertResponse(question.id, response);
 
             // TODO: Handle error state
 

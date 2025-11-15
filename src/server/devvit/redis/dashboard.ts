@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { reddit, redis, scheduler } from '@devvit/web/server';
+import { context, reddit, redis, scheduler } from '@devvit/web/server';
 import { Schema } from './Schema';
 import {
     SurveyDto,
@@ -116,7 +116,6 @@ export const getSurveyById =
             dataKeys.push(RedisKeys.surveyQuestions(surveyId));
 
         // Fetch both the survey config and question list (if asked)
-        // TODO: Refactor BEFORE RELEASE to use hGetAll?
         const surveyData = await redis.mGet(dataKeys);
 
         // If first key missing, return null (not found)
@@ -180,7 +179,6 @@ export const upsertSurvey =
             await txn.multi();
 
             // Upsert config + questions (if defined)
-            // TODO: Should I move to an hSet, so closeDate or others can be easily accessed? await txn.hSet(configKey, config);
             await txn.set(configKey, JSON.stringify(config));
 
             if (questions)
@@ -279,8 +277,10 @@ export const deleteSurveyById =
         const posts = await redis.hGetAll(postListKey);
         for (const postId of Object.keys(posts)) {
             const post = await reddit.getPostById(postId as `t3_{string}`);
-            if (post)
-                await post.remove();
+            if (post) {
+                await post.remove(false);
+                await post.addRemovalNote({ reasonId: '', modNote: `Survey Deleted by ${context.username}` });
+            }
         }
 
         // Finally, schedule job

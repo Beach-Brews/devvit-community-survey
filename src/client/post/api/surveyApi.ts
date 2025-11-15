@@ -14,6 +14,16 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
     return resp.ok ? (await resp.json() as ApiResponse<InitializeSurveyResponse>)?.result ?? null : null;
 };
 
+export const deleteResponses = async (): Promise<boolean> => {
+    const resp = await fetch(`/api/post/survey/response`, { method: 'delete' });
+    return resp.ok;
+}
+
+export const upsertResponse = async (questionId: string, response: string[]): Promise<boolean> => {
+    const resp = await fetch('/api/post/survey/' + questionId, { method: 'post', body: JSON.stringify(response) });
+    return resp.ok;
+};
+
 export const getResultsForQuestion = async (questionId: string): Promise<QuestionResponseDto | null> => {
     const resp = await fetch(`/api/post/survey/results/${questionId}`);
     return resp.ok ? (await resp.json() as ApiResponse<QuestionResponseDto>)?.result ?? null : null;

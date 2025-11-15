@@ -1,6 +1,16 @@
 # Community Survey
 
-A way to provide more advanced polls and surveys directly in Reddit without having to use an external survey provider (such as Google Forms or Survey Monkey).
+Introducing the Community Survey app for Reddit! A way to provide more advanced polls and surveys directly in Reddit without having to use an external survey provider (such as Google Forms or Survey Monkey).
+
+Moderators are able to create surveys, schedule publish and close dates, and view results. Published surveys appear directly the user's feed, allowing them to respond and view results without having to leave Reddit.
+
+## Ongoing Development
+
+Community Survey is still undergoing development and is currently in an Alpha phase. Please note there are likely glitches. There are also a large number of features planned for future releases. Please visit r/CommunitySurvey to report any bugs or make feature requests.
+
+## Terms of Use + Privacy Policy
+
+
 
 ## Getting Started
 
