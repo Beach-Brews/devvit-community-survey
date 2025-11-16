@@ -7,6 +7,7 @@
 
 import { createContext, Dispatch, ReactElement, SetStateAction } from 'react';
 import { UserInfoDto } from '../../shared/types/postApi';
+import { AddToast } from '../shared/toast/toastTypes';
 
 export type DashboardListPageContext = {
     page: 'list' | 'debug';
@@ -26,6 +27,7 @@ export interface DashboardContextProps {
     modal: DashboardModalContent;
     setModal: Dispatch<SetStateAction<DashboardModalContent>>;
     userInfo: UserInfoDto;
+    addToast: AddToast;
 }
 
 export const DashboardContext = createContext<DashboardContextProps | undefined>(undefined);

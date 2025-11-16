@@ -8,6 +8,7 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
+import { AddToast } from '../shared/toast/toastTypes';
 
 export enum PanelType {
     Intro,
@@ -31,6 +32,7 @@ export interface SurveyContextProps {
     survey: SurveyWithQuestionsDto;
     lastResponse: UserResponsesDto | undefined;
     setLastResponse: Dispatch<SetStateAction<UserResponsesDto | undefined>>;
+    addToast: AddToast;
 }
 
 export const SurveyContext = createContext<SurveyContextProps | undefined>(undefined);

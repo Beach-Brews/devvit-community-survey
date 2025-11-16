@@ -21,6 +21,8 @@ import { InitializeSurveyResponse } from '../../shared/types/postApi';
 import { ResultPanel } from './panels/ResultPanel';
 import { DeletePanel } from './panels/DeletePanel';
 import { QuestionDescriptionPanel } from './panels/QuestionDescriptionPanel';
+import { useToaster } from '../shared/toast/useToaster';
+import { PostToaster } from './PostToaster';
 
 export const SurveyPost = () => {
 
@@ -28,6 +30,7 @@ export const SurveyPost = () => {
     const [panelContext, setPanelContext] = useState<SurveyPanelContext>({panel: PanelType.Intro});
     const [postInit, setPostInit] = useState<InitializeSurveyResponse | null | undefined>(undefined);
     const [lastResponse, setLastResponse] = useState<UserResponsesDto | undefined>(undefined);
+    const [toasts, addToast, removeToast] = useToaster();
     const survey = postInit?.survey;
     const user = postInit?.user;
 
@@ -51,7 +54,7 @@ export const SurveyPost = () => {
 
     // Ensure context is only defined if the survey is defined
     const context: SurveyContextProps | undefined = survey
-        ? { panelContext, setPanelContext, survey, lastResponse, setLastResponse }
+        ? { panelContext, setPanelContext, survey, lastResponse, setLastResponse, addToast }
         : undefined;
 
     // Determine the panel to render
@@ -113,6 +116,7 @@ export const SurveyPost = () => {
                         <div className="text-[0.7rem] text-neutral-600 dark:text-neutral-400" >{Constants.SURVEY_VERSION_DISPLAY}</div>
                     </div>
                 </footer>
+                <PostToaster key="toaster" toasts={toasts} removeToast={removeToast} />
             </div>
         </SurveyContext>
     );

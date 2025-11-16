@@ -22,6 +22,7 @@ export const genSurveyId = () => `sv_${genUid()}`;
 export const genQuestionId = () => `sq_${genUid()}`;
 export const genOptionId = () => `sqo_${genUid()}`;
 export const genResponseId = () => `sqo_${genUid()}`;
+export const genToastId = () => `tst_${genUid()}`;
 
 export function assertId(
     idVal: string | null | undefined,

@@ -15,6 +15,8 @@ import { Constants } from '../../shared/constants';
 import { BugAntIcon } from '@heroicons/react/24/solid';
 import { DebugPage } from './pages/debug/DebugPage';
 import { UserInfoDto } from '../../shared/types/postApi';
+import { DashboardToaster } from './shared/components/DashboardToaster';
+import { useToaster } from '../shared/toast/useToaster';
 
 interface SurveyDashboardProps {
     userInfo: UserInfoDto;
@@ -23,13 +25,15 @@ interface SurveyDashboardProps {
 export const SurveyDashboard = (props: SurveyDashboardProps) => {
     const [pageContext, setPageContext] = useState<DashboardPageContext>({page: 'list'});
     const [modal, setModal] = useState<DashboardModalContent>(undefined);
+    const [toasts, addToast, removeToast] = useToaster();
 
     const dashContext = {
         pageContext,
         setPageContext,
         modal,
         setModal,
-        userInfo: props.userInfo
+        userInfo: props.userInfo,
+        addToast
     };
 
     const debugButton = () => {
@@ -70,6 +74,7 @@ export const SurveyDashboard = (props: SurveyDashboardProps) => {
                     </footer>
                 </div>
                 {modal}
+                <DashboardToaster toasts={toasts} removeToast={removeToast} />
             </div>
         </DashboardContext.Provider>
     );

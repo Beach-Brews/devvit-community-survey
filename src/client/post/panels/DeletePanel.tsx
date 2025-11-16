@@ -8,6 +8,7 @@
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { deleteResponses } from '../api/surveyApi';
+import { ToastType } from '../../shared/toast/toastTypes';
 
 export const DeletePanel = () => {
 
@@ -21,10 +22,15 @@ export const DeletePanel = () => {
     };
 
     const onDelete = async () => {
-        const result = await deleteResponses();
-        // TODO: Handle toaster on fail
-        if (result)
+        try {
+            await deleteResponses();
             returnToSurvey();
+        } catch(e) {
+            ctx.addToast({
+                message: 'Failed to delete responses',
+                type: ToastType.Error
+            });
+        }
     };
 
     return (

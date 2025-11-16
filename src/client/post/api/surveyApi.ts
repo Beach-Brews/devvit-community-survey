@@ -16,7 +16,9 @@ export const initializeSurvey = async (): Promise<InitializeSurveyResponse | nul
 
 export const deleteResponses = async (): Promise<boolean> => {
     const resp = await fetch(`/api/post/survey/response`, { method: 'delete' });
-    return resp.ok;
+    if (!resp.ok)
+        throw new Error('Error deleting responses. Try again later.')
+    return true;
 }
 
 export const upsertResponse = async (questionId: string, response: string[]): Promise<boolean> => {

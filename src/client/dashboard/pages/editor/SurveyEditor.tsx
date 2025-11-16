@@ -14,6 +14,7 @@ import { genQuestion, genQuestionId, genSurvey } from '../../../../shared/redis/
 import { DashboardContext } from '../../DashboardContext';
 import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
+import { ToastType } from '../../../shared/toast/toastTypes';
 
 export interface SurveyEditorProps {
     survey: SurveyDto | null;
@@ -28,14 +29,22 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
 
     if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
 
+    const { setPageContext, addToast } = ctx;
     const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
         // TODO: Show survey is saving + successfully saved
-        // TODO: Handle save failed
-        await surveyDashboardApi.saveSurvey(s);
-        if (close)
-            ctx.setPageContext({page: 'list'});
-        return true;
-    }, [ctx]);
+        try {
+            await surveyDashboardApi.saveSurvey(s);
+            if (close)
+                setPageContext({page: 'list'});
+            return true;
+        } catch(e) {
+            addToast({
+                message: 'Save failed',
+                type: ToastType.Error
+            });
+            return false;
+        }
+    }, [setPageContext, addToast]);
 
     const skipAutoSave = useRef(true);
     useEffect(() => {

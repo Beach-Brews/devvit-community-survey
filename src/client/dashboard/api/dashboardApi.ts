@@ -55,7 +55,9 @@ export const closeSurveyById = async (id: string): Promise<boolean> => {
 
 export const saveSurvey = async (survey: SurveyDto): Promise<boolean> => {
     const resp = await fetch(`/api/dash/survey/${survey.id}`, { method: "post", body: JSON.stringify(survey)});
-    return resp.ok;
+    if (!resp.ok)
+        throw new Error('Save Survey Failed');
+    return true;
 };
 
 export const getSurveyResultSummary =
