@@ -11,6 +11,7 @@ import { useCallback, useContext, useState } from 'react';
 import { StopCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { closeSurveyById, deleteSurveyById } from '../../api/dashboardApi';
 import { DashboardContext } from '../../DashboardContext';
+import { ToastType } from '../../../shared/toast/toastTypes';
 
 export interface SurveyDeleteConfirmModalProps {
     survey: SurveyDto;
@@ -26,7 +27,7 @@ export const SurveyDeleteConfirmModal = (props: SurveyDeleteConfirmModalProps) =
     const ctx = useContext(DashboardContext);
     if (!ctx) throw Error('Context undefined.');
 
-    const setModal = ctx.setModal;
+    const { setModal, addToast } = ctx;
 
     const surveyId = props.survey.id;
     const isClose = props.action === 'close';
@@ -44,6 +45,10 @@ export const SurveyDeleteConfirmModal = (props: SurveyDeleteConfirmModalProps) =
             setState({ processing: false, error: !deleted });
             if (deleted) {
                 setModal(undefined);
+                addToast({
+                    message: `Survey ${isClose ? 'closed' : 'deleted'}`,
+                    type: ToastType.Alert
+                });
                 void updateSurveyList();
             }
             return deleted;
@@ -51,7 +56,7 @@ export const SurveyDeleteConfirmModal = (props: SurveyDeleteConfirmModalProps) =
             setState({ processing: false, error: true });
         }
         return false;
-    }, [surveyId, isClose, setModal, updateSurveyList]);
+    }, [surveyId, isClose, setModal, addToast, updateSurveyList]);
 
     const title = isClose
         ? (<div className="flex items-center gap-2"><StopCircleIcon className="size-6" /> Confirm Close Survey</div>)

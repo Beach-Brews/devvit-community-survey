@@ -329,7 +329,7 @@ export const getQuestionById =
     };
 
 export const getQuestionResponseById =
-    async (surveyId: string, questionId: string): Promise<QuestionResponseDto | null> => {
+    async (surveyId: string, questionId: string): Promise<QuestionResponseDto> => {
         // Create logger
         const logger = await Logger.Create('Dash Redis - Get Question Response');
         logger.traceStart('Start Response Fetch');

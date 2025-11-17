@@ -23,7 +23,7 @@ export const ErrorPanel = () => {
         <div className="flex flex-col gap-4 justify-center items-center h-full">
             <img className="w-1/2" src="snoo-facepalm.png" alt="Snoo Error" />
             <div className="text-xl text-center">Sorry, there was an error loading the survey. Please try again later.</div>
-            {ctx?.panelContext?.prev && (
+            {ctx?.panelContext?.prev !== undefined && (
                 <div>
                     <button onClick={gotoPrev} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
                         <ArrowUturnLeftIcon className="size-5" />

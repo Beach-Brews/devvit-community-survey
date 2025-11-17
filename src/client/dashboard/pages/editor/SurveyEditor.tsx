@@ -16,6 +16,14 @@ import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 import { ToastType } from '../../../shared/toast/toastTypes';
 
+enum SaveIndicatorState {
+    Waiting,
+    Pending,
+    Saving,
+    Success,
+    Failed
+}
+
 export interface SurveyEditorProps {
     survey: SurveyDto | null;
 }
@@ -26,18 +34,36 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     if (!ctx) throw Error('Context undefined.');
 
     const [survey, setSurvey] = useState<SurveyDto>(props.survey ?? genSurvey());
+    const [saveIndicator, setSaveIndicator] = useState<SaveIndicatorState>(SaveIndicatorState.Waiting);
+
+    useEffect(() => {
+        if (saveIndicator != SaveIndicatorState.Success) return;
+        const timeoutId = setTimeout(() => setSaveIndicator(SaveIndicatorState.Waiting), 2000);
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [saveIndicator]);
 
     if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
 
     const { setPageContext, addToast } = ctx;
     const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
-        // TODO: Show survey is saving + successfully saved
         try {
+            setSaveIndicator(SaveIndicatorState.Saving);
             await surveyDashboardApi.saveSurvey(s);
-            if (close)
-                setPageContext({page: 'list'});
+            setSaveIndicator(SaveIndicatorState.Success);
+            if (close) {
+                addToast({
+                    message: 'Survey saved',
+                    type: ToastType.Success
+                });
+                setPageContext({ page: 'list' });
+                return true;
+            }
+
             return true;
         } catch(e) {
+            setSaveIndicator(SaveIndicatorState.Failed);
             addToast({
                 message: 'Save failed',
                 type: ToastType.Error
@@ -54,6 +80,10 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             return;
         }
 
+        // Set pending changes state
+        if (saveIndicator != SaveIndicatorState.Success)
+            setSaveIndicator(SaveIndicatorState.Pending);
+
         // Set a timeout for triggering an auto-save
         const timeout = setTimeout(async () => {
             await saveSurvey(survey, false);
@@ -63,6 +93,9 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         return () => {
             clearTimeout(timeout);
         }
+
+        // Don't call hook when saveIndicator changes. Just need it to only flag pending if waiting.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [survey, saveSurvey]);
 
     const modifySurveyQuestion = useCallback((question: SurveyQuestionDto, action?: 'up' | 'down' | 'delete') => {
@@ -188,7 +221,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                         <div>Publish</div>
                     </button>
                     <button
-                        className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer"
+                        className={`border-2 ${saveIndicator == SaveIndicatorState.Saving ? 'animate-pulse duration-200' : ''} bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer`}
                         onClick={() => saveSurvey(survey, true)}
                     >
                         <DocumentCheckIcon className="size-6" />
@@ -224,6 +257,19 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             <div className={`text-xs p-1 text-right bg-neutral-50 dark:bg-neutral-900 ${512-survey.outro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.outro.length} / 512</div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="fixed bottom-0 left-0">
+                <div className={`p-1 text-[0.6rem] rounded-md ${saveIndicator == SaveIndicatorState.Failed ? 'bg-red-50 dark:bg-red-950' : 'bg-neutral-100 dark:bg-neutral-900'}`}>
+                    {(() => {
+                        switch (saveIndicator) {
+                            case SaveIndicatorState.Success:return 'Saved!'
+                            case SaveIndicatorState.Failed: return 'Save fail. Unsaved changes.';
+                            case SaveIndicatorState.Saving: return 'Saving...';
+                            case SaveIndicatorState.Pending: return 'Pending...';
+                            default: return 'No changes';
+                        }
+                    })()}
                 </div>
             </div>
         </>

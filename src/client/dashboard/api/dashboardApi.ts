@@ -45,12 +45,16 @@ export const getSurveyById = async (id: string): Promise<SurveyWithQuestionsDto 
 
 export const deleteSurveyById = async (id: string): Promise<boolean> => {
     const resp = await fetch(`/api/dash/survey/${id}`, { method: "delete" });
-    return resp.ok;
+    if (!resp.ok)
+        throw new Error('Save Survey Failed');
+    return true;
 };
 
 export const closeSurveyById = async (id: string): Promise<boolean> => {
     const resp = await fetch(`/api/dash/survey/${id}/close`, { method: "post" });
-    return resp.ok;
+    if (!resp.ok)
+        throw new Error('Save Survey Failed');
+    return true;
 };
 
 export const saveSurvey = async (survey: SurveyDto): Promise<boolean> => {

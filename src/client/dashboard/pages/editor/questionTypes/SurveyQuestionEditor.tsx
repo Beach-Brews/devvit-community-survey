@@ -120,7 +120,7 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
 
     return (
         <div className="relative flex p-4 pr-0 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
-            {ctx.userInfo.allowDev && (<div className="text-[0.5rem] absolute bottom-4 right-4">{q.id}</div>)}
+            {ctx.userInfo.allowDev && (<div className="text-[0.5rem] absolute bottom-2 right-2">{q.id}</div>)}
             <div className="w-full text-sm flex flex-col gap-4">
                 <div>
                     <input name="title" placeholder="Question Title" maxLength={50} value={q.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />

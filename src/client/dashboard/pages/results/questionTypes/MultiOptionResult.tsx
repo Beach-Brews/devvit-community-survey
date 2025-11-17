@@ -32,7 +32,7 @@ export const MultiOptionResult = (props: DashResultProps) => {
                     const score = props.response.responses[o.value] ?? 0;
                     const percentage = total > 0 ? Math.floor(score/percentTotal*100) : 0;
                     const row = [
-                        (<div key={o.value + '_label'} className="max-w-[150px] text-right">{o.label}</div>)
+                        (<div key={o.value + '_label'} className="max-w-[300px] text-right">{o.label}</div>)
                     ];
                     if (total == 0 && i == 0) {
                         row.push(

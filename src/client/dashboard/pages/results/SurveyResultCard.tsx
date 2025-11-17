@@ -15,27 +15,20 @@ export interface SurveyResultCardProps {
     response: QuestionResponseDto | undefined;
 }
 
-const MissingResults = () => {
-    // TODO - Style - LOW: make this look pretty?
-    return (
-        <div>
-            No responses found.
-        </div>
-    );
-};
-
 export const SurveyResultCard = (props: SurveyResultCardProps) => {
 
     const resultValues = () => {
-        if (props.response === undefined)
-            return <MissingResults />;
+        const response = props.response ?? {
+            total: 0,
+            responses: {}
+        } as QuestionResponseDto;
         switch (props.question.type) {
             case "multi":
             case "checkbox":
             case "rank":
-                return <MultiOptionResult question={props.question} response={props.response} />;
+                return <MultiOptionResult question={props.question} response={response} />;
             case "scale":
-                return <ScaleResult question={props.question} response={props.response} />;
+                return <ScaleResult question={props.question} response={response} />;
             default:
                 return (<div>Results for {props.question.type} not yet supported.</div>);
         }

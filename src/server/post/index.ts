@@ -211,9 +211,6 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 }
 
                 const found = await postRedis.getQuestionResponseById(surveyId, questionId);
-                if (!found)
-                    return messageResponse(res, 404, `No question found with ID: ${surveyId} - ${questionId}`);
-
                 successResponse(res, found);
 
             } catch(e) {

@@ -66,14 +66,15 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
             <div className={`px-1 text-2xl text-neutral-900 dark:text-neutral-100${isDeleted ? ' opacity-30 line-through' : ''}`}>{survey.title}</div>
             <div className="flex justify-between items-center min-h-6">
                 {(!isDeleted && isPublished
-                    ? <div className="flex gap-2 items-center cursor-pointer rounded-lg px-1 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurveyResults}><PresentationChartBarIcon className="size-5" /><span>{survey.responseCount?.toLocaleString()}</span></div>
-                    : <div></div>
+                    ? <div className="w-1/3 flex gap-2 items-center cursor-pointer rounded-lg px-1 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurveyResults}><PresentationChartBarIcon className="size-5" /><span>{survey.responseCount?.toLocaleString()}</span></div>
+                    : <div className="w-1/3"></div>
                 )}
-                {ctx.userInfo.allowDev && (<div className="flex items-center px-1">{survey.id}</div>)}
-                {!isDeleted && !isScheduled && !isPublished && (<div className="flex items-center px-1">Not Scheduled</div>)}
-                {!isDeleted && isScheduled && !isPublished && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowUpIcon className="size-5" /></div> {formatDateTime(survey.publishDate)}</div>)}
-                {!isDeleted && isPublished && survey.closeDate && (<div className="flex items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowDownIcon className="size-5" /></div> {formatDateTime(survey.closeDate)}</div>)}
-                {!isDeleted && isPublished && !survey.closeDate && (<div className="flex items-center px-1">No Close Date</div>)}
+                {ctx.userInfo.allowDev && (<div className="w-1/3 text-center px-1 text-[0.7rem] text-neutral-600 dark:text-neutral-400">{survey.id}</div>)}
+                {!isDeleted && !isScheduled && !isPublished && (<div className="w-1/3 flex justify-end items-center px-1">Not Scheduled</div>)}
+                {!isDeleted && isScheduled && !isPublished && (<div className="w-1/3 flex justify-end items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowUpIcon className="size-5" /></div> {formatDateTime(survey.publishDate)}</div>)}
+                {!isDeleted && isPublished && survey.closeDate && (<div className="w-1/3 flex justify-end items-center px-1"><div className="p-0.5 rounded-lg"><DocumentArrowDownIcon className="size-5" /></div> {formatDateTime(survey.closeDate)}</div>)}
+                {!isDeleted && isPublished && !survey.closeDate && (<div className="w-1/3 flex justify-end items-center px-1">No Close Date</div>)}
+                {isDeleted && (<div className="w-1/3 flex justify-end items-center px-1"></div>)}
             </div>
         </div>
     );

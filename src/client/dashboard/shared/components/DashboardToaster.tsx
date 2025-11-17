@@ -60,7 +60,7 @@ export interface DashboardToasterProps {
 
 export const DashboardToaster = (props: DashboardToasterProps)=> {
     return (
-        <div key="toast-container" className="w-1/3 fixed bottom-4 right-6 flex flex-col justify-center items-center gap-2">
+        <div key="toast-container" className="w-1/2 md:w-1/3 fixed bottom-4 right-6 flex flex-col justify-center items-center gap-2">
             {props.toasts.map(t => <DashboardToastCard key={t.id} toast={t} removeToast={props.removeToast} />)}
         </div>
     )

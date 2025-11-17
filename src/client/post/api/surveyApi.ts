@@ -23,7 +23,9 @@ export const deleteResponses = async (): Promise<boolean> => {
 
 export const upsertResponse = async (questionId: string, response: string[]): Promise<boolean> => {
     const resp = await fetch('/api/post/survey/' + questionId, { method: 'post', body: JSON.stringify(response) });
-    return resp.ok;
+    if (!resp.ok)
+        throw new Error('Save Survey Failed');
+    return true;
 };
 
 export const getResultsForQuestion = async (questionId: string): Promise<QuestionResponseDto | null> => {

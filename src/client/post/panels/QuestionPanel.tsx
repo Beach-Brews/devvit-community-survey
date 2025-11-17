@@ -15,6 +15,7 @@ import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
 import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
 import { upsertResponse } from '../api/surveyApi';
+import { ToastType } from '../../shared/toast/toastTypes';
 
 export const QuestionPanel = () => {
 
@@ -55,21 +56,26 @@ export const QuestionPanel = () => {
 
     // Move to next panel if not saving and response is valid
     const onNext = async () => {
-        if (!validResponse) return;
+        try {
+            if (!validResponse) return;
 
-        // Only save response if a response was provided
-        const lastResponse = ctx.lastResponse ?? {} as UserResponsesDto;
-        if (response) {
-            await upsertResponse(question.id, response);
+            // Only save response if a response was provided
+            const lastResponse = ctx.lastResponse ?? {} as UserResponsesDto;
+            if (response) {
+                await upsertResponse(question.id, response);
 
-            // TODO: Handle error state
+                // Update context response
+                lastResponse[question.id] = response;
+                ctx.setLastResponse(lastResponse);
+            }
 
-            // Update context response
-            lastResponse[question.id] = response;
-            ctx.setLastResponse(lastResponse);
+            ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
+        } catch (e) {
+            ctx.addToast({
+                message: 'Error saving response.',
+                type: ToastType.Error
+            });
         }
-
-        ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
     };
 
     const onPrevious = () => {
