@@ -338,10 +338,10 @@ export const getQuestionResponseById =
             logger.debug(surveyId, questionId);
 
             // Fetch results for question
-            const questionResponseKey = RedisKeys.surveyQuestionResponse(surveyId, questionId);
-            const responses = await redis.zCard(questionResponseKey);
+            const questionResultsKey = RedisKeys.surveyQuestionResults(surveyId, questionId);
+            const responses = await redis.zCard(questionResultsKey);
             const ranks = responses > 0
-                ? await redis.zRange(questionResponseKey, 0, responses)
+                ? await redis.zRange(questionResultsKey, 0, responses)
                 : [];
             logger.debug(responses, ranks);
 

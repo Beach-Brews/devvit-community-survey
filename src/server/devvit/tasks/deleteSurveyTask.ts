@@ -93,11 +93,11 @@ const deleteQuestionResponses = async (ctx: DeleteTaskContext) => {
     if (!ctx.survey.questions) return;
 
     const surveyId = ctx.survey.id;
-    const questionIds = ctx.survey.questions.map(q => RedisKeys.surveyQuestionResponse(surveyId, q.id));
-    ctx.logger.info(`Starting to delete ${questionIds.length} question responses. Current runtime: ${ctx.runtime}s`);
+    const questionResultKeys = ctx.survey.questions.map(q => RedisKeys.surveyQuestionResults(surveyId, q.id));
+    ctx.logger.info(`Starting to delete ${questionResultKeys.length} question responses. Current runtime: ${ctx.runtime}s`);
 
     // TODO: This might be slow if there are a lot of questions. Limit is 25 right now, so should hopefully be safe?
-    await redis.del(...questionIds);
+    await redis.del(...questionResultKeys);
 
     ctx.logger.info(`Completed deleting question responses. Current runtime: ${ctx.runtime}s`);
 };

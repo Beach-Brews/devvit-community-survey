@@ -33,7 +33,7 @@ export const RedisKeys = {
         assertSurveyId(surveyId);
         return `sv:${surveyId}:usr`;
     },
-    surveyQuestionResponse: (surveyId: string, questionId: string) => {
+    surveyQuestionResults: (surveyId: string, questionId: string) => {
         assertSurveyId(surveyId);
         assertQuestionId(questionId);
         return `sv:${surveyId}:qn:${questionId}`;

@@ -98,7 +98,7 @@ export const upsertQuestionResponse =
             // Get keys
             const responderListKey = RedisKeys.responderList();
             const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
-            const questionResponseKey = RedisKeys.surveyQuestionResponse(surveyId, questionId);
+            const questionResultsKey = RedisKeys.surveyQuestionResults(surveyId, questionId);
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
             // Determine if the user has responded yet (response key exists)
@@ -107,7 +107,7 @@ export const upsertQuestionResponse =
             logger.debug(existingResponse ? 'Inserting new response' : 'Updating existing response');
 
             // Start transaction
-            const txn = await redis.watch(responderListKey, surveyResponderList, questionResponseKey, userResponseKey);
+            const txn = await redis.watch(responderListKey, surveyResponderList, questionResultsKey, userResponseKey);
 
             // Add user to survey list
             if (!existingResponse)
@@ -121,18 +121,18 @@ export const upsertQuestionResponse =
                 const existingArr = await Schema.stringArray.parseAsync(JSON.parse(existingResponse)) as string[];
                 for (const [i, op] of existingArr.entries()) {
                     const score = await scoreForOp(questionDto, op, i);
-                    await txn.zIncrBy(questionResponseKey, op, -1 * score);
+                    await txn.zIncrBy(questionResultsKey, op, -1 * score);
                 }
 
             } else {
                 // Otherwise, increase the response count
-                await txn.zIncrBy(questionResponseKey, 'total', 1);
+                await txn.zIncrBy(questionResultsKey, 'total', 1);
             }
 
             // Then update scores for new response
             for (const [i, op] of data.entries()) {
                 const score = await scoreForOp(questionDto, op, i);
-                await txn.zIncrBy(questionResponseKey, op, score);
+                await txn.zIncrBy(questionResultsKey, op, score);
             }
 
             // Commit
@@ -180,7 +180,7 @@ export const deleteUserResponse =
                 Object.entries(userResponses).map(async (r) => {
                     return [
                         r[0],
-                        RedisKeys.surveyQuestionResponse(surveyId, r[0]),
+                        RedisKeys.surveyQuestionResults(surveyId, r[0]),
                         await Schema.stringArray.parseAsync(JSON.parse(r[1])) as string[],
                         surveyDto.questions?.find(q => q.id == r[0])
                     ] as [string, string, string[], SurveyQuestionDto | undefined];
@@ -193,7 +193,7 @@ export const deleteUserResponse =
             // Delete response from each question
             for (const q of parsedResponses) {
                 // q0 - QuestionId
-                // q1 - Question response redis key
+                // q1 - Question results redis key
                 // q2 - User responses
                 // q3 - QuestionDto
 
