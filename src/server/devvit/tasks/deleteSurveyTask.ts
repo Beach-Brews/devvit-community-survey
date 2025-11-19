@@ -50,8 +50,8 @@ class DeleteTaskContext {
 const deleteUserResponses = async (ctx: DeleteTaskContext) => {
 
     // Check if there are records to process
-    const surveyResponseKey = RedisKeys.surveyResponseUserList(ctx.survey.id);
-    const total = await redis.hLen(surveyResponseKey);
+    const surveyResponseKey = RedisKeys.surveyResponderList(ctx.survey.id);
+    const total = await redis.zCard(surveyResponseKey);
     if (total <= 0) {
         ctx.logger.info('No responses found for deletion.');
         return;
@@ -62,20 +62,20 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
     let cursor = 0;
     do {
         // Process deletes in batches (so time can be checked)
-        const scan = await redis.hScan(surveyResponseKey, cursor, undefined, 500);
+        const scan = await redis.zScan(surveyResponseKey, cursor, undefined, 500);
         cursor = scan.cursor;
-        ctx.logger.info(`Deleting batch of ${scan.fieldValues.length} responses. Current runtime: ${ctx.runtime}s`);
+        ctx.logger.info(`Deleting batch of ${scan.members.length} responses. Current runtime: ${ctx.runtime}s`);
 
         // For each user in batch, delete their response.
         const userIds: string[] = [];
-        for (const v of scan.fieldValues) {
-            const userResponseKey = RedisKeys.userSurveyResponse(v.field, ctx.survey.id);
+        for (const v of scan.members) {
+            const userResponseKey = RedisKeys.userSurveyResponse(v.member, ctx.survey.id);
             await redis.del(userResponseKey);
-            userIds.push(v.field);
+            userIds.push(v.member);
         }
 
         // Delete batch of users from hash
-        await redis.hDel(surveyResponseKey, userIds);
+        await redis.zRem(surveyResponseKey, userIds);
 
         // Check runtime for potential time limit
         ctx.checkTime();
@@ -150,9 +150,15 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
             logger.info('Removed survey configs');
 
             // Delete survey from user survey list
-            const userListKey = RedisKeys.userSurveyList(surveyDto.owner);
-            await redis.hDel(userListKey, [surveyId]);
+            const authorSurveyListKey = RedisKeys.authorSurveyList(surveyDto.owner);
+            await redis.hDel(authorSurveyListKey, [surveyId]);
             logger.info('Removed from user survey list');
+
+            // Decrease author list (or remove from list if no surveys left)
+            const authorListKey = RedisKeys.authorList();
+            const authorSurveyCount = (await redis.zIncrBy(authorListKey, surveyDto.owner, -1));
+            if (authorSurveyCount <= 0)
+                await redis.zRem(authorListKey, [surveyDto.owner]);
 
             // Finally, delete from delete queue
             const delKey = RedisKeys.surveyDeleteQueue();

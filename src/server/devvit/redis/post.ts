@@ -16,33 +16,6 @@ import { getSurveyById } from './dashboard';
 
 export { getSurveyById, getQuestionResponseById } from './dashboard';
 
-const addUserToSurveyList =
-    async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
-        // Create logger
-        const logger = await Logger.Create('Post Redis - Add User to Survey List');
-        logger.traceStart('Start User List Add');
-
-        try {
-            // TODO: Should I add a 5-second lock?
-
-            // Write configId to user hash
-            const userListKey = RedisKeys.surveyResponseUserList(surveyId);
-            if (txn) {
-                // @ts-expect-error Ignore txn type
-                await txn.hSet(userListKey, { [userId]: '1' });
-            } else {
-                await redis.hSet(userListKey, { [userId]: '1' });
-            }
-
-        } catch(e) {
-
-            logger.error('Error adding user to survey list: ', e);
-
-        } finally {
-            logger.traceEnd();
-        }
-    };
-
 const assertDataValid = (data: string[], question: SurveyQuestionDto): void => {
     // Error if a value is required, but one not given (or skip if no values and not required.
     if (data.length == 0 || !data[0]) {
@@ -123,19 +96,22 @@ export const upsertQuestionResponse =
             assertDataValid(data, questionDto);
 
             // Get keys
-            const userListKey = RedisKeys.surveyResponseUserList(surveyId);
+            const responderListKey = RedisKeys.responderList();
+            const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
             const questionResponseKey = RedisKeys.surveyQuestionResponse(surveyId, questionId);
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
             // Determine if the user has responded yet (response key exists)
+            // TODO: Add multi response support
             const existingResponse = await redis.hGet(userResponseKey, questionId);
             logger.debug(existingResponse ? 'Inserting new response' : 'Updating existing response');
 
             // Start transaction
-            const txn = await redis.watch(userListKey, questionResponseKey, userResponseKey);
+            const txn = await redis.watch(responderListKey, surveyResponderList, questionResponseKey, userResponseKey);
 
             // Add user to survey list
-            await addUserToSurveyList(userId, surveyId, txn);
+            if (!existingResponse)
+                await txn.zIncrBy(responderListKey, userId, 1);
 
             // Save user response
             await txn.hSet(userResponseKey, { [questionId]: JSON.stringify(data) });
@@ -192,10 +168,13 @@ export const deleteUserResponse =
             }
 
             // Get keys
-            const userListKey = RedisKeys.surveyResponseUserList(surveyId);
+            const responderListKey = RedisKeys.responderList();
+            const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
-            // Get the user's response
+            // Get the user's responses
+            const userAllResponseCount = await redis.zScore(responderListKey, userId) ?? 0;
+            const thisSurveyResponseCount = 1; // (TODO: support for multiple responses (requires huge change))
             const userResponses = await redis.hGetAll(userResponseKey);
             const parsedResponses = await Promise.all(
                 Object.entries(userResponses).map(async (r) => {
@@ -209,7 +188,7 @@ export const deleteUserResponse =
             );
 
             // Start transaction
-            const txn = await redis.watch(userListKey, userResponseKey);
+            const txn = await redis.watch(surveyResponderList, userResponseKey);
 
             // Delete response from each question
             for (const q of parsedResponses) {
@@ -234,7 +213,13 @@ export const deleteUserResponse =
             await txn.del(userResponseKey);
 
             // Remove user from survey list
-            await txn.hDel(userListKey, [userId]);
+            await txn.zRem(surveyResponderList, [userId]);
+
+            // Decrease user response count, or remove from list altogether
+            if (userAllResponseCount <= thisSurveyResponseCount)
+                await txn.zRem(responderListKey, [userId]);
+            else
+                await txn.zIncrBy(responderListKey, userId, -1 * thisSurveyResponseCount);
 
             // Commit
             await txn.exec();

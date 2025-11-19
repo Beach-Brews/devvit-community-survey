@@ -8,8 +8,8 @@
 import { assertSurveyId, assertUserId, assertQuestionId } from '../../../shared/redis/uuidGenerator';
 
 export const RedisKeys = {
-    userList: () => `usr:all`,
-    userSurveyList: (userId: string) => {
+    authorList: () => `usr:author`,
+    authorSurveyList: (userId: string) => {
         assertUserId(userId);
         return `usr:${userId}:svs`;
     },
@@ -28,7 +28,8 @@ export const RedisKeys = {
     surveyPublishQueue: () => `sv:pub`,
     surveyDeleteQueue: () => `sv:del`,
 
-    surveyResponseUserList: (surveyId: string) => {
+    responderList: () => `usr:resp`,
+    surveyResponderList: (surveyId: string) => {
         assertSurveyId(surveyId);
         return `sv:${surveyId}:usr`;
     },

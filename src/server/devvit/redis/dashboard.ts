@@ -21,7 +21,7 @@ import { Constants } from '../../../shared/constants';
 
 const getSurveyIdsForUser =
     async (userId: string): Promise<string[]> => {
-        return await redis.hKeys(RedisKeys.userSurveyList(userId));
+        return await redis.hKeys(RedisKeys.authorSurveyList(userId));
     };
 
 const addSurveyIdToUserList =
@@ -35,21 +35,21 @@ const addSurveyIdToUserList =
             // TODO: Should I add a 5-second lock?
 
             // Write configId to user hash
-            const userListKey = RedisKeys.userSurveyList(userId);
+            const authorSurveyListKey = RedisKeys.authorSurveyList(userId);
             if (txn) {
                 // @ts-expect-error Ignore txn type
-                await txn.hSet(userListKey, { [surveyId]: '1' });
+                await txn.hSet(authorSurveyListKey, { [surveyId]: '1' });
             } else {
-                await redis.hSet(userListKey, { [surveyId]: '1' });
+                await redis.hSet(authorSurveyListKey, { [surveyId]: '1' });
             }
 
             // Write userId to list hash
-            const listKey = RedisKeys.userList();
+            const authorListKey = RedisKeys.authorList();
             if (txn) {
                 // @ts-expect-error Ignore txn type
-                await txn.hSet(listKey, { [userId]: '1' });
+                await txn.zIncrBy(authorListKey, userId, 1);
             } else {
-                await redis.hSet(listKey, { [userId]: '1' });
+                await redis.zIncrBy(authorListKey, userId, 1);
             }
         } catch(e) {
 
@@ -83,7 +83,7 @@ export const getSurveyListForUser =
         const responseCountPromise = surveyIds
             .map(async (sid) =>
                 [sid, [
-                    await redis.hLen(RedisKeys.surveyResponseUserList(sid)),
+                    await redis.zCard(RedisKeys.surveyResponderList(sid)), // TODO: This will need to change for multiple responses
                     (await redis.hGet(deleteQueueKey, sid)) !== undefined
                 ]] as const
             );
@@ -124,9 +124,9 @@ export const getSurveyById =
         // Parse out survey dto
         const surveyDto: SurveyDto = (await Schema.surveyConfig.parseAsync(JSON.parse(surveyData[0]))) satisfies SurveyDto;
 
-        // Get number of responses
-        const resultKey = RedisKeys.surveyResponseUserList(surveyId);
-        surveyDto.responseCount = await redis.hLen(resultKey);
+        // Get number of responses TODO: Will need to change for multiple responses
+        const resultKey = RedisKeys.surveyResponderList(surveyId);
+        surveyDto.responseCount = await redis.zCard(resultKey);
 
         // Check if queued for delete
         const deleteKey = RedisKeys.surveyDeleteQueue();
@@ -163,8 +163,8 @@ export const upsertSurvey =
             logger.debug(questions, config);
 
             // Get all keys to watch
-            const userListKey = RedisKeys.userList();
-            const userSurveyListKey = RedisKeys.userSurveyList(userId);
+            const authorListKey = RedisKeys.authorList();
+            const authorSurveyListKey = RedisKeys.authorSurveyList(userId);
             const configKey = RedisKeys.surveyConfig(surveyId);
             const questionKey = RedisKeys.surveyQuestions(surveyId);
 
@@ -175,7 +175,7 @@ export const upsertSurvey =
             // TODO: Should I add a 5-second lock?
 
             // Start transaction
-            const txn = await redis.watch(userListKey, userSurveyListKey, configKey, questionKey);
+            const txn = await redis.watch(authorListKey, authorSurveyListKey, configKey, questionKey);
             await txn.multi();
 
             // Upsert config + questions (if defined)
