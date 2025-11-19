@@ -38,6 +38,7 @@ export const RedisKeys = {
         assertQuestionId(questionId);
         return `sv:${surveyId}:qn:${questionId}`;
     },
+    // TODO: Change this from surveyId to responseId? Add key for storing user responseIds?
     userSurveyResponse: (userId: string, surveyId: string) => {
         assertUserId(userId);
         assertSurveyId(surveyId);

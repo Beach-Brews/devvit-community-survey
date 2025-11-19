@@ -110,8 +110,11 @@ export const upsertQuestionResponse =
             const txn = await redis.watch(responderListKey, surveyResponderList, questionResultsKey, userResponseKey);
 
             // Add user to survey list
-            if (!existingResponse)
+            if (!existingResponse) {
                 await txn.zIncrBy(responderListKey, userId, 1);
+                await txn.zIncrBy(surveyResponderList, userId, 1);
+                await txn.zIncrBy(surveyResponderList, 'total', 1);
+            }
 
             // Save user response
             await txn.hSet(userResponseKey, { [questionId]: JSON.stringify(data) });
@@ -212,8 +215,11 @@ export const deleteUserResponse =
             // Delete user response key
             await txn.del(userResponseKey);
 
-            // Remove user from survey list
+            // Remove user from survey's response list
             await txn.zRem(surveyResponderList, [userId]);
+
+            // And decrease response count for this survey
+            await txn.zIncrBy(surveyResponderList, 'total', -1 * thisSurveyResponseCount);
 
             // Decrease user response count, or remove from list altogether
             if (userAllResponseCount <= thisSurveyResponseCount)

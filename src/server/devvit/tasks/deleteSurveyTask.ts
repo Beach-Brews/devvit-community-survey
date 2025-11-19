@@ -51,8 +51,8 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
 
     // Check if there are records to process
     const surveyResponseKey = RedisKeys.surveyResponderList(ctx.survey.id);
-    const total = await redis.zCard(surveyResponseKey);
-    if (total <= 0) {
+    const total = await redis.zCard(surveyResponseKey); // NOTE: includes a member named "total"
+    if (total <= 1) {
         ctx.logger.info('No responses found for deletion.');
         return;
     }
@@ -69,6 +69,7 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
         // For each user in batch, delete their response.
         const userIds: string[] = [];
         for (const v of scan.members) {
+            if (v.member === 'total') continue;
             const userResponseKey = RedisKeys.userSurveyResponse(v.member, ctx.survey.id);
             await redis.del(userResponseKey);
             userIds.push(v.member);

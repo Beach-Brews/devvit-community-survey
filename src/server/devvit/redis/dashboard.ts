@@ -83,7 +83,7 @@ export const getSurveyListForUser =
         const responseCountPromise = surveyIds
             .map(async (sid) =>
                 [sid, [
-                    await redis.zCard(RedisKeys.surveyResponderList(sid)), // TODO: This will need to change for multiple responses
+                    await redis.zScore(RedisKeys.surveyResponderList(sid), 'total'),
                     (await redis.hGet(deleteQueueKey, sid)) !== undefined
                 ]] as const
             );
@@ -97,7 +97,7 @@ export const getSurveyListForUser =
                 const dto: SurveyDto = await Schema.surveyConfig.parseAsync(JSON.parse(s)) satisfies SurveyDto;
                 const responseCount = responseCounts.get(dto.id);
                 if (responseCount) {
-                    dto.responseCount = responseCount[0];
+                    dto.responseCount = responseCount[0] ?? 0;
                     dto.deleteQueued = responseCount[1];
                 }
                 return dto;
@@ -124,9 +124,9 @@ export const getSurveyById =
         // Parse out survey dto
         const surveyDto: SurveyDto = (await Schema.surveyConfig.parseAsync(JSON.parse(surveyData[0]))) satisfies SurveyDto;
 
-        // Get number of responses TODO: Will need to change for multiple responses
+        // Get number of responses
         const resultKey = RedisKeys.surveyResponderList(surveyId);
-        surveyDto.responseCount = await redis.zCard(resultKey);
+        surveyDto.responseCount = await redis.zScore(resultKey, 'total') ?? 0;
 
         // Check if queued for delete
         const deleteKey = RedisKeys.surveyDeleteQueue();
