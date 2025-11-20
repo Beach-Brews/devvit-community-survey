@@ -73,11 +73,12 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
             if (v.member === 'total') continue;
             const userResponseKey = RedisKeys.userSurveyResponse(v.member, ctx.survey.id);
             await redis.del(userResponseKey); // TODO: Multiple responses
-            await redis.zIncrBy(responderListKey, v.member, -1 * v.score);
+            if ((await redis.zIncrBy(responderListKey, v.member, -1 * v.score)) <= 0)
+                await redis.zRem(responderListKey, [v.member]);
             userIds.push(v.member);
         }
 
-        // Delete batch of users from hash
+        // Delete batch of users from hash (ensures if job is rescheduled for timing, picks up where it left off)
         await redis.zRem(surveyResponseKey, userIds);
 
         // Check runtime for potential time limit

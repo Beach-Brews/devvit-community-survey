@@ -185,21 +185,42 @@ export const RedisKeys = {
      * **Score:** The number of responses from the user across all surveys
      *
      * **Actions:**
-     * - Add Response - Add user to response list
-     * - Deletes Responses - Decrease response count (or remove from set)
-     * - Survey Delete - Same as deleting responses.
-     * - Delete Account - Same as deleting responses.
+     * - Add Response - Increase user response count by 1
+     * - Deletes Response - Decrease user response count by 1 (or remove from set)
+     * - Deletes All Responses to Survey - Remove user from set
+     * - Survey Delete - Same as deleting all responses to survey
+     * - Delete Account - Remove from set
      */
     responderList: () => `usr:resp`,
 
+    /**
+     * Holds the IDs of all users who have responded to a specific survey.
+     *
+     * **Type:** Sorted Set (zSet)
+     *
+     * **Member:** UserId | 'total' - The User ID of a responder, or a special 'total' member
+     *
+     * **Score:** The number of responses from the user to a specific survey, or the total responses to the survey
+     *
+     * **Actions:**
+     * - Add Response - Increase user score by 1, increase 'total' by 1
+     * - Get Response Count - Return score of 'total' member
+     * - Deletes Response - Decrease user response count (or remove from set), decrease total by 1
+     * - Deletes All Responses - Remove user from set, decrease total by user's score
+     * - Survey Delete - Delete set
+     * - Delete Account - Same as deleting survey
+     */
     surveyResponderList: (surveyId: string) => {
         assertSurveyId(surveyId);
         return `sv:${surveyId}:usr`;
     },
+
+    // TODO: How to save multiple responses?
+
     // TODO: Change this from surveyId to responseId? Add key for storing user responseIds?
     userSurveyResponse: (userId: string, surveyId: string) => {
         assertUserId(userId);
         assertSurveyId(surveyId);
         return `usr:${userId}:svr:${surveyId}`;
-    }
+    },
 };

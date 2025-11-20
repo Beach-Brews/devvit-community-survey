@@ -103,6 +103,7 @@ export const upsertQuestionResponse =
 
             // Determine if the user has responded yet (response key exists)
             // TODO: Add multi response support
+            // TODO: Force complete response before starting new response?
             const existingResponse = await redis.hGet(userResponseKey, questionId);
             logger.debug(existingResponse ? 'Inserting new response' : 'Updating existing response');
 
@@ -175,10 +176,12 @@ export const deleteUserResponse =
             const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
+            // TODO: Handle delete of single or all responses
+
             // Get the user's responses
             const userAllResponseCount = await redis.zScore(responderListKey, userId) ?? 0;
             const thisSurveyResponseCount = await redis.zScore(surveyResponderList, userId) ?? 0;
-            const userResponses = await redis.hGetAll(userResponseKey); // TODO: Multiple responses
+            const userResponses = await redis.hGetAll(userResponseKey);
             const parsedResponses = await Promise.all(
                 Object.entries(userResponses).map(async (r) => {
                     return [
