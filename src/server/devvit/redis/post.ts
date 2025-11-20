@@ -177,8 +177,8 @@ export const deleteUserResponse =
 
             // Get the user's responses
             const userAllResponseCount = await redis.zScore(responderListKey, userId) ?? 0;
-            const thisSurveyResponseCount = 1; // (TODO: support for multiple responses (requires huge change))
-            const userResponses = await redis.hGetAll(userResponseKey);
+            const thisSurveyResponseCount = await redis.zScore(surveyResponderList, userId) ?? 0;
+            const userResponses = await redis.hGetAll(userResponseKey); // TODO: Multiple responses
             const parsedResponses = await Promise.all(
                 Object.entries(userResponses).map(async (r) => {
                     return [
@@ -256,6 +256,7 @@ export const getUserLastResponse =
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
             // Get all values
+            // TODO: Multiple responses
             const userResponses = await redis.hGetAll(userResponseKey);
 
             // If no values, no response

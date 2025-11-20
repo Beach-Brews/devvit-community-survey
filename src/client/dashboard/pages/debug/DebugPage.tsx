@@ -34,13 +34,14 @@ type KeyDebugResponseDto = {
 };
 
 const keys = [
-    `usr:all`,
+    `usr:author`,
     `usr:$userId:svs`,
     `sv:$surveyId:conf`,
     `sv:$surveyId:qns`,
     `sv:$surveyId:posts`,
     `sv:pub`,
     `sv:del`,
+    `usr:resp`,
     `sv:$surveyId:usr`,
     `sv:$surveyId:qn:$questionId`,
     `usr:$userId:svr:$surveyId`

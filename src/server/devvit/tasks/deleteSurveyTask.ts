@@ -50,6 +50,7 @@ class DeleteTaskContext {
 const deleteUserResponses = async (ctx: DeleteTaskContext) => {
 
     // Check if there are records to process
+    const responderListKey = RedisKeys.responderList();
     const surveyResponseKey = RedisKeys.surveyResponderList(ctx.survey.id);
     const total = await redis.zCard(surveyResponseKey); // NOTE: includes a member named "total"
     if (total <= 1) {
@@ -71,7 +72,8 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
         for (const v of scan.members) {
             if (v.member === 'total') continue;
             const userResponseKey = RedisKeys.userSurveyResponse(v.member, ctx.survey.id);
-            await redis.del(userResponseKey);
+            await redis.del(userResponseKey); // TODO: Multiple responses
+            await redis.zIncrBy(responderListKey, v.member, -1 * v.score);
             userIds.push(v.member);
         }
 
@@ -150,7 +152,7 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
             await redis.del(questionKey, configKey);
             logger.info('Removed survey configs');
 
-            // Delete survey from user survey list
+            // Delete survey from author survey list
             const authorSurveyListKey = RedisKeys.authorSurveyList(surveyDto.owner);
             await redis.hDel(authorSurveyListKey, [surveyId]);
             logger.info('Removed from user survey list');

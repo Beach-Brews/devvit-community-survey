@@ -19,56 +19,15 @@ import { RedisKeys } from './RedisKeys';
 import { QuestionResponseDto, ResponseValuesDto, SurveyResultListDto, SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 import { Constants } from '../../../shared/constants';
 
-const getSurveyIdsForUser =
-    async (userId: string): Promise<string[]> => {
-        return await redis.hKeys(RedisKeys.authorSurveyList(userId));
-    };
-
-const addSurveyIdToUserList =
-    async (userId: string, surveyId: string, txn: unknown = undefined): Promise<void> => {
-
-        // Create logger
-        const logger = await Logger.Create('Dash Redis - User List Add');
-        logger.traceStart('Start User List Add');
-
-        try {
-            // TODO: Should I add a 5-second lock?
-
-            // Write configId to user hash
-            const authorSurveyListKey = RedisKeys.authorSurveyList(userId);
-            if (txn) {
-                // @ts-expect-error Ignore txn type
-                await txn.hSet(authorSurveyListKey, { [surveyId]: '1' });
-            } else {
-                await redis.hSet(authorSurveyListKey, { [surveyId]: '1' });
-            }
-
-            // Write userId to list hash
-            const authorListKey = RedisKeys.authorList();
-            if (txn) {
-                // @ts-expect-error Ignore txn type
-                await txn.zIncrBy(authorListKey, userId, 1);
-            } else {
-                await redis.zIncrBy(authorListKey, userId, 1);
-            }
-        } catch(e) {
-
-            logger.error('Error adding survey to user list: ', e);
-
-        } finally {
-            logger.traceEnd();
-        }
-    };
-
 // TODO: Add pagination parameter. Is there a way to filter too?
-export const getSurveyListForUser =
+export const getSurveyListForAuthor =
     async (userId: string): Promise<SurveyDto[]> => {
 
         const logger = await Logger.Create('Dash Redis - Get List for User');
         logger.traceStart('Start Fetch');
 
         // Get the list of surveyIds
-        const surveyIds = await getSurveyIdsForUser(userId);
+        const surveyIds = await redis.hKeys(RedisKeys.authorSurveyList(userId));
         logger.debug('Got IDs: ', surveyIds);
 
         // If no values returned, return empty array
@@ -184,9 +143,11 @@ export const upsertSurvey =
             if (questions)
                 await txn.set(questionKey, JSON.stringify(questions));
 
-            // If new, add to user list
-            if (isNew)
-                await addSurveyIdToUserList(userId, surveyId, txn);
+            // If new, add to author list
+            if (isNew) {
+                await redis.zIncrBy(authorListKey, userId, 1);
+                await txn.hSet(authorSurveyListKey, { [surveyId]: '1' });
+            }
 
             // If no publish date provided, return
             if (config.publishDate == null) {
@@ -283,6 +244,9 @@ export const deleteSurveyById =
             }
         }
 
+        // Clear redis key
+        await redis.del(postListKey);
+
         // Finally, schedule job
         await scheduler.runJob({
             name: Constants.DELETE_JOB_NAME,
@@ -345,6 +309,7 @@ export const getQuestionResponseById =
                 : [];
             logger.debug(responses, ranks);
 
+            // Reduce the results, by extracting the total member, and making a dictionary of OptionId => # of responses
             let total = 0;
             const mappedRanks = ranks.reduce((r: ResponseValuesDto, i: {member: string, score: number}) => {
                 if (i.member == 'total') {

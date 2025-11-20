@@ -69,7 +69,7 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 const userId = await errorIfNoUserId(res);
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
-                return successResponse(res, await dashRedis.getSurveyListForUser(userId));
+                return successResponse(res, await dashRedis.getSurveyListForAuthor(userId));
 
             } catch(e) {
                 logger.error('Error executing API: ', e);
