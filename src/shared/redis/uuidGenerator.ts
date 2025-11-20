@@ -17,6 +17,7 @@ export const SurveyIdRegex = /^sv_[0-9a-zA-Z]{10}$/;
 export const QuestionIdRegex = /^sq_[0-9a-zA-Z]{10}$/;
 export const OptionIdRegex = /^sqo_[0-9a-zA-Z]{10}$/;
 export const ResponseIdRegex = /^sqr_[0-9a-zA-Z]{10}$/;
+export const ToastIdRegex = /^tst_[0-9a-zA-Z]{10}$/;
 
 export const genSurveyId = () => `sv_${genUid()}`;
 export const genQuestionId = () => `sq_${genUid()}`;
@@ -54,6 +55,12 @@ export function assertOptionId(
     optionId: string | null | undefined
 ): asserts optionId is NonNullable<string> {
     assertId(optionId, OptionIdRegex, 'Option');
+}
+
+export function assertResponseId(
+    responseId: string | null | undefined
+): asserts responseId is NonNullable<string> {
+    assertId(responseId, ResponseIdRegex, 'Response');
 }
 
 export const genSurvey = (): SurveyDto => {

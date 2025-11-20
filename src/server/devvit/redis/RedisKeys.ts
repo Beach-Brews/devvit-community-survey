@@ -176,7 +176,7 @@ export const RedisKeys = {
     },
 
     /**
-     * Holds the IDs of all users who have responded to a survey.
+     * Holds the IDs of all users who have responded to a survey. Used for checking for deleted accounts.
      *
      * **Type:** Sorted Set (zSet)
      *
@@ -194,7 +194,29 @@ export const RedisKeys = {
     responderList: () => `usr:resp`,
 
     /**
-     * Holds the IDs of all users who have responded to a specific survey.
+     * Holds the IDs of all surveys a user has responded to. Aids in efficient account deletion, or a future "dashboard"
+     * view for getting responses from a specific user, or for users to manage their survey responses.
+     *
+     * **Type:** Hash Set (hSet)
+     *
+     * **Field:** SurveyId - The Survey ID the used has responded to
+     *
+     * **Value:** Always hard-coded to 1
+     *
+     * **Actions:**
+     * - Add Response - Add survey to set
+     * - Deletes Response - Remove from set if all responses deleted (when removed from surveyResponderList)
+     * - Deletes All Responses to Survey - Remove survey from set
+     * - Survey Delete - Delete survey from set
+     * - Delete Account - Delete set
+     */
+    responderSurveyList: (userId: string) => {
+        assertUserId(userId);
+        return `usr:${userId}:sv`;
+    },
+
+    /**
+     * Holds the IDs of all users who have responded to a specific survey, along with the total response count.
      *
      * **Type:** Sorted Set (zSet)
      *

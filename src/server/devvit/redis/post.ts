@@ -98,23 +98,27 @@ export const upsertQuestionResponse =
             // Get keys
             const responderListKey = RedisKeys.responderList();
             const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
+            const responderSurveyListKey = RedisKeys.responderSurveyList(userId);
             const questionResultsKey = RedisKeys.surveyQuestionResults(surveyId, questionId);
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
             // Determine if the user has responded yet (response key exists)
-            // TODO: Add multi response support
-            // TODO: Force complete response before starting new response?
+            // TODO: Add multi response support. Though it may be less efficient, it may be best to create a general
+            //       response object. This could be useful for storing overall response data. For example, only allowing
+            //       one response per day.
+            const isNewResponse = (await redis.exists(userResponseKey)) <= 0;
             const existingResponse = await redis.hGet(userResponseKey, questionId);
             logger.debug(existingResponse ? 'Inserting new response' : 'Updating existing response');
 
             // Start transaction
-            const txn = await redis.watch(responderListKey, surveyResponderList, questionResultsKey, userResponseKey);
+            const txn = await redis.watch(responderListKey, surveyResponderList, responderSurveyListKey, questionResultsKey, userResponseKey);
 
-            // Add user to survey list
-            if (!existingResponse) {
+            // Add user to survey lists if first response to survey
+            if (isNewResponse) {
                 await txn.zIncrBy(responderListKey, userId, 1);
                 await txn.zIncrBy(surveyResponderList, userId, 1);
                 await txn.zIncrBy(surveyResponderList, 'total', 1);
+                await txn.hSet(responderSurveyListKey, {[surveyId]: '1'});
             }
 
             // Save user response
@@ -173,14 +177,15 @@ export const deleteUserResponse =
 
             // Get keys
             const responderListKey = RedisKeys.responderList();
-            const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
+            const responderSurveyListKey = RedisKeys.responderSurveyList(userId);
+            const surveyResponderListKey = RedisKeys.surveyResponderList(surveyId);
             const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
 
             // TODO: Handle delete of single or all responses
 
             // Get the user's responses
             const userAllResponseCount = await redis.zScore(responderListKey, userId) ?? 0;
-            const thisSurveyResponseCount = await redis.zScore(surveyResponderList, userId) ?? 0;
+            const thisSurveyResponseCount = await redis.zScore(surveyResponderListKey, userId) ?? 0;
             const userResponses = await redis.hGetAll(userResponseKey);
             const parsedResponses = await Promise.all(
                 Object.entries(userResponses).map(async (r) => {
@@ -194,7 +199,7 @@ export const deleteUserResponse =
             );
 
             // Start transaction
-            const txn = await redis.watch(surveyResponderList, userResponseKey);
+            const txn = await redis.watch(responderListKey, surveyResponderListKey, responderSurveyListKey, userResponseKey);
 
             // Delete response from each question
             for (const q of parsedResponses) {
@@ -218,17 +223,19 @@ export const deleteUserResponse =
             // Delete user response key
             await txn.del(userResponseKey);
 
-            // Remove user from survey's response list
-            await txn.zRem(surveyResponderList, [userId]);
+            // Remove user from survey's response list, and survey from user survey list
+            await txn.zRem(surveyResponderListKey, [userId]);
+            await txn.hDel(responderSurveyListKey, [surveyId]);
 
             // And decrease response count for this survey
-            await txn.zIncrBy(surveyResponderList, 'total', -1 * thisSurveyResponseCount);
+            await txn.zIncrBy(surveyResponderListKey, 'total', -1 * thisSurveyResponseCount);
 
             // Decrease user response count, or remove from list altogether
-            if (userAllResponseCount <= thisSurveyResponseCount)
+            if (userAllResponseCount <= thisSurveyResponseCount) {
                 await txn.zRem(responderListKey, [userId]);
-            else
+            } else {
                 await txn.zIncrBy(responderListKey, userId, -1 * thisSurveyResponseCount);
+            }
 
             // Commit
             await txn.exec();
