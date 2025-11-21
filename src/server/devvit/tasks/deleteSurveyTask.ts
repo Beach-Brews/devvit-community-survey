@@ -12,6 +12,7 @@ import { RedisKeys } from '../redis/RedisKeys';
 import { redis } from '@devvit/web/server';
 import { getSurveyById } from '../redis/dashboard';
 import { SurveyDto } from '../../../shared/redis/SurveyDto';
+import { Constants } from '../../../shared/constants';
 
 class DeleteExecutionLimitError extends Error {
 
@@ -72,20 +73,27 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
             // Skip special "total" member
             if (v.member === 'total') continue;
 
-            // Delete user responses
-            const userResponseKey = RedisKeys.userSurveyResponse(v.member, ctx.survey.id);
-            await redis.del(userResponseKey); // TODO: Multiple responses
+            const userId = v.member;
+            const surveyId = ctx.survey.id;
+
+            // Get all user responses to survey
+            const responseListKey = RedisKeys.responderSurveyResponseList(userId, surveyId);
+            const responseValues = await redis.zRange(responseListKey, 0, Constants.MAX_USER_RESPONSES);
+            for (const response of responseValues) {
+                await redis.del(RedisKeys.responderSurveyResponse(userId, surveyId, response.member));
+            }
+            await redis.del(responseListKey);
 
             // Decrease response count from user's total response count
-            if ((await redis.zIncrBy(responderListKey, v.member, -1 * v.score)) <= 0)
-                await redis.zRem(responderListKey, [v.member]);
+            if ((await redis.zIncrBy(responderListKey, userId, -1 * v.score)) <= 0)
+                await redis.zRem(responderListKey, [userId]);
 
             // Remove survey from user's survey list
-            const responderSurveyListKey = RedisKeys.responderSurveyList(v.member);
-            await redis.hDel(responderSurveyListKey, [ctx.survey.id]);
+            const responderSurveyListKey = RedisKeys.responderSurveyList(userId);
+            await redis.hDel(responderSurveyListKey, [surveyId]);
 
             // Remove user from hash after processing (ensures if job is rescheduled for timing, picks up where it left off)
-            await redis.zRem(surveyResponseKey, [v.member]);
+            await redis.zRem(surveyResponseKey, [userId]);
 
             // Check runtime for potential time limit
             ctx.checkTime();

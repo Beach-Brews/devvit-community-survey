@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { assertSurveyId, assertUserId, assertQuestionId } from '../../../shared/redis/uuidGenerator';
+import { assertSurveyId, assertUserId, assertQuestionId, assertResponseId } from '../../../shared/redis/uuidGenerator';
 
 export const RedisKeys = {
     /**
@@ -209,6 +209,8 @@ export const RedisKeys = {
      * - Deletes All Responses to Survey - Remove survey from set
      * - Survey Delete - Delete survey from set
      * - Delete Account - Delete set
+     *
+     * @param userId
      */
     responderSurveyList: (userId: string) => {
         assertUserId(userId);
@@ -231,18 +233,68 @@ export const RedisKeys = {
      * - Deletes All Responses - Remove user from set, decrease total by user's score
      * - Survey Delete - Delete set
      * - Delete Account - Same as deleting survey
+     *
+     * @param surveyId
      */
     surveyResponderList: (surveyId: string) => {
         assertSurveyId(surveyId);
         return `sv:${surveyId}:usr`;
     },
 
-    // TODO: How to save multiple responses?
-
-    // TODO: Change this from surveyId to responseId? Add key for storing user responseIds?
-    userSurveyResponse: (userId: string, surveyId: string) => {
+    /**
+     * Holds the IDs of all responses of a specific user to a specific survey.
+     *
+     * **Type:** Sorted Set (zSet)
+     *
+     * **Member:** ResponseId - The unique response ID.
+     *
+     * **Score:** The timestamp the survey response was first created.
+     *
+     * **Actions:**
+     * - Add Response - Add response ID to list.
+     * - Get Latest Response - Get response with the largest score
+     * - Deletes Response - Remove member for deleted response
+     * - Deletes All Responses - Delete set
+     * - Survey Delete - Same as deleting all responses
+     * - Delete Account - Same as deleting survey
+     *
+     * @param userId
+     * @param surveyId
+     */
+    responderSurveyResponseList: (userId: string, surveyId: string) => {
         assertUserId(userId);
         assertSurveyId(surveyId);
-        return `usr:${userId}:svr:${surveyId}`;
+        return `usr:${userId}:sv:${surveyId}:resp`;
     },
+
+    /**
+     * Holds the IDs of all surveys a user has responded to. Aids in efficient account deletion, or a future "dashboard"
+     * view for getting responses from a specific user, or for users to manage their survey responses.
+     *
+     * **Type:** Hash Set (hSet)
+     *
+     * **Field:** QuestionId - The Question ID the response is for
+     *
+     * **Value:** A stringified array
+     * - Multi/Check/Rank - An array of options selected by the user
+     * - Scale - An array with a single scale value chosen by the user
+     *
+     * **Actions:**
+     * - Add Response - Add valie to set
+     * - Get Response - Return data
+     * - Deletes Response - Delete set
+     * - Deletes All Responses to Survey - Delete set
+     * - Survey Delete - Delete set
+     * - Delete Account - Delete set
+     *
+     * @param userId
+     * @param surveyId
+     * @param responseId
+     */
+    responderSurveyResponse: (userId: string, surveyId: string, responseId: string) => {
+        assertUserId(userId);
+        assertSurveyId(surveyId);
+        assertResponseId(responseId);
+        return `usr:${userId}:sv:${surveyId}:sr:${responseId}`;
+    }
 };

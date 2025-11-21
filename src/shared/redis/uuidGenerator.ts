@@ -22,7 +22,7 @@ export const ToastIdRegex = /^tst_[0-9a-zA-Z]{10}$/;
 export const genSurveyId = () => `sv_${genUid()}`;
 export const genQuestionId = () => `sq_${genUid()}`;
 export const genOptionId = () => `sqo_${genUid()}`;
-export const genResponseId = () => `sqo_${genUid()}`;
+export const genResponseId = () => `sqr_${genUid()}`;
 export const genToastId = () => `tst_${genUid()}`;
 
 export function assertId(

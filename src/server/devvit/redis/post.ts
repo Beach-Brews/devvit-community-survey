@@ -13,11 +13,12 @@ import { SurveyQuestionDto } from '../../../shared/redis/SurveyDto';
 import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
 import * as dashRedis from './dashboard';
 import { getSurveyById } from './dashboard';
+import { genResponseId } from '../../../shared/redis/uuidGenerator';
 
 export { getSurveyById, getQuestionResponseById } from './dashboard';
 
 const assertDataValid = (data: string[], question: SurveyQuestionDto): void => {
-    // Error if a value is required, but one not given (or skip if no values and not required.
+    // Error if a value is required, but one not given, or skip if no values and not required.
     if (data.length == 0 || !data[0]) {
         if (question.required)
             throw new Error(`Question is required, but no values given.`);
@@ -100,25 +101,27 @@ export const upsertQuestionResponse =
             const surveyResponderList = RedisKeys.surveyResponderList(surveyId);
             const responderSurveyListKey = RedisKeys.responderSurveyList(userId);
             const questionResultsKey = RedisKeys.surveyQuestionResults(surveyId, questionId);
-            const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
+            const responseListKey = RedisKeys.responderSurveyResponseList(userId, surveyId);
 
             // Determine if the user has responded yet (response key exists)
-            // TODO: Add multi response support. Though it may be less efficient, it may be best to create a general
-            //       response object. This could be useful for storing overall response data. For example, only allowing
-            //       one response per day.
-            const isNewResponse = (await redis.exists(userResponseKey)) <= 0;
-            const existingResponse = await redis.hGet(userResponseKey, questionId);
-            logger.debug(existingResponse ? 'Inserting new response' : 'Updating existing response');
+            // TODO: Allow multiple responses
+            const isFirstResponse = (await redis.hGet(surveyResponderList, userId)) === undefined;
+            const responseList = await redis.zRange(responseListKey, 0, 1, );
+            const responseId = responseList[0]?.member ?? genResponseId();
+            const userResponseKey = RedisKeys.responderSurveyResponse(userId, surveyId, responseId);
+            const existingResponse = !isFirstResponse ? await redis.hGet(userResponseKey, questionId) : undefined;
+            logger.debug(existingResponse ? `Inserting new response ${responseId}` : `Updating existing response ${responseId}`);
 
             // Start transaction
-            const txn = await redis.watch(responderListKey, surveyResponderList, responderSurveyListKey, questionResultsKey, userResponseKey);
+            const txn = await redis.watch(responderListKey, surveyResponderList, responderSurveyListKey, questionResultsKey, userResponseKey, responseListKey);
 
             // Add user to survey lists if first response to survey
-            if (isNewResponse) {
+            if (isFirstResponse) {
                 await txn.zIncrBy(responderListKey, userId, 1);
                 await txn.zIncrBy(surveyResponderList, userId, 1);
                 await txn.zIncrBy(surveyResponderList, 'total', 1);
                 await txn.hSet(responderSurveyListKey, {[surveyId]: '1'});
+                await txn.zAdd(responseListKey, { member: responseId, score: Date.now() });
             }
 
             // Save user response
@@ -179,30 +182,42 @@ export const deleteUserResponse =
             const responderListKey = RedisKeys.responderList();
             const responderSurveyListKey = RedisKeys.responderSurveyList(userId);
             const surveyResponderListKey = RedisKeys.surveyResponderList(surveyId);
-            const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
+            const responseListKey = RedisKeys.responderSurveyResponseList(userId, surveyId);
 
-            // TODO: Handle delete of single or all responses
+            // TODO: Handle delete of single or all responses. This is very messy and needs cleaned up.
 
             // Get the user's responses
             const userAllResponseCount = await redis.zScore(responderListKey, userId) ?? 0;
             const thisSurveyResponseCount = await redis.zScore(surveyResponderListKey, userId) ?? 0;
-            const userResponses = await redis.hGetAll(userResponseKey);
+            const responseValues = thisSurveyResponseCount > 0
+                ? await redis.zRange(responseListKey, 0, thisSurveyResponseCount)
+                : [];
+
+            // Get response values
+            const responseKeys = responseValues
+                .map(r => RedisKeys.responderSurveyResponse(userId, surveyId, r.member));
+            const userResponses = await Promise.all(
+                responseKeys.map(async (key) => await redis.hGetAll(key))
+            );
             const parsedResponses = await Promise.all(
-                Object.entries(userResponses).map(async (r) => {
-                    return [
-                        r[0],
-                        RedisKeys.surveyQuestionResults(surveyId, r[0]),
-                        await Schema.stringArray.parseAsync(JSON.parse(r[1])) as string[],
-                        surveyDto.questions?.find(q => q.id == r[0])
-                    ] as [string, string, string[], SurveyQuestionDto | undefined];
-                })
+                userResponses.map(async (response) =>
+                    await Promise.all(Object.entries(response)
+                    .map(async (r) => {
+                        return [
+                            r[0],
+                            RedisKeys.surveyQuestionResults(surveyId, r[0]),
+                            await Schema.stringArray.parseAsync(JSON.parse(r[1])) as string[],
+                            surveyDto.questions?.find(q => q.id == r[0])
+                        ] as [string, string, string[], SurveyQuestionDto | undefined];
+                    }))
+                )
             );
 
             // Start transaction
-            const txn = await redis.watch(responderListKey, surveyResponderListKey, responderSurveyListKey, userResponseKey);
+            const txn = await redis.watch(responderListKey, surveyResponderListKey, responderSurveyListKey, responseListKey, ...responseKeys);
 
             // Delete response from each question
-            for (const q of parsedResponses) {
+            for (const q of parsedResponses.flatMap(r => r)) {
                 // q0 - QuestionId
                 // q1 - Question results redis key
                 // q2 - User responses
@@ -221,7 +236,8 @@ export const deleteUserResponse =
             }
 
             // Delete user response key
-            await txn.del(userResponseKey);
+            await txn.del(...responseKeys);
+            await txn.del(responseListKey);
 
             // Remove user from survey's response list, and survey from user survey list
             await txn.zRem(surveyResponderListKey, [userId]);
@@ -263,11 +279,16 @@ export const getUserLastResponse =
             logger.debug(userId, surveyId);
 
             // Get keys
-            const userResponseKey = RedisKeys.userSurveyResponse(userId, surveyId);
+            const responseListKey = RedisKeys.responderSurveyResponseList(userId, surveyId);
+            const responseList = await redis.zRange(responseListKey, 0, 1, );
+            const latestResponseId = responseList[0]?.member;
+            if (!latestResponseId) {
+                return undefined;
+            }
 
             // Get all values
-            // TODO: Multiple responses
-            const userResponses = await redis.hGetAll(userResponseKey);
+            const responseKey = RedisKeys.responderSurveyResponse(userId, surveyId, latestResponseId);
+            const userResponses = await redis.hGetAll(responseKey);
 
             // If no values, no response
             const responses = Object.entries(userResponses);
@@ -277,6 +298,7 @@ export const getUserLastResponse =
 
             // Parse each response as a string[]
             const parsed = (await Promise.all(responses
+                .filter(r => r[0] !== 'meta')
                 .map(async (r) => {
                     try {
                         return [r[0], await Schema.stringArray.parseAsync(JSON.parse(r[1]))] as [string, string[]];
