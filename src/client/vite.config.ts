@@ -11,9 +11,9 @@ export default defineConfig({
         sourcemap: true,
         rollupOptions: {
             input: {
-                index: resolve(__dirname, 'index.html'),
                 dashboard: resolve(__dirname, 'dashboard.html'),
                 survey: resolve(__dirname, 'survey.html'),
+                dashDev: resolve(__dirname, 'dash-dev.html'),
                 surveyCont: resolve(__dirname, 'survey-container.html')
             },
             output: {

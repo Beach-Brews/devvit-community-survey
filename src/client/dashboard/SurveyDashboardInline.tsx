@@ -5,7 +5,6 @@
 * License: BSD-3-Clause
 */
 
-
 import { getWebViewMode, navigateTo, requestExpandedMode, WebViewMode } from '@devvit/web/client';
 import { MouseEvent, useEffect, useState } from 'react';
 import { SurveyDashboard } from './SurveyDashboard';
@@ -31,7 +30,7 @@ export const SurveyDashboardInline = () => {
             }
         };
         void callApi();
-    }, [setUserInfo]);
+    }, []);
 
     // If user is a mod and expanded mode is active, render the dashboard
     const renderMode: WebViewMode = getWebViewMode();
@@ -41,7 +40,7 @@ export const SurveyDashboardInline = () => {
 
     // Handler for launching into expanded mode
     const launchDashboard = async (e: MouseEvent) => {
-        await requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
+        await requestExpandedMode(e.nativeEvent as PointerEvent, 'dashboard');
     };
 
     return (
@@ -49,6 +48,7 @@ export const SurveyDashboardInline = () => {
             <div className="p-4 flex-grow h-[0%]">
                 <div className="flex flex-col gap-4 justify-center items-center h-full">
                     {/* ===== Loading State ===== */}
+                    {/* TODO: separate loading screen if loading expanded mode OR completely refactor into separate html file */}
                     {userInfo === undefined && (
                         <>
                             <div className="animate-pulse h-10 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2"></div>

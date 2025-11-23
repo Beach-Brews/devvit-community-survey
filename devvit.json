@@ -12,12 +12,14 @@
     "dir": "dist/client",
     "entrypoints": {
       "default": {
-        "entry": "index.html",
+        "entry": "survey.html",
         "height": "tall",
         "inline": true
       },
       "dashboard": {
-        "entry": "dashboard.html"
+        "entry": "dashboard.html",
+        "height": "tall",
+        "inline": true
       }
     }
   },
@@ -32,7 +34,7 @@
     "items": [
       {
         "label": "Create Survey Dashboard",
-        "description": "Community-Survey",
+        "description": "r/CommunitySurvey",
         "location": "subreddit",
         "forUserType": "moderator",
         "endpoint": "/internal/menu/create-dashboard"

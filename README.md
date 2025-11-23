@@ -43,10 +43,12 @@ Here are a few future features that are planned.
 * Survey Question Settings
   * Required
   * Randomize question options
+* Import/Export/Backup?
+* Handle cross-device/multi-tab editing. Channels? Lock?
 
 ### Survey
 * Text responses (added as comment)
   * Choose anonymous, unless required
 * Edit response
 * Multiple responses
-* View results
+* Delete response - screen still shows delete / change responses. should go back to intro

@@ -40,7 +40,8 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
                 },
                 textFallback: {
                     text: 'Sorry, this app is not supported on Old Reddit.'
-                }
+                },
+                entry: 'dashboard'
             });
 
             // Immediately remove it from sub feed

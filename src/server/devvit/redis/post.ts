@@ -105,7 +105,7 @@ export const upsertQuestionResponse =
 
             // Determine if the user has responded yet (response key exists)
             // TODO: Allow multiple responses
-            const isFirstResponse = (await redis.hGet(surveyResponderList, userId)) === undefined;
+            const isFirstResponse = ((await redis.zScore(surveyResponderList, userId)) ?? 0) <= 0;
             const responseList = await redis.zRange(responseListKey, 0, 1, );
             const responseId = responseList[0]?.member ?? genResponseId();
             const userResponseKey = RedisKeys.responderSurveyResponse(userId, surveyId, responseId);

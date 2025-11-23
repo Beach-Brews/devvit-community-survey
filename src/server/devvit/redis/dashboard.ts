@@ -139,14 +139,18 @@ export const upsertSurvey =
 
             // Upsert config + questions (if defined)
             await txn.set(configKey, JSON.stringify(config));
+            logger.debug(`Added config to ${configKey}`);
 
-            if (questions)
+            if (questions) {
                 await txn.set(questionKey, JSON.stringify(questions));
+                logger.debug(`Added questions to ${questionKey}`);
+            }
 
             // If new, add to author list
             if (isNew) {
-                await redis.zIncrBy(authorListKey, userId, 1);
+                await txn.zIncrBy(authorListKey, userId, 1);
                 await txn.hSet(authorSurveyListKey, { [surveyId]: '1' });
+                logger.debug(`Added new survey to author lists`);
             }
 
             // If no publish date provided, return
@@ -158,8 +162,15 @@ export const upsertSurvey =
             // If the publishDate within the next 60 seconds, publish immediately!
             const publishNow = config.publishDate <= Date.now() + 60000;
             if (publishNow) {
+                // Save post config
                 await txn.exec();
+
+                // Create post
                 const post = await createSurveyPost(config);
+
+                // Save postID
+                await redis.hSet(RedisKeys.surveyPostList(config.id), {[post.id]: '1'});
+
                 return [isNew, post.id];
             }
 

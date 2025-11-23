@@ -33,7 +33,6 @@ type KeyDebugResponseDto = {
     error?: string | undefined;
 };
 
- // TODO: Update key list
 const keys = [
     `usr:author`,
     `usr:$userId:svs`,
@@ -42,10 +41,12 @@ const keys = [
     `sv:$surveyId:posts`,
     `sv:pub`,
     `sv:del`,
-    `usr:resp`,
-    `sv:$surveyId:usr`,
     `sv:$surveyId:qn:$questionId`,
-    `usr:$userId:svr:$surveyId`
+    `usr:resp`,
+    `usr:$userId:sv`,
+    `sv:$surveyId:usr`,
+    `usr:$userId:sv:$surveyId:resp`,
+    `usr:$userId:sv:$surveyId:sr:$responseId`
 ];
 
 const variables = [...keys.reduce((r: Set<string>, k: string) => {
