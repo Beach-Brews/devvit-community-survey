@@ -137,7 +137,7 @@ export const SurveyQuestionEditor = (props: CommonQuestionEditorProps) => {
                         <option value="checkbox">Checkbox</option>
                         <option value="rank">Rank</option>
                         <option value="scale">Scale</option>
-                        <option value="text">Text</option>
+                        {/*<option value="text">Text</option>*/}
                     </select>
                 </div>
                 {renderQuestionEditor()}

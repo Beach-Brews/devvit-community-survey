@@ -4,51 +4,27 @@ Introducing the Community Survey app for Reddit! A way to provide more advanced 
 
 Moderators are able to create surveys, schedule publish and close dates, and view results. Published surveys appear directly the user's feed, allowing them to respond and view results without having to leave Reddit.
 
+To receive support, report bugs, or request new features, please visit the [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) subreddit!
+
 ## Ongoing Development
 
 Community Survey is still undergoing development and is currently in an Alpha phase. Please note there are likely glitches. There are also a large number of features planned for future releases. Please visit r/CommunitySurvey to report any bugs or make feature requests.
 
 ## Terms of Use + Privacy Policy
 
-
+Please review the Community Survey [Terms of Use and Privacy Policy](https://www.reddit.com/r/CommunitySurvey/wiki/app/terms-and-privacy/).
 
 ## Getting Started
 
-{Future notes on getting started}
+A getting started guide can be found on the [CommunitySurvey App Guide](https://www.reddit.com/r/CommunitySurvey/wiki/app/) wiki page.
 
-## Alpha Features
-* Basic surveys
+## Changelog / Release Notes + Future Roadmap
 
-## Beta Plans
-* Better Accessibility
-* Text Inputs / Comments
-* More settings (required setting, result visibility, account karma)
+A full log of changes and release notes can be found on the [CommunitySurvey Changelog](https://www.reddit.com/r/CommunitySurvey/wiki/app/changelog/) wiki page.
 
-## Future Features
+A roadmap of planned features and bugfixes can be found on the [CommunitySurvey Roadmap](https://www.reddit.com/r/CommunitySurvey/wiki/app/roadmap/) wiki page.
 
-Here are a few future features that are planned.
+## Acknowledgements
 
-### General
-* Better accessibility
-* Text field support
-  * Text responses comments: anonymously posted or posted as user
-
-### Dashboard
-* Survey list filter / pagination
-* Update notice + release notes from wiki page?
-* Survey settings
-  * Background colors
-  * Allow multiple submissions
-  * Anonymous (current), user choice, required
-* Survey Question Settings
-  * Required
-  * Randomize question options
-* Import/Export/Backup?
-* Handle cross-device/multi-tab editing. Channels? Lock?
-
-### Survey
-* Text responses (added as comment)
-  * Choose anonymous, unless required
-* Edit response
-* Multiple responses
-* Delete response - screen still shows delete / change responses. should go back to intro
+* u/PitchforkAssistant - Thank you for helping brainstorm ideas, providing some sweet proto finds, and generally being amazing
+* u/hammertimestudio, u/Xenc, u/Pl00h - Thank you for helping with some light testing and providing feedback

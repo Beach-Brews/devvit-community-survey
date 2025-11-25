@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Community Survey App Icon">
+    <style>.fb { fill: #28859c; } .fr { fill: #9c2828; } .pc { fill: #9c2828; }</style>
+    <!-- Background: rounded square teal -->
+    <rect x="0" y="0" width="1024" height="1024" rx="128" ry="128" class="pc"/>
+
+    <!-- Clipboard -->
+    <g>
+        <!-- Outline -->
+        <path d="M 640 180 h 120 a 30 30 0 0 1 30 30 v 600 a 30 30 0 0 1 -30 30 h -500 a 30 30 0 0 1 -30 -30 v -600 a 30 30 0 0 1 30 -30 h 120" stroke="#FFFFFF" stroke-width="20" fill="none" />
+        <!-- Clip -->
+        <path d="M 460 140 a 20 20 0 0 1 95 0 h 45 a 20 20 0 0 1 20 20 v 35 a 20 20 0 0 1 -20 20 h -180 a 20 20 0 0 1 -20 -20 v -35 a 20 20 0 0 1 20 -20 z" stroke="none" fill="#FFFFFF" />
+        <!-- Clip hole -->
+        <ellipse cx="510" cy="130" rx="20" ry="20" stroke="none" class="pc"/>
+    </g>
+
+    <!-- Responses -->
+    <g>
+        <path d="M 315 270 h 50 a 10 10 0 0 1 10 10 v 50 a 10 10 0 0 1 -10 10 h -50 a 10 10 0 0 1 -10 -10 v -50 a 10 10 0 0 1 10 -10" stroke="#FFFFFF" stroke-width="10" fill="none" />
+        <path d="M 415 290 h 250" stroke="#FFFFFF" stroke-width="12" fill="none" />
+        <path d="M 415 325 h 200" stroke="#FFFFFF" stroke-width="12" fill="none" />
+    </g>
+    <g>
+        <path d="M 315 380 h 50 a 10 10 0 0 1 10 10 v 50 a 10 10 0 0 1 -10 10 h -50 a 10 10 0 0 1 -10 -10 v -50 a 10 10 0 0 1 10 -10" stroke="#FFFFFF" stroke-width="10" fill="none" />
+        <path d="M 325 390 h 30 a 10 10 0 0 1 10 10 v 30 a 10 10 0 0 1 -10 10 h -30 a 10 10 0 0 1 -10 -10 v -30 a 10 10 0 0 1 10 -10" stroke="none" fill="#FFFFFF" />
+        <path d="M 415 400 h 280" stroke="#FFFFFF" stroke-width="12" fill="none" />
+        <path d="M 415 435 h 175" stroke="#FFFFFF" stroke-width="12" fill="none" />
+    </g>
+    <g>
+        <path d="M 315 490 h 50 a 10 10 0 0 1 10 10 v 50 a 10 10 0 0 1 -10 10 h -50 a 10 10 0 0 1 -10 -10 v -50 a 10 10 0 0 1 10 -10" stroke="#FFFFFF" stroke-width="10" fill="none" />
+        <path d="M 325 500 h 30 a 10 10 0 0 1 10 10 v 30 a 10 10 0 0 1 -10 10 h -30 a 10 10 0 0 1 -10 -10 v -30 a 10 10 0 0 1 10 -10" stroke="none" fill="#FFFFFF" />
+        <path d="M 415 520 h 190" stroke="#FFFFFF" stroke-width="12" fill="none" />
+        <path d="M 415 545 h 100" stroke="#FFFFFF" stroke-width="12" fill="none" />
+    </g>
+    <g>
+        <path d="M 315 600 h 50 a 10 10 0 0 1 10 10 v 50 a 10 10 0 0 1 -10 10 h -50 a 10 10 0 0 1 -10 -10 v -50 a 10 10 0 0 1 10 -10" stroke="#FFFFFF" stroke-width="10" fill="none" />
+        <path d="M 415 620 h 225" stroke="#FFFFFF" stroke-width="12" fill="none" />
+        <path d="M 415 655 h 250" stroke="#FFFFFF" stroke-width="12" fill="none" />
+    </g>
+    <g>
+        <path d="M 315 710 h 50 a 10 10 0 0 1 10 10 v 50 a 10 10 0 0 1 -10 10 h -50 a 10 10 0 0 1 -10 -10 v -50 a 10 10 0 0 1 10 -10" stroke="#FFFFFF" stroke-width="10" fill="none" />
+        <path d="M 325 720 h 30 a 10 10 0 0 1 10 10 v 30 a 10 10 0 0 1 -10 10 h -30 a 10 10 0 0 1 -10 -10 v -30 a 10 10 0 0 1 10 -10" stroke="none" fill="#FFFFFF" />
+        <path d="M 415 730 h 150" stroke="#FFFFFF" stroke-width="12" fill="none" />
+        <path d="M 415 765 h 85" stroke="#FFFFFF" stroke-width="12" fill="none" />
+    </g>
+</svg>

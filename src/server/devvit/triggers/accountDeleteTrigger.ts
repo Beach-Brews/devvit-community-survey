@@ -21,9 +21,11 @@ export const registerAccountDeleteTrigger: PathFactory = (router: Router) => {
                 throw new Error(`Failed to get userId from request: ${req.body}`);
             }
 
-            // Loop over all surveys
-            // If user created the survey, queue for delete
-            // Otherwise, check if user has a response. Delete response.
+            // Loop over all users in author list
+            // If user deleted, then delete all authored surveys
+
+            // Loop over all users in response list
+            // If user deleted OR banned by the sub, delete all responses
 
             res.status(200).json({ status: 'ok' });
 
