@@ -297,7 +297,7 @@ export const RedisKeys = {
      * - Scale - An array with a single scale value chosen by the user
      *
      * **Actions:**
-     * - Add Response - Add valie to set
+     * - Add Response - Add value to set
      * - Get Response - Return data
      * - Deletes Response - Delete set
      * - Deletes All Responses to Survey - Delete set

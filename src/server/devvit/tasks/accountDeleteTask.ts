@@ -129,23 +129,30 @@ export const registerAccountDeletedTask: PathFactory = (router: Router) => {
             const authorListKey = RedisKeys.authorList();
             const authorsToCheck = await redis.zRange(authorListKey, 0, Date.now() - oneDay, { by: 'score'});
             if (authorsToCheck && authorsToCheck.length > 0) {
+                logger.debug(`Found ${authorsToCheck.length} authors to check for deletion`);
                 for (const a of authorsToCheck) {
                     await checkUser(a.member, deleteContext, true);
                     deleteContext.checkTime();
                 }
+            } else {
+                logger.debug(`Found 0 authors to check for deletion`);
             }
 
             // Second, detect any responders not actioned / checked in the last day
             const responderListKey = RedisKeys.responderList();
             const respondersToCheck = await redis.zRange(responderListKey, 0, Date.now() - oneDay, { by: 'score'});
             if (respondersToCheck && respondersToCheck.length > 0) {
+                logger.debug(`Found ${respondersToCheck.length} responders to check for deletion`);
                 for (const r of respondersToCheck) {
                     await checkUser(r.member, deleteContext, false);
                     deleteContext.checkTime();
                 }
+            } else {
+                logger.debug(`Found 0 responders to check for deletion`);
             }
 
             res.status(200).json({ status: 'complete' });
+            logger.info(`Delete account check completed in ${deleteContext.runtime}ms.`);
 
         } catch (error) {
             logger.error('Error processing account delete trigger: ', error);
