@@ -32,4 +32,13 @@ Here are a few future features that are planned.
 * Text responses (added as comment)
     * Choose anonymous
 * Multiple responses
+
+### Know Issues
+
+**Dashboard**
+
+* Bug: Editing surveys on two separate devices at the same time
+
+**Survey Posts**
+
 * Bug: Delete response - screen still shows delete / change responses. should go back to intro

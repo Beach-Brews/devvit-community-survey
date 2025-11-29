@@ -109,6 +109,9 @@ export const registerTaskRunnerTask: PathFactory = (router: Router) => {
         const logger = await Logger.Create("Task - Runner");
         logger.traceStart("/internal/cron/task-runner");
 
+        // Save start time
+        const startTime = Date.now();
+
         try {
             // Publish any queued surveys
             await publishQueuedSurveys();
@@ -116,10 +119,13 @@ export const registerTaskRunnerTask: PathFactory = (router: Router) => {
             // Check for any queued deletes (and start if none scheduled)
             await checkDeleteQueue();
 
+            // Print status
+            logger.info(`Tasks completed in ${(Date.now() - startTime)}ms`);
+
             res.status(200).json({ status: 'ok' });
 
         } catch (error) {
-            logger.error('Error processing task runner: ', error);
+            logger.error(`Error processing task runner after ${(Date.now() - startTime)}ms: `, error);
             res.status(500).json({
                 status: 'error',
                 message: 'Error processing task runner'

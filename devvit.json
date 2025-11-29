@@ -51,6 +51,10 @@
         "endpoint": "/internal/cron/task-runner",
         "cron": "* * * * *"
       },
+      "account-delete-checker": {
+        "endpoint": "/internal/task/account-delete-checker",
+        "cron": "* * * * *"
+      },
       "delete-survey": {
         "endpoint": "/internal/task/delete-survey"
       }

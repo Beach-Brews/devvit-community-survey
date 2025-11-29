@@ -148,10 +148,12 @@ export const upsertSurvey =
 
             // If new, add to author list
             if (isNew) {
-                await txn.zIncrBy(authorListKey, userId, 1);
                 await txn.hSet(authorSurveyListKey, { [surveyId]: '1' });
                 logger.debug(`Added new survey to author lists`);
             }
+
+            // Update last access date for delete checking
+            await txn.zAdd(authorListKey, {member: userId, score: Date.now()});
 
             // If no publish date provided, return
             if (config.publishDate == null) {
@@ -226,7 +228,7 @@ export const closeSurveyById =
     };
 
 export const deleteSurveyById =
-    async (surveyId: string): Promise<boolean> => {
+    async (surveyId: string, scheduleAt?: Date | undefined): Promise<boolean> => {
 
         // Get the survey, to get user id
         const survey = await getSurveyById(surveyId, false);
@@ -262,7 +264,7 @@ export const deleteSurveyById =
         await scheduler.runJob({
             name: Constants.DELETE_JOB_NAME,
             data: { surveyId },
-            runAt: new Date()
+            runAt: scheduleAt ?? new Date(),
         });
 
         return true;

@@ -7,10 +7,11 @@
 
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
-import { context, reddit } from '@devvit/web/server';
+import { context, reddit, redis } from '@devvit/web/server';
 import { Logger } from "../../util/Logger";
 import { isMod } from '../../util/userUtils';
 import { PostType } from '../../../shared/types/general';
+import { RedisKeys } from '../redis/RedisKeys';
 
 export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
     router.post('/internal/menu/create-dashboard', async (_req, res): Promise<void> => {
@@ -20,7 +21,6 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
         try {
             // Confirm sub context set
             if (!context.subredditName) {
-                // Yes, I know, bad practice, but also less duplicate code.
                 // noinspection ExceptionCaughtLocallyJS
                 throw new Error('Subreddit Name is required.');
             }
@@ -29,6 +29,31 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
             if (!(await isMod())) {
                 // noinspection ExceptionCaughtLocallyJS
                 throw new Error('You must be a moderator.');
+            }
+
+            // Check if there is an existing post ID saved
+            const dashPostKey = RedisKeys.dashboardPostId();
+            const postIdSet = Object.entries(await redis.hGetAll(dashPostKey));
+            if (postIdSet?.[0]?.[0] !== undefined) {
+
+                // Check time for "forced" new dashboard post
+                const parsedTime = parseInt(postIdSet[0][1]);
+                if (isNaN(parsedTime) || parsedTime < Date.now() - 60000) {
+
+                    // Check if the post actually exists
+                    const existingPost = await reddit.getPostById(postIdSet[0][0] as `t3_${string}`);
+                    if (existingPost) {
+
+                        // Update the last request time (fallback)
+                        await redis.hSet(dashPostKey, { [existingPost.id]: Date.now().toString() });
+
+                        // And redirect the user
+                        res.json({
+                            navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${existingPost.id}`,
+                        });
+                        return;
+                    }
+                }
             }
 
             // Create the new Dashboard post
@@ -45,9 +70,12 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
             });
 
             // Immediately remove it from sub feed
-            // TODO: How do I remove this, but also have it render?
+            // TODO: Either wait for Reddit to allow interactive views on removed posts, or menu item webviews
             //await post.remove(false);
-            await post.hide();
+
+            // Save the ID to Redis (reset if force-created)
+            await redis.del(dashPostKey);
+            await redis.hSet(dashPostKey, { [post.id]: Date.now().toString() });
 
             res.json({
                 navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${post.id}`,

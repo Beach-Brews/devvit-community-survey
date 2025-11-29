@@ -112,7 +112,7 @@ export const SurveyPost = () => {
                         )}
                     </div>
                     {survey && user?.allowDev === true && (
-                        <div>
+                        <div className="text-center text-[0.7rem] text-neutral-600 dark:text-neutral-400">
                             {panelContext.panel == PanelType.Question || panelContext.panel == PanelType.QuestionDescription || panelContext.panel == PanelType.Result
                                 ? panelContext?.number !== undefined
                                     ? survey.id + ' ' + (survey.questions?.[panelContext.number]?.id ?? `Q${panelContext.number} ??`)

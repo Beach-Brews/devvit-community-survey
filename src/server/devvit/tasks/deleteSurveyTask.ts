@@ -14,11 +14,11 @@ import { getSurveyById } from '../redis/dashboard';
 import { SurveyDto } from '../../../shared/redis/SurveyDto';
 import { Constants } from '../../../shared/constants';
 
-class DeleteExecutionLimitError extends Error {
+class DeleteSurveyExecutionLimitError extends Error {
 
-    private readonly _context: DeleteTaskContext;
+    private readonly _context: DeleteSurveyTaskContext;
 
-    constructor(msg: string, ctx: DeleteTaskContext) {
+    constructor(msg: string, ctx: DeleteSurveyTaskContext) {
         super(msg);
         this._context = ctx;
     }
@@ -26,7 +26,7 @@ class DeleteExecutionLimitError extends Error {
     get context() { return this._context; }
 }
 
-class DeleteTaskContext {
+class DeleteSurveyTaskContext {
 
     private readonly _survey: SurveyDto;
     private readonly _startTime: number;
@@ -43,12 +43,12 @@ class DeleteTaskContext {
     }
 
     public checkTime() {
-        if ((Date.now() - this._startTime) > 25000)
-            throw new DeleteExecutionLimitError('Execution threshold reached.', this);
+        if ((Date.now() - this._startTime) > 12000)
+            throw new DeleteSurveyExecutionLimitError('Execution threshold reached.', this);
     }
 }
 
-const deleteUserResponses = async (ctx: DeleteTaskContext) => {
+const deleteUserResponses = async (ctx: DeleteSurveyTaskContext) => {
 
     // Check if there are records to process
     const responderListKey = RedisKeys.responderList();
@@ -84,13 +84,14 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
             }
             await redis.del(responseListKey);
 
-            // Decrease response count from user's total response count
-            if ((await redis.zIncrBy(responderListKey, userId, -1 * v.score)) <= 0)
-                await redis.zRem(responderListKey, [userId]);
-
             // Remove survey from user's survey list
             const responderSurveyListKey = RedisKeys.responderSurveyList(userId);
             await redis.hDel(responderSurveyListKey, [surveyId]);
+
+            // If user no longer has responses to any survey, remove from responder list (do not update time, might be deleting account)
+            const userSurveyList = await redis.hLen(responderSurveyListKey);
+            if (userSurveyList <= 0)
+                await redis.zRem(responderListKey, [userId]);
 
             // Remove user from hash after processing (ensures if job is rescheduled for timing, picks up where it left off)
             await redis.zRem(surveyResponseKey, [userId]);
@@ -107,7 +108,7 @@ const deleteUserResponses = async (ctx: DeleteTaskContext) => {
     ctx.logger.info(`Completed deleting user responses. Current runtime: ${ctx.runtime}s`);
 };
 
-const deleteQuestionResponses = async (ctx: DeleteTaskContext) => {
+const deleteQuestionResponses = async (ctx: DeleteSurveyTaskContext) => {
 
     if (!ctx.survey.questions) return;
 
@@ -149,7 +150,7 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
             }
 
             // Get context
-            const context = new DeleteTaskContext(surveyDto, logger);
+            const context = new DeleteSurveyTaskContext(surveyDto, logger);
 
             // Remove from publish queue
             const pubKey = RedisKeys.surveyPublishQueue();
@@ -173,10 +174,9 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
             await redis.hDel(authorSurveyListKey, [surveyId]);
             logger.info('Removed from user survey list');
 
-            // Decrease author list (or remove from list if no surveys left)
+            // Remove author from author list if no more surveys (do not modify time, since could be processing account deleted)
             const authorListKey = RedisKeys.authorList();
-            const authorSurveyCount = (await redis.zIncrBy(authorListKey, surveyDto.owner, -1));
-            if (authorSurveyCount <= 0)
+            if ((await redis.hLen(authorSurveyListKey)) <= 0)
                 await redis.zRem(authorListKey, [surveyDto.owner]);
 
             // Finally, delete from delete queue
@@ -189,7 +189,7 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
         } catch (error) {
 
             // If a limit error...
-            if (error instanceof DeleteExecutionLimitError) {
+            if (error instanceof DeleteSurveyExecutionLimitError) {
                 logger.warn(`Execution limit reached for survey ${error.context.survey.id} after ${error.context.runtime}s`);
                 res.status(429).json({
                     status: 'limit',

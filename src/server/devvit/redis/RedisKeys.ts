@@ -9,25 +9,42 @@ import { assertSurveyId, assertUserId, assertQuestionId, assertResponseId } from
 
 export const RedisKeys = {
     /**
-     * List of all survey authors
+     * Saves the ID of the dashboard post, so multiple are not created.
+     *
+     * **Type:** Hash Set (hSet)
+     *
+     * **Field:** PostId - The Post ID last saved for the dash post
+     *
+     * **Value:** Time - The time the last request to create a dashboard was. Allows forcing a new post if create menu
+     *                   is used in the same minute.
+     *
+     * **Actions:**
+     * - Get Existing ID - Check if existing post exists
+     * - Save New ID - Save ID of new dashboard post
+     */
+    dashboardPostId: () => `dash:id`,
+
+    /**
+     * List of all survey authors. Used to check for account deletion.
      *
      * **Type:** Sorted Set (ZSet)
      *
      * **Members:** UserId - The userId for the author
      *
-     * **Score:** Number of surveys the author has created
+     * **Score:** The last time the user has performed an action, or last delete check
      *
      * **Actions:**
-     * - Survey Create - Increase survey count
-     * - Survey Delete - Decrease survey count (or remove member if 0)
-     * - Account Delete - Survey is deleted. See Survey Delete action.
+     * - Survey Create - Update action time
+     * - Survey Edit - Update action time
+     * - Survey Delete - Remove from set (if no more surveys authored)
+     * - Account Delete - Delete all authored surveys will remove user from set.
      */
     authorList: () => `usr:author`,
 
     /**
      * List of surveys by a specific author
      *
-     * **Type:** Hash Set (HSet)
+     * **Type:** Hash Set (hSet)
      *
      * **Field:** SurveyId - The ID of each survey
      *
@@ -87,7 +104,7 @@ export const RedisKeys = {
     },
 
     /**
-     * Holds the post Id(s) for surveys.
+     * Holds the post ID(s) for surveys.
      *
      * **Type:** Hash Set (hSet)
      *
@@ -182,14 +199,14 @@ export const RedisKeys = {
      *
      * **Member:** UserId - The User ID
      *
-     * **Score:** The number of responses from the user across all surveys
+     * **Score:** The last time the user has performed an action, or last delete check
      *
      * **Actions:**
-     * - Add Response - Increase user response count by 1
-     * - Deletes Response - Decrease user response count by 1 (or remove from set)
-     * - Deletes All Responses to Survey - Remove user from set
-     * - Survey Delete - Same as deleting all responses to survey
-     * - Delete Account - Remove from set
+     * - Add Response - Set timestamp
+     * - Deletes Response - Remove user from set (if no more responses)
+     * - Deletes All Responses to Survey - Remove user from set (if no more responses)
+     * - Survey Delete - Remove user from set (if no more responses)
+     * - Delete Account - Delete all responses for all surveys, which will remove from set
      */
     responderList: () => `usr:resp`,
 

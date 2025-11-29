@@ -24,6 +24,10 @@ A full log of changes and release notes can be found on the [CommunitySurvey Cha
 
 A roadmap of planned features and bugfixes can be found on the [CommunitySurvey Roadmap](https://www.reddit.com/r/CommunitySurvey/wiki/app/roadmap/) wiki page.
 
+## Community Survey Source Code
+
+Want some reading material to help you fall asleep? Check out the [Community Survey Source Code on GitHub](https://github.com/Beach-Brews/devvit-community-survey)!
+
 ## Acknowledgements
 
 * u/PitchforkAssistant - Thank you for helping brainstorm ideas, providing some sweet proto finds, and generally being amazing

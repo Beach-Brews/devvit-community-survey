@@ -12,11 +12,13 @@ import { registerTaskRunnerTask } from './tasks/taskRunnerTask';
 import { registerAppUpgradeTrigger } from './triggers/upgradeTrigger';
 import { registerAppInstallTrigger } from './triggers/installTrigger';
 import { registerDeleteSurveyTask } from './tasks/deleteSurveyTask';
+import { registerAccountDeletedTask } from './tasks/accountDeleteTask';
 
 export const registerInternalRoutes: PathFactory = (router: Router) => {
     registerCreateDashboardMenu(router);
     registerTaskRunnerTask(router);
     registerDeleteSurveyTask(router);
+    registerAccountDeletedTask(router);
     registerAppInstallTrigger(router);
     registerAppUpgradeTrigger(router);
 };

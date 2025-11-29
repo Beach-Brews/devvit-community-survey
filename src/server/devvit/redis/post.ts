@@ -117,12 +117,14 @@ export const upsertQuestionResponse =
 
             // Add user to survey lists if first response to survey
             if (isFirstResponse) {
-                await txn.zIncrBy(responderListKey, userId, 1);
                 await txn.zIncrBy(surveyResponderList, userId, 1);
                 await txn.zIncrBy(surveyResponderList, 'total', 1);
                 await txn.hSet(responderSurveyListKey, {[surveyId]: '1'});
                 await txn.zAdd(responseListKey, { member: responseId, score: Date.now() });
             }
+
+            // Save last access date for account delete
+            await txn.zAdd(responderListKey, {member: userId, score: Date.now()});
 
             // Save user response
             await txn.hSet(userResponseKey, { [questionId]: JSON.stringify(data) });
@@ -187,7 +189,7 @@ export const deleteUserResponse =
             // TODO: Handle delete of single or all responses. This is very messy and needs cleaned up.
 
             // Get the user's responses
-            const userAllResponseCount = await redis.zScore(responderListKey, userId) ?? 0;
+            const userSurveyCount = await redis.hLen(responderSurveyListKey);
             const thisSurveyResponseCount = await redis.zScore(surveyResponderListKey, userId) ?? 0;
             const responseValues = thisSurveyResponseCount > 0
                 ? await redis.zRange(responseListKey, 0, thisSurveyResponseCount)
@@ -246,12 +248,9 @@ export const deleteUserResponse =
             // And decrease response count for this survey
             await txn.zIncrBy(surveyResponderListKey, 'total', -1 * thisSurveyResponseCount);
 
-            // Decrease user response count, or remove from list altogether
-            if (userAllResponseCount <= thisSurveyResponseCount) {
+            // Remove user from responder list if only survey (do not update time, might be processing delete account)
+            if (userSurveyCount <= 1)
                 await txn.zRem(responderListKey, [userId]);
-            } else {
-                await txn.zIncrBy(responderListKey, userId, -1 * thisSurveyResponseCount);
-            }
 
             // Commit
             await txn.exec();
