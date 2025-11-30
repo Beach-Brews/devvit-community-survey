@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { redis, reddit } from '@devvit/web/server';
+import { redis, reddit, settings } from '@devvit/web/server';
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
 import { Logger } from "../../util/Logger";
@@ -90,13 +90,22 @@ const checkUser = async (userId: string, context: DeleteAccountTaskContext, isAu
     // Check if user exists
     const userProfile = await reddit.getUserById(userId as `t2_${string}`);
 
-    // TODO: Check if user is banned from subreddit? Requires getting current subreddit and looping over users...
-
     // If the user could not be found (undefined, not error), trigger an onAccountDelete
     if (!userProfile) {
         context.logger.info(`Failed to find a user with ID ${userId}. Triggering account delete.`)
         await onAccountDeleted(userId, context);
         return;
+    }
+
+    // Check if user has been banned from the sub
+    if ((await settings.get<boolean>('removeBanned'))) {
+        const sub = await reddit.getCurrentSubreddit();
+        const banList = await sub.getBannedUsers({username: userProfile.username}).all();
+        if (banList[0] && banList[0].id === userId) {
+            context.logger.info(`Detected banned user with ID ${userId}. Triggering account delete.`);
+            await onAccountDeleted(userId, context);
+            return;
+        }
     }
 
     // If user is active, set last check date

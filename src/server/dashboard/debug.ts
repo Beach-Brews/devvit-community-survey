@@ -85,7 +85,7 @@ export const registerDashboardDebugRoutes: PathFactory = (router: Router) => {
                 logger.error('Error executing API: ', e);
                 res.status(500).json({
                     type: 'error',
-                    error: 'An unknown error ocurred.'
+                    error: 'An unknown error occurred.'
                 });
             } finally {
                 logger.traceEnd();

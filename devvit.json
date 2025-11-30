@@ -68,6 +68,12 @@
         "helpText": "Allows the developer read-only access to a developer console. Leave this setting off unless receiving support.",
         "defaultValue": false
       },
+      "removeBanned": {
+        "type": "boolean",
+        "label": "Remove Banned Responses",
+        "helpText": "If true and a user is banned from the sub, the banned user's replies to all surveys will be automatically removed within 24-48 hours.",
+        "defaultValue": true
+      },
       "logLevel": {
         "type": "select",
         "label": "Log Level",

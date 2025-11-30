@@ -53,7 +53,7 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         : 'No close date'}
                 </div>
             </div>
-            <div className="flex flex-col gap-4 justify-center items-center flex-grow h-[0%]">
+            <div className="w-full flex flex-col gap-4 justify-center items-center flex-grow h-[0%]">
                 <div className="text-4xl font-bold text-center">{ctx.survey.title}</div>
                 {ctx.survey.intro && (<div className="text-xl text-center line-clamp-5">{ctx.survey.intro}</div>)}
                 <div className="mt-8 w-full flex justify-center">
