@@ -44,6 +44,7 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
                 return successResponse(res, {
                     isMod: userIsMod,
+                    responseBlocked: undefined,
                     allowDev: await debugEnabled(),
                     username: userInfo?.username ?? 'anonymous',
                     userId: userInfo?.id,

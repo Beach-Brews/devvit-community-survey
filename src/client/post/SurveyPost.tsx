@@ -77,7 +77,7 @@ export const SurveyPost = () => {
 
         // Otherwise, load from context
         switch (panelContext.panel) {
-            case PanelType.Intro: return (<IntroPanel isAnonymous={!user?.userId} />);
+            case PanelType.Intro: return (<IntroPanel isAnonymous={!user?.userId} responseBlocked={user?.responseBlocked} />);
             case PanelType.Question: return (<QuestionPanel key={`pnl_${panelContext.number}`} />);
             case PanelType.Outro: return (<OutroPanel />);
             case PanelType.Result: return (<ResultPanel />);

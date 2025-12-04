@@ -10,6 +10,8 @@ import { OptionIdRegex, QuestionIdRegex, SurveyIdRegex } from '../../../shared/r
 
 export class Schema {
 
+    static stringArray = z.array(z.string());
+
     /* ==================== Question Config ==================== */
 
     static questionOption = z
@@ -72,6 +74,15 @@ export class Schema {
 
     static surveyQuestionList = z.array(Schema.question);
 
+    static responderCriteria = z
+        .looseObject({
+            verifiedEmail: z.boolean().default(false),
+            approvedUsers: z.boolean().default(false),
+            minKarma: z.number().nullable().default(null),
+            minSubKarma: z.number().nullable().default(null),
+            userFlairs: Schema.stringArray.nullable().default(null)
+        });
+
     static surveyConfig = z
         .looseObject({
             id: z.string().regex(SurveyIdRegex, 'Not a valid survey ID string'),
@@ -80,6 +91,13 @@ export class Schema {
             intro: z.string().default(''),
             outro: z.string().min(1, 'Survey Outro missing'),
             allowMultiple: z.boolean().default(false),
+            responderCriteria: Schema.responderCriteria.nullish().default({
+                verifiedEmail: false,
+                approvedUsers: false,
+                minKarma: null,
+                minSubKarma: null,
+                userFlairs: null
+            }),
             createDate: z.number().default(() => Date.now()),
             publishDate: z.number().nullable(),
             closeDate: z.number().nullable()
@@ -90,6 +108,4 @@ export class Schema {
             ...Schema.surveyConfig.shape,
             questions: Schema.surveyQuestionList
         });
-
-    static stringArray = z.array(z.string());
 }

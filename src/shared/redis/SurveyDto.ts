@@ -48,6 +48,14 @@ export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | MultiOption
 
 export type SurveyQuestionList = SurveyQuestionDto[];
 
+export type ResponderCriteriaDto = {
+    verifiedEmail: boolean;
+    approvedUsers: boolean;
+    minKarma: number | null;
+    minSubKarma: number | null;
+    userFlairs: null | [string]
+};
+
 export type SurveyDto = {
     id: string;
     owner: string;
@@ -55,6 +63,7 @@ export type SurveyDto = {
     intro: string;
     outro: string;
     allowMultiple: boolean;
+    responderCriteria: ResponderCriteriaDto | null | undefined,
     createDate: number;
     publishDate: number | null;
     closeDate: number | null;

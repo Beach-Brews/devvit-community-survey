@@ -17,8 +17,7 @@ export const DeletePanel = () => {
     if (!ctx) throw Error('Context undefined.');
 
     const returnToSurvey = () => {
-        const { prev, ...currentContext } = ctx.panelContext;
-        ctx.setPanelContext({ ...currentContext, panel: prev ?? PanelType.Intro });
+        ctx.setPanelContext({ ...ctx.panelContext, panel: PanelType.Intro });
     };
 
     const onDelete = async () => {

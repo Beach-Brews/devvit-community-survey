@@ -19,8 +19,8 @@ import {
 } from '../util/apiUtils';
 import * as postRedis from '../devvit/redis/post';
 import { context, reddit } from '@devvit/web/server';
-import { InitializeSurveyResponse } from '../../shared/types/postApi';
-import { isMod } from '../util/userUtils';
+import { InitializeSurveyResponse, ResponseBlockedReason } from '../../shared/types/postApi';
+import { getResponseBlockedReason, isMod } from '../util/userUtils';
 import { QuestionResponseDto } from '../../shared/redis/ResponseDto';
 import { debugEnabled } from '../util/debugUtils';
 
@@ -61,9 +61,13 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
 
                 // Get user info
                 const userInfo = await reddit.getCurrentUser();
-                const [userIsMod, snoovar] = userInfo
-                    ? await Promise.all([isMod(userInfo), userInfo.getSnoovatarUrl()])
-                    : [false, undefined];
+                const [userIsMod, snoovar, responseBlocked] = userInfo
+                    ? await Promise.all([
+                        isMod(userInfo),
+                        userInfo.getSnoovatarUrl(),
+                        getResponseBlockedReason(found, userInfo)
+                    ])
+                    : [false, undefined, ResponseBlockedReason.ANONYMOUS];
 
                 // Get responses (if user has any)
                 const lastResponse = userInfo?.id !== undefined
@@ -74,6 +78,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                     survey: found as SurveyWithQuestionsDto,
                     user: {
                         isMod: userIsMod,
+                        responseBlocked: responseBlocked,
                         allowDev: await debugEnabled(),
                         username: userInfo?.username ?? 'anonymous',
                         userId: userInfo?.id,
@@ -172,6 +177,13 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 if (surveyDto.closeDate && surveyDto.closeDate < Date.now()) {
                     logger.warn('Attempt to respond to closed survey by user blocked: ', surveyId, userId);
                     return messageResponse(res, 400, 'This survey is closed and no longer accepting responses', 122);
+                }
+
+                // Error if user is not allowed to respond
+                const blockResponse = await getResponseBlockedReason(surveyDto);
+                if (blockResponse !== undefined) {
+                    logger.warn(`User ${userId} tried adding a response, but is blocked for ${blockResponse}.`);
+                    return messageResponse(res, 403, `Used is unable to respond: ${blockResponse}`, 666);
                 }
 
                 // Run the upsert

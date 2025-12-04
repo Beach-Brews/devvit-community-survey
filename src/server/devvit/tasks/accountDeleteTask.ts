@@ -12,6 +12,7 @@ import { Logger } from "../../util/Logger";
 import { RedisKeys } from '../redis/RedisKeys';
 import { deleteSurveyById } from '../redis/dashboard';
 import { deleteUserResponse } from '../redis/post';
+import { isBanned } from '../../util/userUtils';
 
 class DeleteAccountExecutionLimitError extends Error {
 
@@ -98,14 +99,10 @@ const checkUser = async (userId: string, context: DeleteAccountTaskContext, isAu
     }
 
     // Check if user has been banned from the sub
-    if ((await settings.get<boolean>('removeBanned'))) {
-        const sub = await reddit.getCurrentSubreddit();
-        const banList = await sub.getBannedUsers({username: userProfile.username}).all();
-        if (banList[0] && banList[0].id === userId) {
-            context.logger.info(`Detected banned user with ID ${userId}. Triggering account delete.`);
-            await onAccountDeleted(userId, context);
-            return;
-        }
+    if ((await settings.get<boolean>('removeBanned')) && (await isBanned(userProfile.username))) {
+        context.logger.info(`Detected banned user with ID ${userId}. Triggering account delete.`);
+        await onAccountDeleted(userId, context);
+        return;
     }
 
     // If user is active, set last check date
