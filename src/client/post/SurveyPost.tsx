@@ -13,7 +13,7 @@ import { ErrorPanel } from './panels/ErrorPanel';
 import { IntroPanel } from './panels/IntroPanel';
 import { QuestionPanel } from './panels/QuestionPanel';
 import { OutroPanel } from './panels/OutroPanel';
-import { navigateTo } from '@devvit/web/client';
+import { context, navigateTo } from '@devvit/web/client';
 import { Constants } from '../../shared/constants';
 import { ClosedPanel } from './panels/ClosedPanel';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
@@ -25,6 +25,12 @@ import { useToaster } from '../shared/toast/useToaster';
 import { PostToaster } from './PostToaster';
 
 export const SurveyPost = () => {
+
+    // Determine if post is deleted (based on post data)
+    // @ts-expect-error - Bug with native apps having the developerData object
+    const surveyId = context?.postData?.developerData?.surveyId ??
+        context?.postData?.surveyId;
+    const isDeleted = surveyId === 'deleted';
 
     // State for loading survey context
     const [panelContext, setPanelContext] = useState<SurveyPanelContext>({panel: PanelType.Intro});
@@ -39,6 +45,7 @@ export const SurveyPost = () => {
 
     // Load survey from backend
     useEffect(() => {
+        if (isDeleted) return;
         const callApi = async () => {
             try {
                 const postInit = await initializeSurvey();
@@ -50,15 +57,24 @@ export const SurveyPost = () => {
             }
         };
         void callApi();
-    }, []);
+    }, [isDeleted]);
 
     // Ensure context is only defined if the survey is defined
-    const context: SurveyContextProps | undefined = survey
+    const surveyContext: SurveyContextProps | undefined = survey
         ? { panelContext, setPanelContext, survey, lastResponse, setLastResponse, addToast }
         : undefined;
 
     // Determine the panel to render
     const getPanel = () => {
+
+        // If the survey was deleted
+        if (isDeleted)
+            return (
+                <div className="flex flex-col gap-4 justify-center items-center h-full">
+                    <div className="text-xl text-center">This survey has been deleted.</div>
+                </div>
+            );
+
         // If loading (survey undefined) show loading
         if (postInit === undefined)
             return (<LoadingPanel />);
@@ -90,7 +106,7 @@ export const SurveyPost = () => {
     };
 
     return (
-        <SurveyContext value={context}>
+        <SurveyContext value={surveyContext}>
             <div className="h-full max-h-full flex flex-col justify-between">
                 <div className="p-2 flex-grow h-[0%]">
                     {getPanel()}

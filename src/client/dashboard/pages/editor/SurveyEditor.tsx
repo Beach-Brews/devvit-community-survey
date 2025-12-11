@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import { ChangeEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FocusEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { SurveyDto, SurveyQuestionDto } from '../../../../shared/redis/SurveyDto';
 import { CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
@@ -15,6 +15,7 @@ import { DashboardContext } from '../../DashboardContext';
 import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 import { ToastType } from '../../../shared/toast/toastTypes';
+import { SurveyHeaderEditor } from './SurveyHeaderEditor';
 
 enum SaveIndicatorState {
     Waiting,
@@ -162,7 +163,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         });
     };
 
-    const onInputBlur = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    const onInputBlur = (e: FocusEvent<HTMLInputElement> | FocusEvent<HTMLTextAreaElement>) => {
         const fieldName = e.target.name;
         let value = e.target.value;
 
@@ -231,17 +232,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             </div>
             <div className="my-4">
                 <div className="flex flex-col gap-8">
-                    <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
-                        {ctx.userInfo.allowDev && (<div className="text-[0.5rem] absolute bottom-4 left-4">{survey.id}</div>)}
-                        <div>
-                            <input name="title" placeholder="Survey Title" maxLength={50} value={survey.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full text-2xl border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                            <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${50-survey.title.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.title.length} / 50</div>
-                        </div>
-                        <div>
-                            <textarea name="intro" placeholder="Captivate your audiance with a survey prompt." maxLength={512} value={survey.intro} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full min-h-[4rem] max-h-[10rem] border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                            <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${512-survey.intro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.intro.length} / 512</div>
-                        </div>
-                    </div>
+                    <SurveyHeaderEditor survey={survey} allowDev={ctx?.userInfo?.allowDev ?? false} onInputChange={onInputChange} onInputBlur={onInputBlur} setSurvey={setSurvey} />
                     {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==questionCount-1} duplicateAction={!maxReached ? onAddQuestion : undefined} />)}
                     <div className="flex justify-center">
                         <button disabled={maxReached} onClick={() => onAddQuestion()} className="w-1/2 lg:w-1/3 border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex justify-center gap-2 items-center cursor-pointer disabled:pointer-events-none disabled:opacity-50">

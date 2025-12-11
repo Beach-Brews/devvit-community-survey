@@ -48,12 +48,44 @@ export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | MultiOption
 
 export type SurveyQuestionList = SurveyQuestionDto[];
 
+export enum KarmaType {
+    BOTH,
+    COMMENT,
+    POST
+}
+
+export type KarmaCriteriaDto = {
+    type: KarmaType;
+    value: number;
+}
+
+export enum FlairType {
+    TEXT_EQUAL,
+    TEXT_PARTIAL,
+    CSS_CLASS
+}
+
+export type FlairCriteriaDto = {
+    type: FlairType;
+    value: string;
+};
+
 export type ResponderCriteriaDto = {
     verifiedEmail: boolean;
     approvedUsers: boolean;
-    minKarma: number | null;
-    minSubKarma: number | null;
-    userFlairs: null | [string]
+    minAge: null | number;
+    minKarma: KarmaCriteriaDto | null;
+    minSubKarma: KarmaCriteriaDto | null;
+    userFlairs: null | FlairCriteriaDto[]
+};
+
+export const DefaultResponderCriteria: ResponderCriteriaDto = {
+    verifiedEmail: false,
+    approvedUsers: false,
+    minAge: null,
+    minKarma: null,
+    minSubKarma:  null,
+    userFlairs: null
 };
 
 export type SurveyDto = {

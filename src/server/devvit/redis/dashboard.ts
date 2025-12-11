@@ -18,6 +18,7 @@ import { createSurveyPost } from '../../util/publishUtils';
 import { RedisKeys } from './RedisKeys';
 import { QuestionResponseDto, ResponseValuesDto, SurveyResultListDto, SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 import { Constants } from '../../../shared/constants';
+import { PostType } from '../../../shared/types/general';
 
 // TODO: Add pagination parameter. Is there a way to filter too?
 export const getSurveyListForAuthor =
@@ -252,6 +253,10 @@ export const deleteSurveyById =
         for (const postId of Object.keys(posts)) {
             const post = await reddit.getPostById(postId as `t3_{string}`);
             if (post) {
+                await post.setPostData({
+                    postType: PostType[PostType.Survey],
+                    surveyId: 'deleted'
+                });
                 await post.remove(false);
                 await post.addRemovalNote({ reasonId: '', modNote: `Survey Deleted by ${context.username}` });
             }

@@ -24,6 +24,7 @@ import { QuestionResponseDto, SurveyResultSummaryDto } from '../../shared/redis/
 import { reddit } from '@devvit/web/server';
 import { UserInfoDto } from '../../shared/types/postApi';
 import { debugEnabled } from '../util/debugUtils';
+import { SubredditUserFlairsResult, UserFlairTemplate } from '../../shared/types/dashboardApi';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
@@ -220,6 +221,32 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                     return messageResponse(res, 404, `No question found with ID: ${surveyId} - ${questionId}`);
 
                 successResponse(res, found);
+
+            } catch(e) {
+                logger.error('Error executing API: ', e);
+                messageResponse(res, 500, 'There was an error processing this request');
+            } finally {
+                logger.traceEnd();
+            }
+        });
+
+    router.route('/api/dash/flairs')
+        .get<unknown, ApiResponse<SubredditUserFlairsResult>>(async (_req, res) => {
+            const logger = await Logger.Create(`Dashboard API - Get Subreddit Flairs`);
+            logger.traceStart('Api Start');
+
+            try {
+                if (await errorIfNotMod(res)) return;
+
+                const sub = await reddit.getCurrentSubreddit();
+                const flairs = await sub.getUserFlairTemplates();
+
+                successResponse(res, flairs.map(f => {
+                    return {
+                        id: f.id,
+                        text: f.text
+                    } as UserFlairTemplate;
+                }));
 
             } catch(e) {
                 logger.error('Error executing API: ', e);

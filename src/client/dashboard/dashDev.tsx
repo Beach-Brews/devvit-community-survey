@@ -11,7 +11,8 @@ createRoot(document.getElementById('root')!).render(
         username: 'Beach-Brews',
         snoovar: '',
         isMod: true,
-        allowDev: true
+        allowDev: true,
+        responseBlocked: undefined
     }} />
   </StrictMode>
 );

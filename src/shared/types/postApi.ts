@@ -11,10 +11,16 @@ import { UserResponsesDto } from '../redis/ResponseDto';
 export enum ResponseBlockedReason {
     ANONYMOUS,
     BANNED,
+    MUTED,
     NOT_VERIFIED,
     NOT_APPROVED,
+    MIN_AGE,
     MIN_KARMA,
+    MIN_COMMENT_KARMA,
+    MIN_POST_KARMA,
     MIN_SUB_KARMA,
+    MIN_SUB_COMMENT_KARMA,
+    MIN_SUB_POST_KARMA,
     USER_FLAIR
 }
 

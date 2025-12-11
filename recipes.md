@@ -22,6 +22,7 @@ Here are a few future features that are planned.
 
 ### Dashboard
 * Survey list filter / pagination
+* Date selector for publish and close dates
 * Update notice + release notes from wiki page?
 * Survey settings
     * Background/button colors

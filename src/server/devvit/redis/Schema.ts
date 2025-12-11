@@ -7,6 +7,7 @@
 
 import { z } from 'zod';
 import { OptionIdRegex, QuestionIdRegex, SurveyIdRegex } from '../../../shared/redis/uuidGenerator';
+import { FlairType, KarmaType } from '../../../shared/redis/SurveyDto';
 
 export class Schema {
 
@@ -74,13 +75,30 @@ export class Schema {
 
     static surveyQuestionList = z.array(Schema.question);
 
+    static karmaType = z.enum(KarmaType);
+
+    static karmaCriteria = z
+        .looseObject({
+            type: Schema.karmaType,
+            value: z.number()
+        });
+
+    static flairType = z.enum(FlairType);
+
+    static flairCriteria = z
+        .looseObject({
+            type: Schema.flairType,
+            value: z.string()
+        });
+
     static responderCriteria = z
         .looseObject({
             verifiedEmail: z.boolean().default(false),
             approvedUsers: z.boolean().default(false),
-            minKarma: z.number().nullable().default(null),
-            minSubKarma: z.number().nullable().default(null),
-            userFlairs: Schema.stringArray.nullable().default(null)
+            minAge: z.number().nullable().default(null),
+            minKarma: Schema.karmaCriteria.nullable().default(null),
+            minSubKarma: Schema.karmaCriteria.nullable().default(null),
+            userFlairs: z.array(Schema.flairCriteria).nullable().default(null)
         });
 
     static surveyConfig = z
@@ -94,6 +112,7 @@ export class Schema {
             responderCriteria: Schema.responderCriteria.nullish().default({
                 verifiedEmail: false,
                 approvedUsers: false,
+                minAge: null,
                 minKarma: null,
                 minSubKarma: null,
                 userFlairs: null

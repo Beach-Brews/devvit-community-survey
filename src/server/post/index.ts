@@ -182,8 +182,8 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 // Error if user is not allowed to respond
                 const blockResponse = await getResponseBlockedReason(surveyDto);
                 if (blockResponse !== undefined) {
-                    logger.warn(`User ${userId} tried adding a response, but is blocked for ${blockResponse}.`);
-                    return messageResponse(res, 403, `Used is unable to respond: ${blockResponse}`, 666);
+                    logger.warn(`User ${userId} tried adding a response, but is blocked for ${ResponseBlockedReason[blockResponse]}.`);
+                    return messageResponse(res, 403, `Used is unable to respond: ${ResponseBlockedReason[blockResponse]}`, 666);
                 }
 
                 // Run the upsert

@@ -9,6 +9,7 @@ import { SurveyDto, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyD
 import { ApiResponse } from '../../../shared/types/api';
 import { SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 import { UserInfoDto } from '../../../shared/types/postApi';
+import { SubredditUserFlairsResult } from '../../../shared/types/dashboardApi';
 
 export const getUserInfo = async (): Promise<UserInfoDto | null> => {
     const resp = await fetch(`/api/dash/user-info`);
@@ -68,4 +69,10 @@ export const getSurveyResultSummary =
     async (surveyId: string): Promise<SurveyResultSummaryDto | null> => {
         const resp = await fetch(`/api/dash/survey/${surveyId}/results`);
         return resp.ok ? (await resp.json() as ApiResponse<SurveyResultSummaryDto>)?.result ?? null : null;
+    };
+
+export const getSubredditUserFlairs =
+    async (): Promise<SubredditUserFlairsResult | null> => {
+        const resp = await fetch(`/api/dash/flairs`);
+        return resp.ok ? (await resp.json() as ApiResponse<SubredditUserFlairsResult>)?.result ?? null : null;
     };

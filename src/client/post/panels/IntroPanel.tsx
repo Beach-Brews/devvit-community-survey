@@ -42,24 +42,36 @@ export const IntroPanel = (props: IntroPanelProps) => {
 
     const disableResponses = props.responseBlocked !== undefined || props.isAnonymous;
 
-    const getBlockedReason = (reason: ResponseBlockedReason) => {
-        switch (reason) {
+    const blockedReason = (() => {
+        switch (props.responseBlocked) {
             case ResponseBlockedReason.BANNED:
-                return 'You Are Banned';
+                return ['Account Is Banned', 'Sorry, banned users cannot respond to this survey.'];
+            case ResponseBlockedReason.MUTED:
+                return ['Account Is Muted', 'Sorry, muted users cannot respond to this survey.'];
             case ResponseBlockedReason.NOT_VERIFIED:
-                return 'Account Must Have Verified Email';
+                return ['Email Unverified', 'Sorry, users must have a verified email on their account to respond to this survey.'];
             case ResponseBlockedReason.NOT_APPROVED:
-                return 'Not an Approved User';
+                return ['Not an Approved User', 'Sorry, users must be an approved user of this subreddit to respond to this survey.'];
+            case ResponseBlockedReason.MIN_AGE:
+                return ['Account Too New', `Sorry, users with accounts newer than ${ctx.survey.responderCriteria?.minAge ?? 0} days cannot respond to this survey.`];
+            case ResponseBlockedReason.MIN_POST_KARMA:
+                return ['Account Post Karma Too Low', `Sorry, users must have a minimum of ${ctx.survey.responderCriteria?.minKarma?.value?.toLocaleString() ?? 0} account Post Karma to respond to this survey.`];
+            case ResponseBlockedReason.MIN_COMMENT_KARMA:
+                return ['Account Comment Karma Too Low', `Sorry, users must have a minimum of ${ctx.survey.responderCriteria?.minKarma?.value?.toLocaleString() ?? 0} account Comment Karma to respond to this survey.`];
             case ResponseBlockedReason.MIN_KARMA:
-                return 'Account Karma Too Low';
+                return ['Account Karma Too Low', `Sorry, users must have a minimum of ${ctx.survey.responderCriteria?.minKarma?.value?.toLocaleString() ?? 0} account Karma to respond to this survey.`];
+            case ResponseBlockedReason.MIN_SUB_POST_KARMA:
+                return ['Subreddit Post Karma Too Low', `Sorry, users must have a minimum of ${ctx.survey.responderCriteria?.minSubKarma?.value?.toLocaleString() ?? 0} community Post Karma to respond to this survey.`];
+            case ResponseBlockedReason.MIN_SUB_COMMENT_KARMA:
+                return ['Subreddit Comment Karma Too Low', `Sorry, users must have a minimum of ${ctx.survey.responderCriteria?.minSubKarma?.value?.toLocaleString() ?? 0} community Comment Karma to respond to this survey.`];
             case ResponseBlockedReason.MIN_SUB_KARMA:
-                return 'Subreddit Karma Too Low';
+                return ['Subreddit Karma Too Low', `Sorry, users must have a minimum of ${ctx.survey.responderCriteria?.minSubKarma?.value?.toLocaleString() ?? 0} community Karma to respond to this survey.`];
             case ResponseBlockedReason.USER_FLAIR:
-                return 'User Flair Not Allowed';
+                return ['User Flair Restricted', 'Sorry, users must have a specific user flair to respond to this survey.'];
             default:
-                return 'Error';
+                return ['Error', 'An unknown error has occurred. Try again later.'];
         }
-    }
+    })();
 
     return (
         <div className="flex flex-col gap-4 justify-between items-center h-full">
@@ -84,7 +96,7 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         {props.isAnonymous
                             ? 'Login to Start Survey'
                             : props.responseBlocked !== undefined
-                                ? getBlockedReason(props.responseBlocked)
+                                ? blockedReason[0]
                                 : responses <= 0
                                     ? 'Start Survey'
                                     : responses < ctx.survey.questions.length
@@ -93,7 +105,9 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         }
                     </button>
                 </div>
-                <div className="text-neutral-700 dark:text-neutral-300">{ctx.survey.questions.length} total questions</div>
+                {blockedReason?.[1] !== undefined
+                    ? (<div className="text-neutral-700 dark:text-neutral-300 text-center">{blockedReason[1]}</div>)
+                    : (<div className="text-neutral-700 dark:text-neutral-300 text-center">{ctx.survey.questions.length} total questions</div>)}
                 {responses > 0 && (
                     <div className="mt-8 w-full flex justify-center">
                         <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
