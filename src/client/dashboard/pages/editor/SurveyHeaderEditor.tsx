@@ -5,14 +5,20 @@
 * License: BSD-3-Clause
 */
 
-import { DefaultResponderCriteria, ResponderCriteriaDto, SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { KeyboardEvent, ChangeEvent, Dispatch, FocusEvent, SetStateAction, useState, useEffect } from 'react';
+import {
+    DefaultResponderCriteria,
+    FlairType,
+    KarmaType,
+    ResponderCriteriaDto,
+    SurveyDto
+} from '../../../../shared/redis/SurveyDto';
+import { ChangeEvent, Dispatch, FocusEvent, KeyboardEvent, SetStateAction, useEffect, useState } from 'react';
 import { CheckboxIcon } from '../../../shared/components/CustomIcons';
 import { context } from '@devvit/web/client';
 import { getSubredditUserFlairs } from '../../api/dashboardApi';
 import { SubredditUserFlairsResult } from '../../../../shared/types/dashboardApi';
 
-type HeaderTabs = 'title' | 'settings';
+type HeaderTabs = 'title' | 'criteria';
 
 export interface SurveyConfigEditorProps {
     survey: SurveyDto;
@@ -47,13 +53,35 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
             };
         });
     };
-    const onChangeNumber = (field: string, e: ChangeEvent<HTMLInputElement>) => {
+
+    // TODO: Fix allowing negative values...
+    const parseIntSafe = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
-        if ([...value.matchAll(/\D/g)].length > 0) {
+        if (value === '-') return -0;
+        if (value !== '' && !/^-?\d*$/.test(value)) {
             e.preventDefault();
-            return;
+            return undefined;
         }
-        const parsedValue = parseInt(value);
+        return parseInt(value);
+    }
+    const preventNonNumeric = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (!/[0-9]/.test(e.key) &&
+            e.key !== '-' &&
+            e.key.indexOf('Arrow') < 0 &&
+            e.key !== 'Home' &&
+            e.key !== 'End' &&
+            e.key !== 'Tab' &&
+            e.key !== 'Backspace' &&
+            e.key !== 'Delete' &&
+            !e.metaKey &&
+            !e.ctrlKey) {
+            e.preventDefault();
+        }
+    };
+
+    const onChangeNumber = (field: string, e: ChangeEvent<HTMLInputElement>) => {
+        const parsedValue = parseIntSafe(e);
+        if (parsedValue === undefined) return;
         setSurvey(s => {
             return {
                 ...s,
@@ -64,10 +92,18 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
             };
         });
     };
-    const preventNonNumeric = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (!/[0-9]/.test(e.key) && e.key.indexOf('Arrow') < 0 && e.key !== 'Home' && e.key !== 'End' && e.key != 'Tab' && e.key !== 'Backspace' && e.key !== 'Delete' && !e.metaKey && !e.ctrlKey)
-            e.preventDefault();
-    }
+    const onChangeKarma = (field: string, type: KarmaType | undefined, value: number | undefined) => {
+        if (value === undefined) return;
+        setSurvey(s => {
+            return {
+                ...s,
+                responderCriteria: {
+                    ...criteria,
+                    [field]: type !== undefined ? { type, value: isNaN(value) ? 0 : value } : null
+                },
+            };
+        });
+    };
 
     const buttonActive = "border-b-2 border-blue-300 dark:border-blue-700 font-bold";
     const buttonInactive = "border-b-1 border-neutral-300 dark:border-neutral-700 cursor-pointer hover:border-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100";
@@ -76,77 +112,232 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
         <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
             <div className="w-full pb-4 flex gap-4 justify-center align-center">
                 <button className={`px-4 py-1 ${headerTab == 'title' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('title')}>Survey Title</button>
-                <button className={`px-4 py-1 ${headerTab == 'settings' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('settings')}>Settings</button>
+                <button className={`px-4 py-1 ${headerTab == 'criteria' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('criteria')}>Responder Criteria</button>
             </div>
             {
                 (() => {
                     switch (headerTab) {
 
-                        case 'settings': {
+                        case 'criteria': {
                             const optionStyle = "px-2 text-neutral-900 bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-950";
                             return (
-                                <div className="pb-6 px-8 flex flex-col gap-4">
-                                    <div className="flex gap-4 justify-start items-center group cursor-pointer" onClick={() => onChangeCriteria({ ...criteria, verifiedEmail: !criteria.verifiedEmail })}>
-                                        <button className="w-[10rem] flex justify-end items-center cursor-pointer">
-                                            <CheckboxIcon fill={criteria.verifiedEmail} />
-                                        </button>
-                                        <div><strong>Verified Email</strong> - Only users who have a verified email on their account can respond.</div>
+                                <div className="mb-6 px-4 grid grid-cols-[3fr_1fr_16fr] gap-4">
+                                    {/* Verified Email */}
+                                    <div
+                                        className="contents group cursor-pointer"
+                                        onClick={() =>
+                                            onChangeCriteria({
+                                                ...criteria,
+                                                verifiedEmail: !criteria.verifiedEmail,
+                                            })
+                                        }
+                                    >
+                                        <div className="flex justify-end items-center">
+                                            <button className="cursor-pointer">
+                                                <CheckboxIcon fill={criteria.verifiedEmail} />
+                                            </button>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <strong>Verified Email</strong> - Only users who have a verified email on their account can respond.
+                                        </div>
                                     </div>
-                                    <div className="flex gap-4 justify-start items-center group cursor-pointer" onClick={() => onChangeCriteria({ ...criteria, approvedUsers: !criteria.approvedUsers })}>
-                                        <button className="w-[10rem] flex justify-end items-center cursor-pointer">
-                                            <CheckboxIcon fill={criteria.approvedUsers} />
-                                        </button>
-                                        <div><strong>Approved Users</strong> - Only subreddit approved users can respond.</div>
+
+                                    {/* Approved Users */}
+                                    <div
+                                        className="contents group cursor-pointer"
+                                        onClick={() =>
+                                            onChangeCriteria({
+                                                ...criteria,
+                                                approvedUsers: !criteria.approvedUsers,
+                                            })
+                                        }
+                                    >
+                                        <div className="flex justify-end items-center">
+                                            <button className="cursor-pointer">
+                                                <CheckboxIcon fill={criteria.approvedUsers} />
+                                            </button>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <strong>Approved Users</strong> - Only subreddit approved users can respond.
+                                        </div>
                                     </div>
-                                    <div className="flex gap-4 justify-start items-center">
-                                        <input
-                                            value={criteria.minAge ?? ''}
-                                            placeholder="none"
-                                            onKeyDown={preventNonNumeric}
-                                            onChange={(e) => onChangeNumber('minAge', e)}
-                                            className="w-[10rem] px-2 py-1 text-sm text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
-                                        />
-                                        <div><strong>Minimum Account Age (Days)</strong> - A user's account must be this many days old to respond.</div>
-                                    </div>
-                                    <div className="flex gap-4 justify-start items-center">
-                                        <div className="w-[10rem] gap-2 flex flex-col justify-end items-center">
-                                            <select className="w-full px-2 py-1 text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white">
-                                                <option className={optionStyle}>None</option>
-                                                <option className={optionStyle}>Post + Comment</option>
-                                                <option className={optionStyle}>Post</option>
-                                                <option className={optionStyle}>Comment</option>
-                                            </select>
+
+                                    {/* Min Age (Days) */}
+                                    <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
+                                        <div className="flex justify-start items-center md:justify-end">
                                             <input
-                                                value={criteria.minKarma?.value ?? ''}
+                                                value={criteria.minAge ?? ''}
                                                 placeholder="none"
                                                 onKeyDown={preventNonNumeric}
                                                 onChange={(e) => onChangeNumber('minAge', e)}
-                                                className="w-[10rem] px-2 py-1 text-sm text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                             />
                                         </div>
-                                        <div><strong>Minimum Account Karma</strong> - A user's account must have this minimum karma to respond.</div>
+                                        <div className="col-span-2">
+                                            <strong>Minimum Account Age (Days)</strong> - A user's account must be this many days old to respond.
+                                        </div>
                                     </div>
-                                    <div className="flex gap-4 justify-start items-center">
-                                        <div className="w-[10rem] gap-2 flex flex-col justify-end items-center">
-                                            <select className="w-full px-2 py-1 text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white">
-                                                <option className={optionStyle}>None</option>
-                                                <option className={optionStyle}>Post + Comment</option>
-                                                <option className={optionStyle}>Post</option>
-                                                <option className={optionStyle}>Comment</option>
+
+                                    {/* Min Account Karma */}
+                                    <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
+                                        <div className="flex justify-start items-center md:justify-end">
+                                            <select
+                                                value={criteria.minKarma?.type}
+                                                onChange={(e) =>
+                                                    onChangeKarma(
+                                                        'minKarma',
+                                                        parseIntSafe(e),
+                                                        criteria.minKarma?.value ?? 0
+                                                    )
+                                                }
+                                                className="w-full px-2 py-1 md:text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                            >
+                                                <option value={undefined} className={optionStyle}>None</option>
+                                                <option value={KarmaType.BOTH} className={optionStyle}>Post + Comment</option>
+                                                <option value={KarmaType.POST} className={optionStyle}>Post</option>
+                                                <option value={KarmaType.COMMENT} className={optionStyle}>Comment</option>
                                             </select>
-                                            <input
-                                                value={criteria.minSubKarma?.value ?? ''}
-                                                placeholder="none"
-                                                onKeyDown={preventNonNumeric}
-                                                onChange={(e) => onChangeNumber('minAge', e)}
-                                                className="w-[10rem] px-2 py-1 text-sm text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
-                                            />
                                         </div>
-                                        <div><strong>Minimum Community Karma</strong> - A user's account must have this minimum karma in r/{context?.subredditName ?? '{currentSubName}'} to respond.</div>
+                                        <div className="col-span-2">
+                                            <strong>Minimum Account Karma</strong> - A user's account must have a minimum Post, Comment, or total karma to respond.
+                                        </div>
                                     </div>
-                                    <div className="flex gap-4 .justify-start items-center">
-                                        {userFlair?.flairs.map(f => <p key={f.id}>{f.text}</p>)}
+
+                                    {/* Min Karma Value */}
+                                    {criteria.minKarma?.type !== undefined && (
+                                        <div className="col-span-3 pl-8 md:pl-0 flex flex-col-reverse gap-2 md:contents">
+                                            <div className="flex justify-start items-center md:justify-end col-span-2">
+                                                <input
+                                                    value={criteria.minKarma.value ?? 0}
+                                                    placeholder="none"
+                                                    onKeyDown={preventNonNumeric}
+                                                    onChange={(e) =>
+                                                        onChangeKarma(
+                                                            'minKarma',
+                                                            criteria.minKarma?.type,
+                                                            parseIntSafe(e)
+                                                        )
+                                                    }
+                                                    className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                />
+                                            </div>
+                                            <div>
+                                                <strong>Minimum Account Karma Value</strong> - The minimum karma amount, based on the selector above.
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Min Sub Account Karma */}
+                                    <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
+                                        <div className="flex justify-start items-center md:justify-end">
+                                            <select
+                                                value={criteria.minSubKarma?.type}
+                                                onChange={(e) =>
+                                                    onChangeKarma(
+                                                        'minSubKarma',
+                                                        parseIntSafe(e),
+                                                        criteria.minSubKarma?.value ?? 0
+                                                    )
+                                                }
+                                                className="w-full px-2 py-1 md:text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                            >
+                                                <option value={undefined} className={optionStyle}>None</option>
+                                                <option value={KarmaType.BOTH} className={optionStyle}>Post + Comment</option>
+                                                <option value={KarmaType.POST} className={optionStyle}>Post</option>
+                                                <option value={KarmaType.COMMENT} className={optionStyle}>Comment</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <strong>Minimum Community Karma</strong> - A user's account must have this minimum karma in r/{context?.subredditName ?? '{currentSubName}'}{' '}to respond.
+                                        </div>
                                     </div>
+
+                                    {/* Min Sub  Karma Value */}
+                                    {criteria.minSubKarma?.type !== undefined && (
+                                        <div className="col-span-3 pl-8 md:pl-0 flex flex-col-reverse gap-2 md:contents">
+                                            <div className="flex justify-start items-center md:justify-end col-span-2">
+                                                <input
+                                                    value={criteria.minSubKarma.value ?? 0}
+                                                    placeholder="none"
+                                                    onKeyDown={preventNonNumeric}
+                                                    onChange={(e) =>
+                                                        onChangeKarma(
+                                                            'minSubKarma',
+                                                            criteria.minSubKarma?.type,
+                                                            parseIntSafe(e)
+                                                        )
+                                                    }
+                                                    className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                />
+                                            </div>
+                                            <div>
+                                                <strong>Minimum Community Karma Value</strong> - The minimum karma amount, based on the selector above.
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="col-span-3 border-t-1"></div>
+
+                                    <div>{/*Spacer*/}</div>
+                                    <div className="col-span-2">
+                                        <strong>User Flair</strong> - Only users with the selected flair(s) may respond
+                                    </div>
+
+                                    {/*criteria.userFlairs && criteria.userFlairs.length > 0 && criteria.userFlairs.map((c, i) => {
+                                        return (
+                                            <div key={`flaircri_${i}`} className="contents">
+                                                <div className="flex justify-start items-center md:justify-end">
+                                                    <select
+                                                        value={c.type}
+                                                        className="w-full px-2 py-1 md:text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                    >
+                                                        <option value={FlairType.TEXT_EQUAL} className={optionStyle}>Text (Equal)</option>
+                                                        <option value={FlairType.TEXT_PARTIAL} className={optionStyle}>Text (RegEx)</option>
+                                                        <option value={FlairType.CSS_CLASS} className={optionStyle}>CSS Class</option>
+                                                    </select>
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <input
+                                                        value={''}
+                                                        onChange={(e) => onChangeNumber('minAge', e)}
+                                                        className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })*/}
+
+                                    {userFlair?.flairs && userFlair?.flairs.length > 0 ? (
+                                        userFlair.flairs.map((f) => {
+                                            const isSelected = criteria.userFlairs !== null && criteria.userFlairs.length > 0 && criteria.userFlairs.some(c => c.value === f.text);
+                                            return (
+                                                <div
+                                                    key={`flair_${f.id}`}
+                                                    className="contents group cursor-pointer"
+                                                    onClick={() => {
+                                                        const flairCriteria = criteria.userFlairs ?? [];
+                                                        onChangeCriteria({
+                                                            ...criteria,
+                                                            userFlairs: isSelected
+                                                                ? [...flairCriteria.filter(s => s.value !== f.text)]
+                                                                : [...flairCriteria, { type: FlairType.TEXT_EQUAL, value: f.text }],
+                                                        });
+                                                    }}
+                                                >
+                                                    <div className="flex justify-end items-center">
+                                                        <button className="cursor-pointer">
+                                                            <CheckboxIcon fill={isSelected} />
+                                                        </button>
+                                                    </div>
+                                                    <div className="col-span-2">
+                                                        {f.text}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="col-span-3">No user flairs configured.</div>
+                                    )}
                                 </div>
                             );
                         }

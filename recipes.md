@@ -27,7 +27,11 @@ Here are a few future features that are planned.
 * Survey settings
     * Background/button colors
     * Allow multiple submissions
-    * Anonymous (current), user choice
+    * Anonymous (default), user choice
+    * Result visibility
+      * Always visible
+      * Only once closed
+      * Mods only
 * Survey Question Settings
     * Required
     * Randomize question options
