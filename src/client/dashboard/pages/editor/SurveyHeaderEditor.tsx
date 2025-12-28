@@ -9,8 +9,11 @@ import {
     DefaultResponderCriteria,
     FlairType,
     KarmaType,
+    KarmaTypeType,
     ResponderCriteriaDto,
-    SurveyDto
+    ResultVisibility,
+    ResultVisibilityType,
+    SurveyDto,
 } from '../../../../shared/redis/SurveyDto';
 import { ChangeEvent, Dispatch, FocusEvent, KeyboardEvent, SetStateAction, useEffect, useState } from 'react';
 import { CheckboxIcon } from '../../../shared/components/CustomIcons';
@@ -18,7 +21,7 @@ import { context } from '@devvit/web/client';
 import { getSubredditUserFlairs } from '../../api/dashboardApi';
 import { SubredditUserFlairsResult } from '../../../../shared/types/dashboardApi';
 
-type HeaderTabs = 'title' | 'criteria';
+type HeaderTabs = 'title' | 'criteria' | 'settings';
 
 export interface SurveyConfigEditorProps {
     survey: SurveyDto;
@@ -88,11 +91,11 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                 responderCriteria: {
                     ...criteria,
                     [field]: isNaN(parsedValue) ? null : parsedValue
-                },
+                }
             };
         });
     };
-    const onChangeKarma = (field: string, type: KarmaType | undefined, value: number | undefined) => {
+    const onChangeKarma = (field: string, type: KarmaTypeType | undefined, value: number | undefined) => {
         if (value === undefined) return;
         setSurvey(s => {
             return {
@@ -100,26 +103,27 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                 responderCriteria: {
                     ...criteria,
                     [field]: type !== undefined ? { type, value: isNaN(value) ? 0 : value } : null
-                },
+                }
             };
         });
     };
 
     const buttonActive = "border-b-2 border-blue-300 dark:border-blue-700 font-bold";
     const buttonInactive = "border-b-1 border-neutral-300 dark:border-neutral-700 cursor-pointer hover:border-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100";
+    const optionStyle = "px-2 text-neutral-900 bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-950";
 
     return (
         <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
             <div className="w-full pb-4 flex gap-4 justify-center align-center">
                 <button className={`px-4 py-1 ${headerTab == 'title' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('title')}>Survey Title</button>
                 <button className={`px-4 py-1 ${headerTab == 'criteria' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('criteria')}>Responder Criteria</button>
+                <button className={`px-4 py-1 ${headerTab == 'settings' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('settings')}>Survey Settings</button>
             </div>
             {
                 (() => {
                     switch (headerTab) {
 
                         case 'criteria': {
-                            const optionStyle = "px-2 text-neutral-900 bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-950";
                             return (
                                 <div className="mb-6 px-4 grid grid-cols-[3fr_1fr_16fr] gap-4">
                                     {/* Verified Email */}
@@ -137,7 +141,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 <CheckboxIcon fill={criteria.verifiedEmail} />
                                             </button>
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 flex items-center">
                                             <strong>Verified Email</strong> - Only users who have a verified email on their account can respond.
                                         </div>
                                     </div>
@@ -157,7 +161,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 <CheckboxIcon fill={criteria.approvedUsers} />
                                             </button>
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 flex items-center">
                                             <strong>Approved Users</strong> - Only subreddit approved users can respond.
                                         </div>
                                     </div>
@@ -173,7 +177,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                             />
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 flex items-center">
                                             <strong>Minimum Account Age (Days)</strong> - A user's account must be this many days old to respond.
                                         </div>
                                     </div>
@@ -186,19 +190,19 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 onChange={(e) =>
                                                     onChangeKarma(
                                                         'minKarma',
-                                                        parseIntSafe(e),
+                                                        e.target.value === '' ? undefined : e.target.value as KarmaTypeType,
                                                         criteria.minKarma?.value ?? 0
                                                     )
                                                 }
                                                 className="w-full px-2 py-1 md:text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                             >
-                                                <option value={undefined} className={optionStyle}>None</option>
-                                                <option value={KarmaType.BOTH} className={optionStyle}>Post + Comment</option>
-                                                <option value={KarmaType.POST} className={optionStyle}>Post</option>
-                                                <option value={KarmaType.COMMENT} className={optionStyle}>Comment</option>
+                                                <option value={''} className={optionStyle}>None</option>
+                                                <option value={KarmaType.Both} className={optionStyle}>Post + Comment</option>
+                                                <option value={KarmaType.Post} className={optionStyle}>Post</option>
+                                                <option value={KarmaType.Comment} className={optionStyle}>Comment</option>
                                             </select>
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 flex items-center">
                                             <strong>Minimum Account Karma</strong> - A user's account must have a minimum Post, Comment, or total karma to respond.
                                         </div>
                                     </div>
@@ -221,7 +225,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                     className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                                 />
                                             </div>
-                                            <div>
+                                            <div className="flex items-center">
                                                 <strong>Minimum Account Karma Value</strong> - The minimum karma amount, based on the selector above.
                                             </div>
                                         </div>
@@ -235,19 +239,19 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 onChange={(e) =>
                                                     onChangeKarma(
                                                         'minSubKarma',
-                                                        parseIntSafe(e),
+                                                        e.target.value === '' ? undefined : e.target.value as KarmaTypeType,
                                                         criteria.minSubKarma?.value ?? 0
                                                     )
                                                 }
                                                 className="w-full px-2 py-1 md:text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                             >
                                                 <option value={undefined} className={optionStyle}>None</option>
-                                                <option value={KarmaType.BOTH} className={optionStyle}>Post + Comment</option>
-                                                <option value={KarmaType.POST} className={optionStyle}>Post</option>
-                                                <option value={KarmaType.COMMENT} className={optionStyle}>Comment</option>
+                                                <option value={KarmaType.Both} className={optionStyle}>Post + Comment</option>
+                                                <option value={KarmaType.Post} className={optionStyle}>Post</option>
+                                                <option value={KarmaType.Comment} className={optionStyle}>Comment</option>
                                             </select>
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 flex items-center">
                                             <strong>Minimum Community Karma</strong> - A user's account must have this minimum karma in r/{context?.subredditName ?? '{currentSubName}'}{' '}to respond.
                                         </div>
                                     </div>
@@ -258,8 +262,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             <div className="flex justify-start items-center md:justify-end col-span-2">
                                                 <input
                                                     value={criteria.minSubKarma.value ?? 0}
-                                                    placeholder="none"
-                                                    onKeyDown={preventNonNumeric}
+                                                    type="number"
                                                     onChange={(e) =>
                                                         onChangeKarma(
                                                             'minSubKarma',
@@ -267,10 +270,10 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                             parseIntSafe(e)
                                                         )
                                                     }
-                                                    className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                    className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                 />
                                             </div>
-                                            <div>
+                                            <div className="flex items-center">
                                                 <strong>Minimum Community Karma Value</strong> - The minimum karma amount, based on the selector above.
                                             </div>
                                         </div>
@@ -279,7 +282,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     <div className="col-span-3 border-t-1"></div>
 
                                     <div>{/*Spacer*/}</div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-2 flex items-center">
                                         <strong>User Flair</strong> - Only users with the selected flair(s) may respond
                                     </div>
 
@@ -320,7 +323,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                             ...criteria,
                                                             userFlairs: isSelected
                                                                 ? [...flairCriteria.filter(s => s.value !== f.text)]
-                                                                : [...flairCriteria, { type: FlairType.TEXT_EQUAL, value: f.text }],
+                                                                : [...flairCriteria, { type: FlairType.TextEqual, value: f.text }],
                                                         });
                                                     }}
                                                 >
@@ -329,7 +332,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                             <CheckboxIcon fill={isSelected} />
                                                         </button>
                                                     </div>
-                                                    <div className="col-span-2">
+                                                    <div className="col-span-2 flex items-center">
                                                         {f.text}
                                                     </div>
                                                 </div>
@@ -338,6 +341,39 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     ) : (
                                         <div className="col-span-3">No user flairs configured.</div>
                                     )}
+                                </div>
+                            );
+                        }
+
+                        case "settings": {
+                            return (
+                                <div className="mb-6 px-4 grid grid-cols-[3fr_1fr_16fr] gap-4">
+
+                                    {/* Result Visibility */}
+                                    <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
+                                        <div className="flex justify-start items-center md:justify-end">
+                                            <select
+                                                value={survey.resultVisibility ?? ResultVisibility.Always}
+                                                className="w-full px-2 py-1 md:text-right text-sm border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
+                                                onChange={(e) =>
+                                                    setSurvey(s => {
+                                                        return {
+                                                            ...s,
+                                                            resultVisibility: e.target.value as ResultVisibilityType
+                                                        };
+                                                    })
+                                                }
+                                            >
+                                                <option value={ResultVisibility.Always} className={optionStyle}>Always</option>
+                                                <option value={ResultVisibility.Closed} className={optionStyle}>Closed Only</option>
+                                                <option value={ResultVisibility.Mods} className={optionStyle}>Mods Only</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-span-2 flex items-center">
+                                            <strong>Result Visibility</strong> - Choose whether results are always visible, only when survey has closed, or only mods can see results.
+                                        </div>
+                                    </div>
+
                                 </div>
                             );
                         }

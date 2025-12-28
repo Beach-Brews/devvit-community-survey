@@ -11,10 +11,11 @@ import { PanelType, SurveyContext } from '../SurveyContext';
 import { formatRelativeDateTime } from '../../shared/dateFormat';
 import { DocumentArrowDownIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ResponseBlockedReason } from '../../../shared/types/postApi';
+import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 
 export interface IntroPanelProps {
     isAnonymous: boolean,
-    responseBlocked: ResponseBlockedReason | undefined
+    responseBlocked: ResponseBlockedReason | null | undefined
 }
 
 export const IntroPanel = (props: IntroPanelProps) => {
@@ -40,9 +41,10 @@ export const IntroPanel = (props: IntroPanelProps) => {
         ctx.setPanelContext({ panel: PanelType.Delete, prev: PanelType.Intro });
     };
 
-    const disableResponses = props.responseBlocked !== undefined || props.isAnonymous;
+    const disableResponses = !!props.responseBlocked || props.isAnonymous;
 
     const blockedReason = (() => {
+        if (!props.responseBlocked) return undefined;
         switch (props.responseBlocked) {
             case ResponseBlockedReason.BANNED:
                 return ['Account Is Banned', 'Sorry, banned users cannot respond to this survey.'];
@@ -77,10 +79,20 @@ export const IntroPanel = (props: IntroPanelProps) => {
         <div className="flex flex-col gap-4 justify-between items-center h-full">
             <div className="w-full flex justify-between">
                 <div className="text-neutral-700 dark:text-neutral-300">
-                    <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                        <PresentationChartBarIcon className="size-5" />
-                        <span>{ctx.survey.responseCount?.toLocaleString() ?? 0}</span>
-                    </button>
+                    {ctx.canViewResults
+                        ? (
+                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                                <PresentationChartBarIcon className="size-5" />
+                                <span>{ctx.survey.responseCount?.toLocaleString() ?? 0}</span>
+                            </button>
+                        )
+                        : (
+                            <div className="flex gap-1 items-center rounded-lg p-2">
+                                <PresentationChartBarIcon className="size-5" />
+                                <span>{ctx.survey.resultVisibility === ResultVisibility.Closed ? 'Results on Close' : 'Mods Only'}</span>
+                            </div>
+                        )
+                    }
                 </div>
                 <div className="p-2 text-neutral-700 dark:text-neutral-300">
                     {ctx.survey.closeDate
@@ -95,7 +107,7 @@ export const IntroPanel = (props: IntroPanelProps) => {
                     <button disabled={disableResponses} onClick={!disableResponses ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
                         {props.isAnonymous
                             ? 'Login to Start Survey'
-                            : props.responseBlocked !== undefined
+                            : blockedReason?.[0] !== undefined
                                 ? blockedReason[0]
                                 : responses <= 0
                                     ? 'Start Survey'

@@ -7,7 +7,7 @@
 
 import { z } from 'zod';
 import { OptionIdRegex, QuestionIdRegex, SurveyIdRegex } from '../../../shared/redis/uuidGenerator';
-import { FlairType, KarmaType } from '../../../shared/redis/SurveyDto';
+import { FlairType, KarmaType, ResultVisibility } from '../../../shared/redis/SurveyDto';
 
 export class Schema {
 
@@ -75,6 +75,8 @@ export class Schema {
 
     static surveyQuestionList = z.array(Schema.question);
 
+    static resultVisibility = z.enum(ResultVisibility);
+
     static karmaType = z.enum(KarmaType);
 
     static karmaCriteria = z
@@ -117,6 +119,7 @@ export class Schema {
                 minSubKarma: null,
                 userFlairs: null
             }),
+            resultVisibility: Schema.resultVisibility.default(ResultVisibility.Always),
             createDate: z.number().default(() => Date.now()),
             publishDate: z.number().nullable(),
             closeDate: z.number().nullable()

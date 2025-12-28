@@ -181,7 +181,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
 
                 // Error if user is not allowed to respond
                 const blockResponse = await getResponseBlockedReason(surveyDto);
-                if (blockResponse !== undefined) {
+                if (blockResponse !== null) {
                     logger.warn(`User ${userId} tried adding a response, but is blocked for ${ResponseBlockedReason[blockResponse]}.`);
                     return messageResponse(res, 403, `Used is unable to respond: ${ResponseBlockedReason[blockResponse]}`, 666);
                 }
@@ -205,6 +205,11 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
             logger.traceStart('Api Start');
 
             try {
+
+                // Error if user is undefined
+                const userId = await errorIfNoUserId(res);
+                if (!userId) return;
+
                 // Error if postData is undefined
                 if (!context.postData) {
                     logger.error('PostData missing from context.');
@@ -220,6 +225,20 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 if (!surveyId || typeof surveyId !== 'string') {
                     logger.error(`SurveyID missing from context (or not a string): ${surveyId ?? 'undefined'}`);
                     return messageResponse(res, 400, 'SurveyID missing from context', 133);
+                }
+
+                // Get survey to check if allowed to see results.
+                const surveyDto = await postRedis.getSurveyById(surveyId, false);
+                if (!surveyDto) {
+                    logger.error('No Survey found with ID: ', surveyId);
+                    return surveyNotFoundResponse(res, surveyId);
+                }
+
+                // Error if user is not allowed to respond
+                const blockResponse = await getResponseBlockedReason(surveyDto);
+                if (blockResponse !== null) {
+                    logger.warn(`User ${userId} tried adding a response, but is blocked for ${ResponseBlockedReason[blockResponse]}.`);
+                    return messageResponse(res, 403, `Used is unable to respond: ${ResponseBlockedReason[blockResponse]}`, 666);
                 }
 
                 const found = await postRedis.getQuestionResponseById(surveyId, questionId);

@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')!).render(
         snoovar: '',
         isMod: true,
         allowDev: true,
-        responseBlocked: undefined
+        responseBlocked: null
     }} />
   </StrictMode>
 );

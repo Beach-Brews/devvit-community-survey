@@ -48,25 +48,37 @@ export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | MultiOption
 
 export type SurveyQuestionList = SurveyQuestionDto[];
 
-export enum KarmaType {
-    BOTH,
-    COMMENT,
-    POST
-}
+export const ResultVisibility = {
+    Always: 'Always',
+    Closed: 'Closed',
+    Mods: 'Mods'
+} as const;
+
+export type ResultVisibilityType = (typeof ResultVisibility)[keyof typeof ResultVisibility];
+
+export const KarmaType = {
+    Both: 'Both',
+    Comment: 'Comment',
+    Post: 'Post'
+} as const;
+
+export type KarmaTypeType = (typeof KarmaType)[keyof typeof KarmaType];
 
 export type KarmaCriteriaDto = {
-    type: KarmaType;
+    type: KarmaTypeType;
     value: number;
 }
 
-export enum FlairType {
-    TEXT_EQUAL,
-    TEXT_PARTIAL,
-    CSS_CLASS
-}
+export const FlairType = {
+    TextEqual: 'TxtEq',
+    TextPartial: 'TxtPart',
+    CssClass: 'CssCls'
+} as const;
+
+export type FlairTypeType = (typeof FlairType)[keyof typeof FlairType];
 
 export type FlairCriteriaDto = {
-    type: FlairType;
+    type: FlairTypeType;
     value: string;
 };
 
@@ -96,6 +108,7 @@ export type SurveyDto = {
     outro: string;
     allowMultiple: boolean;
     responderCriteria: ResponderCriteriaDto | null | undefined,
+    resultVisibility: ResultVisibilityType | null | undefined,
     createDate: number;
     publishDate: number | null;
     closeDate: number | null;

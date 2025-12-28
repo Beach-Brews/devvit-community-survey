@@ -26,7 +26,7 @@ export enum ResponseBlockedReason {
 
 export type UserInfoDto = {
     isMod: boolean;
-    responseBlocked: ResponseBlockedReason | undefined;
+    responseBlocked: ResponseBlockedReason | null;
     allowDev: boolean;
     username: string;
     userId: string | undefined;
@@ -36,5 +36,5 @@ export type UserInfoDto = {
 export type InitializeSurveyResponse = {
     survey: SurveyWithQuestionsDto;
     user: UserInfoDto;
-    lastResponse: UserResponsesDto | undefined;
+    lastResponse: UserResponsesDto | null;
 };

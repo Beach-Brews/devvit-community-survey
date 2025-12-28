@@ -30,9 +30,10 @@ export interface SurveyContextProps {
     panelContext: SurveyPanelContext;
     setPanelContext: Dispatch<SetStateAction<SurveyPanelContext>>;
     survey: SurveyWithQuestionsDto;
-    lastResponse: UserResponsesDto | undefined;
-    setLastResponse: Dispatch<SetStateAction<UserResponsesDto | undefined>>;
+    lastResponse: UserResponsesDto | null | undefined;
+    setLastResponse: Dispatch<SetStateAction<UserResponsesDto | null | undefined>>;
     addToast: AddToast;
+    canViewResults: boolean;
 }
 
 export const SurveyContext = createContext<SurveyContextProps | undefined>(undefined);

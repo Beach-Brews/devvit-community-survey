@@ -134,10 +134,12 @@ export const QuestionPanel = () => {
                         </button>
                     </div>
                     <div className="flex justify-center w-1/5">
-                        <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                            <PresentationChartBarIcon className="size-5" />
-                            <span className="hidden md:block">Results</span>
-                        </div>
+                        {ctx.canViewResults && (
+                            <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                                <PresentationChartBarIcon className="size-5" />
+                                <span className="hidden md:block">Results</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="text-neutral-700 dark:text-neutral-300">Question {qNo+1} of {totalQs}</div>

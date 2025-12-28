@@ -40,7 +40,7 @@ export const isMuted = async (username?: string, subredditName?: string): Promis
     return approvedUsers.some(u => u.username === username);
 };
 
-export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): Promise<ResponseBlockedReason | undefined> => {
+export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): Promise<ResponseBlockedReason | null> => {
 
     // Get user if not specified
     user = user ?? await reddit.getCurrentUser();
@@ -81,11 +81,11 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
 
     // Check user has minimum karma
     if (criteria.minKarma !== null) {
-        if (criteria.minKarma.type === KarmaType.POST && user.linkKarma < criteria.minKarma.value)
+        if (criteria.minKarma.type === KarmaType.Post && user.linkKarma < criteria.minKarma.value)
             return ResponseBlockedReason.MIN_POST_KARMA;
-        if (criteria.minKarma.type === KarmaType.COMMENT && user.linkKarma < criteria.minKarma.value)
+        if (criteria.minKarma.type === KarmaType.Comment && user.linkKarma < criteria.minKarma.value)
             return ResponseBlockedReason.MIN_COMMENT_KARMA;
-        if (criteria.minKarma.type === KarmaType.BOTH && (user.commentKarma + user.linkKarma) < criteria.minKarma.value)
+        if (criteria.minKarma.type === KarmaType.Both && (user.commentKarma + user.linkKarma) < criteria.minKarma.value)
             return ResponseBlockedReason.MIN_KARMA;
     }
 
@@ -93,24 +93,24 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
     if (criteria.minSubKarma !== null) {
         const subComment = userSubKarma.fromComments ?? 0;
         const subPost = userSubKarma.fromPosts ?? 0;
-        if (criteria.minSubKarma.type === KarmaType.POST && subPost < criteria.minSubKarma.value)
+        if (criteria.minSubKarma.type === KarmaType.Post && subPost < criteria.minSubKarma.value)
             return ResponseBlockedReason.MIN_SUB_POST_KARMA;
-        if (criteria.minSubKarma.type === KarmaType.COMMENT && subComment < criteria.minSubKarma.value)
+        if (criteria.minSubKarma.type === KarmaType.Comment && subComment < criteria.minSubKarma.value)
             return ResponseBlockedReason.MIN_SUB_COMMENT_KARMA;
-        if (criteria.minSubKarma.type === KarmaType.BOTH && (subPost + subComment) < criteria.minSubKarma.value)
+        if (criteria.minSubKarma.type === KarmaType.Both && (subPost + subComment) < criteria.minSubKarma.value)
             return ResponseBlockedReason.MIN_SUB_KARMA;
     }
 
     // Check user flair
     const userFlairMatch = !criteria.userFlairs || criteria.userFlairs.length <= 0 ||
         (usersFlair !== undefined && criteria.userFlairs.some(c =>
-           (c.type === FlairType.TEXT_EQUAL && usersFlair.flairText?.toLowerCase() === c.value.toLowerCase()) ||
-           (c.type === FlairType.TEXT_PARTIAL && new RegExp(c.value, 'i').exec(usersFlair.flairText ?? '') !== null) ||
-           (c.type === FlairType.CSS_CLASS && usersFlair.flairCssClass?.toLowerCase() === c.value.toLowerCase())
+           (c.type === FlairType.TextEqual && usersFlair.flairText?.toLowerCase() === c.value.toLowerCase()) ||
+           (c.type === FlairType.TextPartial && new RegExp(c.value, 'i').exec(usersFlair.flairText ?? '') !== null) ||
+           (c.type === FlairType.CssClass && usersFlair.flairCssClass?.toLowerCase() === c.value.toLowerCase())
         ));
     if (!userFlairMatch)
         return ResponseBlockedReason.USER_FLAIR;
 
     // Otherwise, there is no reason
-    return undefined;
+    return null;
 }
