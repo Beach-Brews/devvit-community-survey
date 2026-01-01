@@ -142,7 +142,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             </button>
                                         </div>
                                         <div className="col-span-2 flex items-center">
-                                            <strong>Verified Email</strong> - Only users who have a verified email on their account can respond.
+                                            <div><strong>Verified Email</strong> - Only users who have a verified email on their account can respond.</div>
                                         </div>
                                     </div>
 
@@ -162,7 +162,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             </button>
                                         </div>
                                         <div className="col-span-2 flex items-center">
-                                            <strong>Approved Users</strong> - Only subreddit approved users can respond.
+                                            <div><strong>Approved Users</strong> - Only subreddit approved users can respond.</div>
                                         </div>
                                     </div>
 
@@ -178,7 +178,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             />
                                         </div>
                                         <div className="col-span-2 flex items-center">
-                                            <strong>Minimum Account Age (Days)</strong> - A user's account must be this many days old to respond.
+                                            <div><strong>Minimum Account Age (Days)</strong> - A user's account must be this many days old to respond.</div>
                                         </div>
                                     </div>
 
@@ -203,7 +203,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             </select>
                                         </div>
                                         <div className="col-span-2 flex items-center">
-                                            <strong>Minimum Account Karma</strong> - A user's account must have a minimum Post, Comment, or total karma to respond.
+                                            <div><strong>Minimum Account Karma</strong> - A user's account must have a minimum Post, Comment, or total karma to respond.</div>
                                         </div>
                                     </div>
 
@@ -226,7 +226,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 />
                                             </div>
                                             <div className="flex items-center">
-                                                <strong>Minimum Account Karma Value</strong> - The minimum karma amount, based on the selector above.
+                                                <div><strong>Minimum Account Karma Value</strong> - The minimum karma amount, based on the selector above.</div>
                                             </div>
                                         </div>
                                     )}
@@ -252,7 +252,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             </select>
                                         </div>
                                         <div className="col-span-2 flex items-center">
-                                            <strong>Minimum Community Karma</strong> - A user's account must have this minimum karma in r/{context?.subredditName ?? '{currentSubName}'}{' '}to respond.
+                                            <div><strong>Minimum Community Karma</strong> - A user's account must have this minimum Post, Comment, or total karma in r/{context?.subredditName ?? '{currentSubName}'}{' '}to respond.</div>
                                         </div>
                                     </div>
 
@@ -283,7 +283,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
 
                                     <div>{/*Spacer*/}</div>
                                     <div className="col-span-2 flex items-center">
-                                        <strong>User Flair</strong> - Only users with the selected flair(s) may respond
+                                        <div><strong>User Flair</strong> - Only users with the selected flair(s) may respond.</div>
                                     </div>
 
                                     {/*criteria.userFlairs && criteria.userFlairs.length > 0 && criteria.userFlairs.map((c, i) => {
@@ -365,12 +365,13 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                 }
                                             >
                                                 <option value={ResultVisibility.Always} className={optionStyle}>Always</option>
-                                                <option value={ResultVisibility.Closed} className={optionStyle}>Closed Only</option>
+                                                <option value={ResultVisibility.Closed} className={optionStyle}>Once Closed</option>
+                                                <option value={ResultVisibility.Responders} className={optionStyle}>Responders Only</option>
                                                 <option value={ResultVisibility.Mods} className={optionStyle}>Mods Only</option>
                                             </select>
                                         </div>
                                         <div className="col-span-2 flex items-center">
-                                            <strong>Result Visibility</strong> - Choose whether results are always visible, only when survey has closed, or only mods can see results.
+                                            <div><strong>Result Visibility</strong> - Choose whether results are always visible, only when survey has closed, once a user has completed the survey, or only mods can see results.</div>
                                         </div>
                                     </div>
 

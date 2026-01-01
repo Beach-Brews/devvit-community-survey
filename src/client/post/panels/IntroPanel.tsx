@@ -89,7 +89,12 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         : (
                             <div className="flex gap-1 items-center rounded-lg p-2">
                                 <PresentationChartBarIcon className="size-5" />
-                                <span>{ctx.survey.resultVisibility === ResultVisibility.Closed ? 'Results on Close' : 'Mods Only'}</span>
+                                <span>{ctx.survey.resultVisibility === ResultVisibility.Closed
+                                    ? 'Results Once Closed'
+                                    : ctx.survey.resultVisibility === ResultVisibility.Responders
+                                        ? 'Results Once Complete'
+                                        : 'Mods Only'
+                                }</span>
                             </div>
                         )
                     }

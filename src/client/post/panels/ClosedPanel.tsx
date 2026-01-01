@@ -7,6 +7,7 @@
 
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
+import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 
 export const ClosedPanel = () => {
 
@@ -38,7 +39,10 @@ export const ClosedPanel = () => {
               )
               : (
                   <button disabled={true} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
-                      View Results <span className="text-[0.75rem]">(Mods Only)</span>
+                      View Results <br />
+                      <span className="text-[0.75rem]">
+                          {ctx.survey.resultVisibility === ResultVisibility.Responders ? '(Responders only) ': '(Mods Only)'}
+                      </span>
                   </button>
               )
           }

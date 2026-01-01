@@ -25,6 +25,7 @@ import { useToaster } from '../shared/toast/useToaster';
 import { PostToaster } from './PostToaster';
 import { ResultVisibility } from '../../shared/redis/SurveyDto';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
+import { HelpPanel } from './panels/HelpPanel';
 
 export const SurveyPost = () => {
 
@@ -65,7 +66,8 @@ export const SurveyPost = () => {
     const canViewResults = (
         (user && user.isMod) ||
         (survey && (survey.resultVisibility ?? ResultVisibility.Always) === ResultVisibility.Always) ||
-        (!!survey?.closeDate && survey.closeDate <= Date.now() && survey.resultVisibility !== ResultVisibility.Mods)
+        (survey && lastResponse && Object.keys(lastResponse).length >= survey.questions.length && survey.resultVisibility === ResultVisibility.Responders) ||
+        (!!survey?.closeDate && survey.closeDate <= Date.now() && survey.resultVisibility === ResultVisibility.Closed)
     );
 
     // Ensure context is only defined if the survey is defined
@@ -92,6 +94,10 @@ export const SurveyPost = () => {
         if (postInit === null || !survey)
             return (<ErrorPanel />);
 
+        // Always allow help panel
+        if (panelContext.panel === PanelType.Help)
+            return (<HelpPanel />);
+
         // If the survey is now closed
         if (survey.closeDate && survey.closeDate <= Date.now())
             return panelContext.panel === PanelType.Result && canViewResults
@@ -114,6 +120,17 @@ export const SurveyPost = () => {
                 console.error(`[Survey Post] - Unknown panel type: ${panelContext.panel}`);
                 return (<ErrorPanel />);
         }
+    };
+
+    const openHelp = () => {
+        setPanelContext(cc => {
+            console.log('Open Help: ', cc);
+            return {
+                panel: cc.prev !== undefined && cc.panel === PanelType.Help ? cc.prev : PanelType.Help,
+                number: cc.number ?? -1,
+                prev: cc.panel
+            };
+        });
     };
 
     return (
@@ -139,23 +156,26 @@ export const SurveyPost = () => {
                         )}
                     </div>
                     <div className="w-1/7 flex flex-col justify-center items-center">
-                    {survey && user?.allowDev === true
-                        ? (
-                            <div className="text-center text-[0.7rem] text-neutral-600 dark:text-neutral-400">
-                                {panelContext.panel == PanelType.Question || panelContext.panel == PanelType.QuestionDescription || panelContext.panel == PanelType.Result
-                                    ? panelContext?.number !== undefined
-                                        ? survey.id + ' ' + (survey.questions?.[panelContext.number]?.id ?? `Q${panelContext.number} ??`)
-                                        : survey.id + ' QNaN'
-                                    : survey.id
-                                }
-                            </div>
-                        ) : (
-                            <button onClick={undefined} className="hidden flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                                <QuestionMarkCircleIcon className="size-4" />
-                                <span>Help</span>
-                            </button>
-                        )
-                    }
+                        {survey && user?.allowDev === true
+                            ? (
+                                <div className="text-center text-[0.7rem] text-neutral-600 dark:text-neutral-400">
+                                    {panelContext.panel == PanelType.Question || panelContext.panel == PanelType.QuestionDescription || panelContext.panel == PanelType.Result
+                                        ? panelContext?.number !== undefined
+                                            ? survey.id + ' ' + (survey.questions?.[panelContext.number]?.id ?? `Q${panelContext.number} ??`)
+                                            : survey.id + ' QNaN'
+                                        : survey.id
+                                    }
+                                </div>
+                            ) : postInit !== undefined
+                                ? (
+                                    <button onClick={openHelp} className="hidden flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                                        <QuestionMarkCircleIcon className="size-4" />
+                                        <span>Help</span>
+                                    </button>
+                                ) : (
+                                    <div className="h-4 bg-neutral-300 rounded-full dark:bg-neutral-700 w-3/4 annimate-pulse"></div>
+                                )
+                        }
                     </div>
                     <div className="w-3/7 flex flex-col items-end justify-end">
                         <div><span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span></div>

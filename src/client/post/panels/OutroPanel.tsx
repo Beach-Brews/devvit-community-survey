@@ -35,7 +35,7 @@ export const OutroPanel = () => {
           <button onClick={restartSurvey} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
               Change Responses
           </button>
-          {ctx.canViewResults
+          {ctx.canViewResults || ctx.survey.resultVisibility === ResultVisibility.Responders
               ? (
                   <button onClick={showResults} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
                       View Results

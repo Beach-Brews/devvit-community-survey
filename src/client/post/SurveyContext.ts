@@ -16,6 +16,7 @@ export enum PanelType {
     Outro,
     Result,
     QuestionDescription,
+    Help,
     Delete
 }
 

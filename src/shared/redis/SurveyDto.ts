@@ -51,6 +51,7 @@ export type SurveyQuestionList = SurveyQuestionDto[];
 export const ResultVisibility = {
     Always: 'Always',
     Closed: 'Closed',
+    Responders: 'Resp',
     Mods: 'Mods'
 } as const;
 
