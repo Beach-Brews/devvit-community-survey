@@ -72,7 +72,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 // Get responses (if user has any)
                 const lastResponse = userInfo?.id !== undefined
                     ? await postRedis.getUserLastResponse(userInfo.id, surveyId)
-                    : undefined;
+                    : null;
 
                 successResponse(res, {
                     survey: found as SurveyWithQuestionsDto,

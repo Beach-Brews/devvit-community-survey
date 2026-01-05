@@ -31,5 +31,5 @@ Want some reading material to help you fall asleep? Check out the [Community Sur
 ## Acknowledgements
 
 * u/PitchforkAssistant - Thank you for helping brainstorm ideas, providing some sweet proto finds, and generally being amazing
-* u/SampleOfOne - Thank you for poking holes and offering up suggestions for features to make this app successful
+* u/SampleOfNone - Thank you for poking holes and offering up suggestions for features to make this app successful
 * u/hammertimestudio, u/Xenc, u/Pl00h - Thank you for helping with some light testing and providing feedback

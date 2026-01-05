@@ -124,7 +124,6 @@ export const SurveyPost = () => {
 
     const openHelp = () => {
         setPanelContext(cc => {
-            console.log('Open Help: ', cc);
             return {
                 panel: cc.prev !== undefined && cc.panel === PanelType.Help ? cc.prev : PanelType.Help,
                 number: cc.number ?? -1,

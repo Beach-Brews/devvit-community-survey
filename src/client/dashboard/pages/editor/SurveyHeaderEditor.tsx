@@ -115,9 +115,9 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
     return (
         <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
             <div className="w-full pb-4 flex gap-4 justify-center align-center">
-                <button className={`px-4 py-1 ${headerTab == 'title' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('title')}>Survey Title</button>
-                <button className={`px-4 py-1 ${headerTab == 'criteria' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('criteria')}>Responder Criteria</button>
-                <button className={`px-4 py-1 ${headerTab == 'settings' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('settings')}>Survey Settings</button>
+                <button className={`px-4 py-1 ${headerTab === 'title' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('title')}>Survey Title</button>
+                <button className={`px-4 py-1 ${headerTab === 'criteria' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('criteria')}>Responder Criteria</button>
+                <button className={`px-4 py-1 ${headerTab === 'settings' ? buttonActive : buttonInactive}`} onClick={() => setHeaderTab('settings')}>Survey Settings</button>
             </div>
             {
                 (() => {
