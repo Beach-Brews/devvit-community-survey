@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "community-survey",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "BSD-3-Clause",
   "type": "module",
   "scripts": {
@@ -24,10 +24,10 @@
     "type-check": "tsc --build"
   },
   "dependencies": {
-    "@devvit/web": "0.12.4",
+    "@devvit/web": "0.12.7",
     "@heroicons/react": "^2.2.0",
     "clsx": "2.1.1",
-    "devvit": "0.12.4",
+    "devvit": "0.12.7",
     "express": "5.1.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
