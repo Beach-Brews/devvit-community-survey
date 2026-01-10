@@ -17,9 +17,9 @@ import {
 } from '../../../../shared/redis/SurveyDto';
 import { ChangeEvent, Dispatch, FocusEvent, KeyboardEvent, SetStateAction, useEffect, useState } from 'react';
 import { CheckboxIcon } from '../../../shared/components/CustomIcons';
-import { context } from '@devvit/web/client';
 import { getSubredditUserFlairs } from '../../api/dashboardApi';
 import { SubredditUserFlairsResult } from '../../../../shared/types/dashboardApi';
+import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
 
 type HeaderTabs = 'title' | 'criteria' | 'settings';
 
@@ -171,7 +171,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                         <div className="flex justify-start items-center md:justify-end">
                                             <input
                                                 value={criteria.minAge ?? ''}
-                                                placeholder="none"
+                                                placeholder="No Account Age Minimum"
                                                 onKeyDown={preventNonNumeric}
                                                 onChange={(e) => onChangeNumber('minAge', e)}
                                                 className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
@@ -232,6 +232,8 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     )}
 
                                     {/* Min Sub Account Karma */}
+                                    {/* TODO: Add sub-karma minimums once supported fully */}
+                                    {/* **********************
                                     <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
                                         <div className="flex justify-start items-center md:justify-end">
                                             <select
@@ -257,6 +259,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     </div>
 
                                     {/* Min Sub  Karma Value */}
+                                    {/* ******************
                                     {criteria.minSubKarma?.type !== undefined && (
                                         <div className="col-span-3 pl-8 md:pl-0 flex flex-col-reverse gap-2 md:contents">
                                             <div className="flex justify-start items-center md:justify-end col-span-2">
@@ -278,6 +281,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             </div>
                                         </div>
                                     )}
+                                    END TODO: Add sub-karma minimums once supported fully */}
 
                                     <div className="col-span-3 border-t-1"></div>
 
@@ -384,11 +388,11 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                 <>
                                     <div>
                                         <input name="title" placeholder="Survey Title" maxLength={50} value={survey.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full text-2xl border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                                        <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${50-survey.title.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.title.length} / 50</div>
+                                        <InputLengthIndicator current={survey.title.length} max={50} warnCount={15} />
                                     </div>
                                     <div>
                                         <textarea name="intro" placeholder="Captivate your audiance with a survey prompt." maxLength={512} value={survey.intro} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full min-h-[4rem] max-h-[10rem] border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                                        <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${512-survey.intro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.intro.length} / 512</div>
+                                        <InputLengthIndicator current={survey.intro.length} max={512} warnCount={50} />
                                     </div>
                                 </>
                             );

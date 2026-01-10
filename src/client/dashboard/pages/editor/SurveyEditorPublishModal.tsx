@@ -31,6 +31,19 @@ interface SurveyPublishOptionsState {
     closeDate: number;
 }
 
+const toLocalISOString = (date: Date)=> {
+    // Calculate the local offset in milliseconds
+    const offsetMs = date.getTimezoneOffset() * 60000;
+
+    // Create a new date shifted by the offset, so when toISOString() converts
+    // it to UTC, it actually matches the original local time.
+    const localDate = new Date(date.getTime() - offsetMs);
+
+    // toISOString() produces "YYYY-MM-DDTHH:mm:ss.sssZ" (UTC)
+    // We slice it to get "YYYY-MM-DDTHH:mm" (local-time format)
+    return localDate.toISOString().slice(0, 16);
+}
+
 export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) => {
     const ctx = useContext(DashboardContext);
     if (!ctx) throw Error('Context undefined.');
@@ -40,10 +53,10 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
 
     const [options, setOptions] = useState<SurveyPublishOptionsState>({
         immediate: true,
-        scheduleDateInput: new Date().toLocaleString(),
+        scheduleDateInput: toLocalISOString(new Date()),
         scheduleDate: Date.now(),
         noCloseDate: true,
-        closeDateInput: new Date(Date.now() + (7 * 24 * 60 * 60000)).toLocaleString(),
+        closeDateInput: toLocalISOString(new Date(Date.now() + (7 * 24 * 60 * 60000))),
         closeDate: Date.now() + (7 * 24 * 60 * 60000)
     });
 
@@ -153,6 +166,7 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
                             <div>Future Date</div>
                             <div>
                                 <input
+                                    type="datetime-local"
                                     onFocus={() => onPublishOptionChange(false)}
                                     onChange={onPublishDateChange}
                                     value={options.scheduleDateInput}
@@ -175,6 +189,7 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
                             <div>Future Date</div>
                             <div>
                                 <input
+                                    type="datetime-local"
                                     onFocus={() => onCloseOptionChange(false)}
                                     onChange={onCloseDateChange}
                                     value={options.closeDateInput}

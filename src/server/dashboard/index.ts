@@ -241,12 +241,14 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 const sub = await reddit.getCurrentSubreddit();
                 const flairs = await sub.getUserFlairTemplates();
 
-                successResponse(res, flairs.map(f => {
-                    return {
-                        id: f.id,
-                        text: f.text
-                    } as UserFlairTemplate;
-                }));
+                successResponse(res, {
+                    flairs: flairs.map(f => {
+                        return {
+                            id: f.id,
+                            text: f.text
+                        } as UserFlairTemplate;
+                    })
+                });
 
             } catch(e) {
                 logger.error('Error executing API: ', e);

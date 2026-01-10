@@ -48,11 +48,11 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
         return ResponseBlockedReason.ANONYMOUS;
 
     // Fetch async info in parallel
-    const [userIsBanned, userIsApproved, userIsMuted, userSubKarma, usersFlair] = await Promise.all([
+    const [userIsBanned, userIsApproved, userIsMuted, /*userSubKarma,*/ usersFlair] = await Promise.all([
         isBanned(user.username),
         isApproved(user.username),
         isMuted(user.username),
-        user.getUserKarmaFromCurrentSubreddit(),
+        //user.getUserKarmaFromCurrentSubreddit(),
         user.getUserFlairBySubreddit(context.subredditName)
     ]);
 
@@ -90,6 +90,8 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
     }
 
     // Check user has minimum community karma
+    // TODO: Discuss allowing users to get their community karma, not only mods
+    /*
     if (criteria.minSubKarma !== null) {
         const subComment = userSubKarma.fromComments ?? 0;
         const subPost = userSubKarma.fromPosts ?? 0;
@@ -100,6 +102,7 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
         if (criteria.minSubKarma.type === KarmaType.Both && (subPost + subComment) < criteria.minSubKarma.value)
             return ResponseBlockedReason.MIN_SUB_KARMA;
     }
+    */
 
     // Check user flair
     const userFlairMatch = !criteria.userFlairs || criteria.userFlairs.length <= 0 ||

@@ -16,6 +16,7 @@ import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 import { ToastType } from '../../../shared/toast/toastTypes';
 import { SurveyHeaderEditor } from './SurveyHeaderEditor';
+import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
 
 enum SaveIndicatorState {
     Waiting,
@@ -191,12 +192,21 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     };
 
     const onAddQuestion = (q?: SurveyQuestionDto) => {
+        let newTitle = '';
+        if (q) {
+            newTitle = q.title;
+        const match = newTitle.match(/^(.*)#(\d)+$/i);
+            if (match && match.length >= 3 && match[2] !== undefined)
+                newTitle = match[1] + '#' + (parseInt(match[2]) + 1);
+            else
+                newTitle = newTitle + ' #1';
+        }
         setSurvey(s => {
             return {
                 ...s,
                 questions: [
                     ...s.questions ?? [],
-                    q ? {...q, id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
+                    q ? {...q, title: newTitle.substring(0, 50), id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
                 ]
             };
         });
@@ -245,7 +255,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                     <div className="text-sm p-4 flex flex-col gap-4 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
                         <div >
                             <textarea name="outro" placeholder="Thank the responders with an outro." maxLength={512} value={survey.outro} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full min-h-[4rem] max-h-[10rem] border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                            <div className={`text-xs p-1 text-right bg-neutral-50 dark:bg-neutral-900 ${512-survey.outro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.outro.length} / 512</div>
+                            <InputLengthIndicator current={survey.outro.length} max={512} warnCount={50} />
                         </div>
                     </div>
                 </div>
@@ -261,6 +271,25 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             default: return 'No changes';
                         }
                     })()}
+                </div>
+            </div>
+
+            <div className="flex justify-end items-center border-t mt-8">
+                <div className="flex gap-4 my-4">
+                    <button
+                        className="border-2 border-blue-800 bg-blue-800 text-white px-2 py-1 rounded-lg text-small hover:bg-blue-700 hover:border-blue-300 dark:hover:border-blue-600 flex gap-2 items-center cursor-pointer"
+                        onClick={requestPublish}
+                    >
+                        <CalendarDaysIcon className="size-6" />
+                        <div>Publish</div>
+                    </button>
+                    <button
+                        className={`border-2 ${saveIndicator == SaveIndicatorState.Saving ? 'animate-pulse duration-200' : ''} bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer`}
+                        onClick={() => saveSurvey(survey, true)}
+                    >
+                        <DocumentCheckIcon className="size-6" />
+                        <div>Save</div>
+                    </button>
                 </div>
             </div>
         </>
