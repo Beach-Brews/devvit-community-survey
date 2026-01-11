@@ -6,6 +6,7 @@
 */
 
 import { ChangeEvent, FocusEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { SurveyDto, SurveyQuestionDto } from '../../../../shared/redis/SurveyDto';
 import { CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
@@ -36,8 +37,9 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     if (!ctx) throw Error('Context undefined.');
 
     const [survey, setSurvey] = useState<SurveyDto>(props.survey ?? genSurvey());
-    const [saveIndicator, setSaveIndicator] = useState<SaveIndicatorState>(SaveIndicatorState.Waiting);
+    if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
 
+    const [saveIndicator, setSaveIndicator] = useState<SaveIndicatorState>(SaveIndicatorState.Waiting);
     useEffect(() => {
         if (saveIndicator != SaveIndicatorState.Success) return;
         const timeoutId = setTimeout(() => setSaveIndicator(SaveIndicatorState.Waiting), 2000);
@@ -46,7 +48,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         };
     }, [saveIndicator]);
 
-    if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
+    const editorContainerRef = useRef<HTMLDivElement | null>(null);
 
     const { setPageContext, addToast } = ctx;
     const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
@@ -100,8 +102,22 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [survey, saveSurvey]);
 
+    // Helper for scrolling to a specific question
+    const scrollToQuestion = (idx: number) => {
+        // Get the question div
+        const c = editorContainerRef?.current?.childNodes;
+        if (!c || c.length < 4) return;
+        const child = c[idx+1] as HTMLElement;
+        if (!child) return;
+
+        // Scroll to it
+        console.log('Scrolling to:', child);
+        child.scrollIntoView({behavior: 'auto', block: 'center'});
+    };
+
     const modifySurveyQuestion = useCallback((question: SurveyQuestionDto, action?: 'up' | 'down' | 'delete') => {
-        setSurvey(s => {
+        let scrollIdx = 0;
+        flushSync(() => setSurvey(s => {
             const ql = s.questions ?? [];
             const idx = ql.findIndex(q => q.id == question.id);
             if (idx >= 0) {
@@ -115,6 +131,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             if (thisQ && qBefore) {
                                 newState[idx - 1] = thisQ;
                                 newState[idx] = qBefore;
+                                scrollIdx = idx - 1;
                             }
                         }
                         if (idx < ql.length - 1 && action == 'down') {
@@ -123,6 +140,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             if (thisQ && qAfter) {
                                 newState[idx + 1] = thisQ;
                                 newState[idx] = qAfter;
+                                scrollIdx = idx + 1;
                             }
                         }
                         return { ...s, questions: newState};
@@ -139,6 +157,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                         // Force at least one question
                         if (newState.length <= 0)
                             newState.push(genQuestion(0));
+                        scrollIdx = idx === ql.length-1 ? ql.length-2 : idx;
                         return { ...s, questions: newState};
                     }
 
@@ -152,7 +171,9 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                 console.error(`Failed to find question ${question.id}`);
             }
             return s;
-        });
+        }));
+        
+        scrollToQuestion(scrollIdx);
     }, [setSurvey]);
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -192,24 +213,45 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     };
 
     const onAddQuestion = (q?: SurveyQuestionDto) => {
+        // If making a coly of an existing question, add #1 to the end
         let newTitle = '';
         if (q) {
             newTitle = q.title;
-        const match = newTitle.match(/^(.*)#(\d)+$/i);
+            const match = newTitle.match(/^(.*)#(\d)+$/i);
             if (match && match.length >= 3 && match[2] !== undefined)
                 newTitle = match[1] + '#' + (parseInt(match[2]) + 1);
             else
                 newTitle = newTitle + ' #1';
         }
-        setSurvey(s => {
-            return {
-                ...s,
-                questions: [
-                    ...s.questions ?? [],
-                    q ? {...q, title: newTitle.substring(0, 50), id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
-                ]
-            };
+
+        // Re-render the new question first
+        flushSync(() => {
+            setSurvey(s => {
+                return {
+                    ...s,
+                    questions: [
+                        ...s.questions ?? [],
+                        q ? {...q, title: newTitle.substring(0, 50), id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
+                    ]
+                };
+            });
         });
+
+        // Get the new question div
+        const c = editorContainerRef?.current?.childNodes;
+        if (!c || c.length < 3) return;
+        const child = c[c.length-3] as HTMLElement;
+        if (!child) return;
+
+        // Scroll to it
+        child.scrollIntoView({behavior: 'auto', block: 'center'});
+
+        // Then focus the title + pre-select the question text for editing
+        const title = child.querySelector('input[name="title"]') as HTMLInputElement;
+        if (!title) return;
+        title.focus();
+        title.selectionStart = 0;
+        title.selectionEnd = title.value.length;
     };
 
     const requestPublish = async () => {
@@ -241,7 +283,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                 </div>
             </div>
             <div className="my-4">
-                <div className="flex flex-col gap-8">
+                <div ref={editorContainerRef} className="flex flex-col gap-8">
                     <SurveyHeaderEditor survey={survey} allowDev={ctx?.userInfo?.allowDev ?? false} onInputChange={onInputChange} onInputBlur={onInputBlur} setSurvey={setSurvey} />
                     {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==questionCount-1} duplicateAction={!maxReached ? onAddQuestion : undefined} />)}
                     <div className="flex justify-center">

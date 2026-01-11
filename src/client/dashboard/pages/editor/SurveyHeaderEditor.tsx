@@ -22,6 +22,7 @@ import { SubredditUserFlairsResult } from '../../../../shared/types/dashboardApi
 import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
 
 type HeaderTabs = 'title' | 'criteria' | 'settings';
+type NumericInputs = { minAge: string, minKarma: string, minSubKarma: string };
 
 export interface SurveyConfigEditorProps {
     survey: SurveyDto;
@@ -33,9 +34,19 @@ export interface SurveyConfigEditorProps {
 
 export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
     const {survey, allowDev, onInputChange, onInputBlur, setSurvey} = props;
-    const [headerTab, setHeaderTab] = useState<HeaderTabs>('title');
-    const [userFlair, setUserFlair] = useState<SubredditUserFlairsResult | null>(null);
 
+    // Save state for which header tab is displayed (title, response criteria, settings, etc.)
+    const [headerTab, setHeaderTab] = useState<HeaderTabs>('title');
+
+    // Save the "raw" inputs for the numeric values, so a "negative" can be entered
+    const [numericInputs, setNumericInputs] = useState<NumericInputs>({
+        minAge: survey.responderCriteria?.minAge?.toString() ?? '',
+        minKarma: survey.responderCriteria?.minKarma?.value?.toString() ?? '',
+        minSubKarma: survey.responderCriteria?.minSubKarma?.value?.toString() ?? '',
+    });
+
+    // Get the list of subreddit user flair templates to select from
+    const [userFlair, setUserFlair] = useState<SubredditUserFlairsResult | null>(null);
     useEffect(() => {
         const call = async () => {
             try {
@@ -47,6 +58,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
         void call();
     }, []);
 
+    // Handle changing user response criteria
     const criteria = survey.responderCriteria ?? DefaultResponderCriteria;
     const onChangeCriteria = (newCriteria: ResponderCriteriaDto) => {
         setSurvey(s => {
@@ -57,19 +69,30 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
         });
     };
 
-    // TODO: Fix allowing negative values...
-    const parseIntSafe = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
+    // Helper for parsing a number input
+    const parseIntSafe = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>, allowNeg: boolean = true) => {
         const value = e.target.value;
-        if (value === '-') return -0;
-        if (value !== '' && !/^-?\d*$/.test(value)) {
+        const regEx = allowNeg ? /^-?\d*$/ : /^\d*$/;
+        if (value !== '' && !regEx.test(value)) {
             e.preventDefault();
             return undefined;
         }
+
+        setNumericInputs(s => {
+            return {
+                ...s,
+                [e.target.name]: e.target.value
+            };
+        });
+
+        if (value === '-') return -0;
         return parseInt(value);
-    }
-    const preventNonNumeric = (e: KeyboardEvent<HTMLInputElement>) => {
+    };
+
+    // Handler for blocking non-numeric or "action" keys
+    const preventNonNumeric = (e: KeyboardEvent<HTMLInputElement>, allowNeg: boolean = true) => {
         if (!/[0-9]/.test(e.key) &&
-            e.key !== '-' &&
+            ((!allowNeg && e.key === '-') || (allowNeg && e.key !== '-')) &&
             e.key.indexOf('Arrow') < 0 &&
             e.key !== 'Home' &&
             e.key !== 'End' &&
@@ -82,8 +105,9 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
         }
     };
 
-    const onChangeNumber = (field: string, e: ChangeEvent<HTMLInputElement>) => {
-        const parsedValue = parseIntSafe(e);
+    // General number fields (e.g. min account age)
+    const onChangeNumber = (field: string, e: ChangeEvent<HTMLInputElement>, allowNeg: boolean = true) => {
+        const parsedValue = parseIntSafe(e, allowNeg);
         if (parsedValue === undefined) return;
         setSurvey(s => {
             return {
@@ -95,6 +119,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
             };
         });
     };
+
     const onChangeKarma = (field: string, type: KarmaTypeType | undefined, value: number | undefined) => {
         if (value === undefined) return;
         setSurvey(s => {
@@ -170,10 +195,11 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
                                         <div className="flex justify-start items-center md:justify-end">
                                             <input
-                                                value={criteria.minAge ?? ''}
-                                                placeholder="No Account Age Minimum"
-                                                onKeyDown={preventNonNumeric}
-                                                onChange={(e) => onChangeNumber('minAge', e)}
+                                                name="minAge"
+                                                value={numericInputs.minAge}
+                                                placeholder="None"
+                                                onKeyDown={e => preventNonNumeric(e, false)}
+                                                onChange={(e) => onChangeNumber('minAge', e, false)}
                                                 className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                             />
                                         </div>
@@ -212,8 +238,9 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                         <div className="col-span-3 pl-8 md:pl-0 flex flex-col-reverse gap-2 md:contents">
                                             <div className="flex justify-start items-center md:justify-end col-span-2">
                                                 <input
-                                                    value={criteria.minKarma.value ?? 0}
-                                                    placeholder="none"
+                                                    name="minKarma"
+                                                    value={numericInputs.minKarma}
+                                                    placeholder="0"
                                                     onKeyDown={preventNonNumeric}
                                                     onChange={(e) =>
                                                         onChangeKarma(
@@ -264,7 +291,8 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                         <div className="col-span-3 pl-8 md:pl-0 flex flex-col-reverse gap-2 md:contents">
                                             <div className="flex justify-start items-center md:justify-end col-span-2">
                                                 <input
-                                                    value={criteria.minSubKarma.value ?? 0}
+                                                    name="minSubKarma"
+                                                    value={numericInputs.minSubKarma}
                                                     type="number"
                                                     onChange={(e) =>
                                                         onChangeKarma(

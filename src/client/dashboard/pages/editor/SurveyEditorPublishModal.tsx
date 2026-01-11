@@ -171,8 +171,8 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
                                     onChange={onPublishDateChange}
                                     value={options.scheduleDateInput}
                                     className={`p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white${options.immediate ? ' opacity-50' : ''}`}
+                                    style={{colorScheme: "light dark"}}
                                 />
-                                <div className={`${options.immediate ? 'opacity-50' : (isNaN(options.scheduleDate) ? ' text-red-600 dark:text-red-400' : '')}`}>{new Date(options.scheduleDate).toLocaleString()}</div>
                             </div>
                         </div>
                     </div>
@@ -194,8 +194,8 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
                                     onChange={onCloseDateChange}
                                     value={options.closeDateInput}
                                     className={`p-2 border-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white${options.noCloseDate ? ' opacity-50' : ''}`}
+                                    style={{colorScheme: "light dark"}}
                                 />
-                                <div className={`${options.noCloseDate ? 'opacity-50' : (isNaN(options.closeDate) ? ' text-red-600 dark:text-red-400' : '')}`}>{new Date(options.closeDate).toLocaleString()}</div>
                             </div>
                         </div>
                     </div>
