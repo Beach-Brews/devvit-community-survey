@@ -19,8 +19,8 @@ import {
 } from '../util/apiUtils';
 import * as postRedis from '../devvit/redis/post';
 import { context, reddit } from '@devvit/web/server';
-import { InitializeSurveyResponse, ResponseBlockedReason } from '../../shared/types/postApi';
-import { getResponseBlockedReason, isMod } from '../util/userUtils';
+import { InitializeSurveyResponse, ResponseBlockedReason, ResultsHiddenReason } from '../../shared/types/postApi';
+import { getResponseBlockedReason, getResultsHiddenReason, isMod } from '../util/userUtils';
 import { QuestionResponseDto } from '../../shared/redis/ResponseDto';
 import { debugEnabled } from '../util/debugUtils';
 
@@ -201,7 +201,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
 
     router.route('/api/post/survey/results/:questionId')
         .get<QuestionIdParam, ApiResponse<QuestionResponseDto>>(async (req, res) => {
-            const logger = await Logger.Create(`Dashboard API - Get Survey Result`);
+            const logger = await Logger.Create(`Post API - Get Question Result`);
             logger.traceStart('Api Start');
 
             try {
@@ -234,11 +234,11 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                     return surveyNotFoundResponse(res, surveyId);
                 }
 
-                // Error if user is not allowed to respond
-                const blockResponse = await getResponseBlockedReason(surveyDto);
-                if (blockResponse !== null) {
-                    logger.warn(`User ${userId} tried adding a response, but is blocked for ${ResponseBlockedReason[blockResponse]}.`);
-                    return messageResponse(res, 403, `Used is unable to respond: ${ResponseBlockedReason[blockResponse]}`, 666);
+                // Error if user is not allowed to view results
+                const resultsHidden = await getResultsHiddenReason(surveyDto);
+                if (resultsHidden !== null) {
+                    logger.error(`User ${userId} is not allowed fo view results to survey ${surveyId} for reason ${ResultsHiddenReason[resultsHidden]}`);
+                    return messageResponse(res, 403, 'Not allowed to view results.', resultsHidden);
                 }
 
                 const found = await postRedis.getQuestionResponseById(surveyId, questionId);

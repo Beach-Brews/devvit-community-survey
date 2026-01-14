@@ -6,8 +6,15 @@
  */
 
 import { context, reddit, User } from '@devvit/web/server';
-import { DefaultResponderCriteria, FlairType, KarmaType, SurveyDto } from '../../shared/redis/SurveyDto';
-import { ResponseBlockedReason } from '../../shared/types/postApi';
+import * as postRedis from '../devvit/redis/post';
+import {
+    DefaultResponderCriteria,
+    FlairType,
+    KarmaType,
+    ResultVisibility,
+    SurveyDto
+} from '../../shared/redis/SurveyDto';
+import { ResponseBlockedReason, ResultsHiddenReason } from '../../shared/types/postApi';
 
 export const isMod = async (user?: User): Promise<boolean> => {
     user = user ?? await reddit.getCurrentUser();
@@ -40,6 +47,29 @@ export const isMuted = async (username?: string, subredditName?: string): Promis
     return approvedUsers.some(u => u.username === username);
 };
 
+export const getResultsHiddenReason = async (survey: SurveyDto, user?: User): Promise<ResultsHiddenReason | null> => {
+
+    // Get user if not specified
+    user = user ?? await reddit.getCurrentUser();
+
+    // If user is a mod, always allow
+    if (user && (await isMod(user)))
+        return null;
+
+    // Switch on visibility
+    switch (survey.resultVisibility) {
+        case ResultVisibility.Closed:
+            return survey.closeDate !== null && survey.closeDate < Date.now() ? null : ResultsHiddenReason.LIVE;
+        case ResultVisibility.Responders:
+            return user && (await postRedis.getUserLastResponse(user.id, survey.id)) ? null : ResultsHiddenReason.NOT_RESPONDED;
+        case ResultVisibility.Mods:
+            return ResultsHiddenReason.NOT_MOD;
+        case ResultVisibility.Always:
+        default:
+            return null;
+    }
+};
+
 export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): Promise<ResponseBlockedReason | null> => {
 
     // Get user if not specified
@@ -48,13 +78,18 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
         return ResponseBlockedReason.ANONYMOUS;
 
     // Fetch async info in parallel
-    const [userIsBanned, userIsApproved, userIsMuted, /*userSubKarma,*/ usersFlair] = await Promise.all([
+    const [userIsMod, userIsBanned, userIsApproved, userIsMuted, /*userSubKarma,*/ usersFlair] = await Promise.all([
+        isMod(user),
         isBanned(user.username),
         isApproved(user.username),
         isMuted(user.username),
         //user.getUserKarmaFromCurrentSubreddit(),
         user.getUserFlairBySubreddit(context.subredditName)
     ]);
+
+    // Always allow mods
+    if  (userIsMod)
+        return null;
 
     // If user is banned, return banned
     if (userIsBanned)

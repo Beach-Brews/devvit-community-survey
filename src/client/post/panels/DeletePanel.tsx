@@ -23,6 +23,7 @@ export const DeletePanel = () => {
     const onDelete = async () => {
         try {
             await deleteResponses();
+            ctx.setLastResponse(null);
             returnToSurvey();
         } catch(e) {
             ctx.addToast({

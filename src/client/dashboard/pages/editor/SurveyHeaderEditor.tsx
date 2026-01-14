@@ -313,8 +313,8 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
 
                                     <div className="col-span-3 border-t-1"></div>
 
-                                    <div>{/*Spacer*/}</div>
-                                    <div className="col-span-2 flex items-center">
+                                    <div className="hidden md:block">{/*Spacer*/}</div>
+                                    <div className="col-span-3 md:col-span-2 flex items-center">
                                         <div><strong>User Flair</strong> - Only users with the selected flair(s) may respond.</div>
                                     </div>
 

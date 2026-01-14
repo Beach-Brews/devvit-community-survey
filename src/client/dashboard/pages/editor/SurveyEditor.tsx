@@ -112,11 +112,11 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
 
         // Scroll to it
         console.log('Scrolling to:', child);
-        child.scrollIntoView({behavior: 'auto', block: 'center'});
+        child.scrollIntoView({behavior: 'auto', block: 'start'});
     };
 
     const modifySurveyQuestion = useCallback((question: SurveyQuestionDto, action?: 'up' | 'down' | 'delete') => {
-        let scrollIdx = 0;
+        let scrollIdx: number | undefined = undefined;
         flushSync(() => setSurvey(s => {
             const ql = s.questions ?? [];
             const idx = ql.findIndex(q => q.id == question.id);
@@ -172,8 +172,9 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             }
             return s;
         }));
-        
-        scrollToQuestion(scrollIdx);
+
+        if (scrollIdx)
+            scrollToQuestion(scrollIdx);
     }, [setSurvey]);
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -244,7 +245,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         if (!child) return;
 
         // Scroll to it
-        child.scrollIntoView({behavior: 'auto', block: 'center'});
+        child.scrollIntoView({behavior: 'auto', block: 'start'});
 
         // Then focus the title + pre-select the question text for editing
         const title = child.querySelector('input[name="title"]') as HTMLInputElement;

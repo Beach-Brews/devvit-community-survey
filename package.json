@@ -16,6 +16,7 @@
     "dev:devvit": "devvit playtest",
     "dev:server": "cd src/server && vite build --watch",
     "dev:vite": "cd src/client && vite --mode debug --port 7474",
+    "uat": "npm run build && devvit playtest UAT4CommunitySurvey",
     "lint": "eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "login": "devvit login",

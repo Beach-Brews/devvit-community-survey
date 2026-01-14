@@ -22,7 +22,7 @@ Here are a few future features that are planned.
 
 ### Dashboard
 * Survey list filter / pagination
-* Date selector for publish and close dates
+* ~~Date selector for publish and close dates~~
 * Update notice + release notes from wiki page?
 * Survey settings
     * Background/button colors
@@ -41,11 +41,14 @@ Here are a few future features that are planned.
 * Rolling/Repeating survey?
 * Handle cross-device/multi-tab editing. Channels? Lock?
 * Link to survey post
+* View live survey config (settings, questions, etc.)
+  * Possibly allow some editing? (e.g. question description or label)
 
 ### Survey
 * Text responses (added as comment)
     * Choose anonymous
 * Multiple responses
+* Help screens
 
 ### Know Issues
 

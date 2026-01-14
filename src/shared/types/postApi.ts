@@ -8,6 +8,12 @@
 import { SurveyWithQuestionsDto } from '../redis/SurveyDto';
 import { UserResponsesDto } from '../redis/ResponseDto';
 
+export enum ResultsHiddenReason {
+    LIVE,
+    NOT_RESPONDED,
+    NOT_MOD
+}
+
 export enum ResponseBlockedReason {
     ANONYMOUS,
     BANNED,
