@@ -93,6 +93,9 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
 
+                // NOTE: It is known (and intended for potential future use) that all mods can modify any survey,
+                //       even if not the original author!
+
                 const item = await dashRedis.closeSurveyById(req.params.surveyId);
                 if (!item)
                     return surveyNotFoundResponse(res, req.params.surveyId);
@@ -140,6 +143,9 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
 
+                // NOTE: It is known (and intended for potential future use) that all mods can modify any survey,
+                //       even if not the original author!
+
                 // Upsert
                 const [isNew, postId] = await dashRedis.upsertSurvey(userId, req.params.surveyId, req.body);
                 if (postId) {
@@ -165,6 +171,9 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 const userId = await errorIfNoUserId(res);
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
+
+                // NOTE: It is known (and intended for potential future use) that all mods can modify any survey,
+                //       even if not the original author!
 
                 const success = await dashRedis.deleteSurveyById(req.params.surveyId);
                 if (!success)

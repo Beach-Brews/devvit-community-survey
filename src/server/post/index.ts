@@ -205,11 +205,6 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
             logger.traceStart('Api Start');
 
             try {
-
-                // Error if user is undefined
-                const userId = await errorIfNoUserId(res);
-                if (!userId) return;
-
                 // Error if postData is undefined
                 if (!context.postData) {
                     logger.error('PostData missing from context.');
@@ -237,7 +232,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 // Error if user is not allowed to view results
                 const resultsHidden = await getResultsHiddenReason(surveyDto);
                 if (resultsHidden !== null) {
-                    logger.error(`User ${userId} is not allowed fo view results to survey ${surveyId} for reason ${ResultsHiddenReason[resultsHidden]}`);
+                    logger.error(`User ${context.userId ?? '<anonymous>'} is not allowed fo view results to survey ${surveyId} for reason ${ResultsHiddenReason[resultsHidden]}`);
                     return messageResponse(res, 403, 'Not allowed to view results.', resultsHidden);
                 }
 
