@@ -6,8 +6,6 @@
 * ~~The APIs calls do not check for guest/banned users~~
 * Add trigger to detect user bans immediately
 
-* If the app comments something, and it is removed (or flagged by Reddit filters), the app is likely to be banned? How can I avoid this?
-
 ## Future Features
 
 Here are a few future features that are planned.
@@ -15,6 +13,7 @@ Here are a few future features that are planned.
 ### General
 * Text field support
   * Text response comments: anonymously posted or posted as user
+  * If the app comments something, and it is removed (or flagged by Reddit filters), the app is likely to be banned? How can I avoid this?
 
 ### Dashboard
 * Survey list filter / pagination
@@ -25,6 +24,7 @@ Here are a few future features that are planned.
   * Allow multiple submissions
   * Anonymous (default), user choice
   * Save default settings for future surveys
+  * Add Flair to Survey Post
   * ~~Result visibility~~
     * ~~Always visible~~
     * ~~Only once closed~~
@@ -46,6 +46,7 @@ Here are a few future features that are planned.
   * Choose anonymous
 * Multiple responses
 * Help screens
+  * Feedback / report issue -> Add post to CommunitySurvey automatically, or other method? 
 
 ### Know Issues
 
@@ -56,4 +57,4 @@ Here are a few future features that are planned.
 
 **Survey Posts**
 
-* No known issues
+* Bug: Question description - The show description link does not appear when question title is too long and wraps to a second line

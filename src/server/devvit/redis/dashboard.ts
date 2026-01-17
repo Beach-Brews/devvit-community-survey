@@ -134,7 +134,7 @@ export const upsertSurvey =
                 throw new Error('Survey has been published and cannot be modified!');
 
             // Set isNew helper variable
-            const isNew = conf !== null;
+            const isNew = conf === null;
             logger.debug(isNew ? 'Inserting new survey' : 'Updating existing survey');
 
             // TODO: Should I add a 5-second lock?
