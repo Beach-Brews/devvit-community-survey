@@ -19,7 +19,7 @@ export const createSurveyPost = async (survey: SurveyDto): Promise<Post> => {
             surveyId: survey.id
         },
         textFallback: {
-            text: 'Sorry, this app is not supported on Old Reddit.'
+            text: 'Sorry, this survey is not supported on Old Reddit or has been deleted.'
         },
         entry: "default"
     });

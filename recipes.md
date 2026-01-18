@@ -33,6 +33,7 @@ Here are a few future features that are planned.
   * Required
   * Randomize question options
 * Import/Export/Backup?
+* Auth-Token Timeout Modal/Message
 * Duplicate/Copy survey
 * Rolling/Repeating survey?
 * Handle cross-device/multi-tab editing. Channels? Lock?

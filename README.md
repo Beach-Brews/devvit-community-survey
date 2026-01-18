@@ -1,3 +1,5 @@
+![Community Survey App](https://i.redd.it/z0w005dqhvdg1.png)
+
 # Community Survey
 
 Introducing the Community Survey app for Reddit! A way to provide more advanced polls and surveys directly in Reddit without having to use an external survey provider (such as Google Forms or Survey Monkey). This app ensures confidence and control for both the survey author and responders!
