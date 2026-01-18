@@ -111,7 +111,6 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         if (!child) return;
 
         // Scroll to it
-        console.log('Scrolling to:', child);
         child.scrollIntoView({behavior: 'auto', block: 'start'});
     };
 

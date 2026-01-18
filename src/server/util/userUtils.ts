@@ -118,7 +118,7 @@ export const getResponseBlockedReason = async (survey: SurveyDto, user?: User): 
     if (criteria.minKarma !== null) {
         if (criteria.minKarma.type === KarmaType.Post && user.linkKarma < criteria.minKarma.value)
             return ResponseBlockedReason.MIN_POST_KARMA;
-        if (criteria.minKarma.type === KarmaType.Comment && user.linkKarma < criteria.minKarma.value)
+        if (criteria.minKarma.type === KarmaType.Comment && user.commentKarma < criteria.minKarma.value)
             return ResponseBlockedReason.MIN_COMMENT_KARMA;
         if (criteria.minKarma.type === KarmaType.Both && (user.commentKarma + user.linkKarma) < criteria.minKarma.value)
             return ResponseBlockedReason.MIN_KARMA;
