@@ -9,10 +9,11 @@ import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
 import { Logger } from "../../util/Logger";
 import { RedisKeys } from '../redis/RedisKeys';
-import { redis } from '@devvit/web/server';
+import { reddit, redis } from '@devvit/web/server';
 import { getSurveyById } from '../redis/dashboard';
 import { SurveyDto } from '../../../shared/redis/SurveyDto';
 import { Constants } from '../../../shared/constants';
+import { PostType } from '../../../shared/types/general';
 
 class DeleteSurveyExecutionLimitError extends Error {
 
@@ -178,6 +179,31 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
             const authorListKey = RedisKeys.authorList();
             if ((await redis.hLen(authorSurveyListKey)) <= 0)
                 await redis.zRem(authorListKey, [surveyDto.owner]);
+
+            // Confirm posts are deleted
+            const postListKey = RedisKeys.surveyPostList(surveyId);
+            const posts = Object.keys(await redis.hGetAll(postListKey));
+            if (posts && posts.length > 0) {
+
+                // Get username (for mod note)
+                const username = await reddit.getUserById(surveyDto.owner as `t2_${string}`);
+
+                // Remove each post
+                for (const postId of posts) {
+                    const post = await reddit.getPostById(postId as `t3_{string}`);
+                    if (post) {
+                        await post.setPostData({
+                            postType: PostType[PostType.Survey],
+                            surveyId: 'deleted',
+                        });
+                        await post.remove(false);
+                        await post.addRemovalNote({ reasonId: '', modNote: `Survey Deleted by ${username}` });
+                    }
+                }
+
+                // Clear post redis key
+                await redis.del(postListKey);
+            }
 
             // Finally, delete from delete queue
             const delKey = RedisKeys.surveyDeleteQueue();

@@ -19,8 +19,8 @@ import {
 } from '../util/apiUtils';
 import * as postRedis from '../devvit/redis/post';
 import { context, reddit } from '@devvit/web/server';
-import { InitializeSurveyResponse } from '../../shared/types/postApi';
-import { isMod } from '../util/userUtils';
+import { InitializeSurveyResponse, ResponseBlockedReason, ResultsHiddenReason } from '../../shared/types/postApi';
+import { getResponseBlockedReason, getResultsHiddenReason, isMod } from '../util/userUtils';
 import { QuestionResponseDto } from '../../shared/redis/ResponseDto';
 import { debugEnabled } from '../util/debugUtils';
 
@@ -61,19 +61,24 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
 
                 // Get user info
                 const userInfo = await reddit.getCurrentUser();
-                const [userIsMod, snoovar] = userInfo
-                    ? await Promise.all([isMod(userInfo), userInfo.getSnoovatarUrl()])
-                    : [false, undefined];
+                const [userIsMod, snoovar, responseBlocked] = userInfo
+                    ? await Promise.all([
+                        isMod(userInfo),
+                        userInfo.getSnoovatarUrl(),
+                        getResponseBlockedReason(found, userInfo)
+                    ])
+                    : [false, undefined, ResponseBlockedReason.ANONYMOUS];
 
                 // Get responses (if user has any)
                 const lastResponse = userInfo?.id !== undefined
                     ? await postRedis.getUserLastResponse(userInfo.id, surveyId)
-                    : undefined;
+                    : null;
 
                 successResponse(res, {
                     survey: found as SurveyWithQuestionsDto,
                     user: {
                         isMod: userIsMod,
+                        responseBlocked: responseBlocked,
                         allowDev: await debugEnabled(),
                         username: userInfo?.username ?? 'anonymous',
                         userId: userInfo?.id,
@@ -174,6 +179,13 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                     return messageResponse(res, 400, 'This survey is closed and no longer accepting responses', 122);
                 }
 
+                // Error if user is not allowed to respond
+                const blockResponse = await getResponseBlockedReason(surveyDto);
+                if (blockResponse !== null) {
+                    logger.warn(`User ${userId} tried adding a response, but is blocked for ${ResponseBlockedReason[blockResponse]}.`);
+                    return messageResponse(res, 403, `Used is unable to respond: ${ResponseBlockedReason[blockResponse]}`, 666);
+                }
+
                 // Run the upsert
                 await postRedis.upsertQuestionResponse(userId, surveyId, req.params.questionId, JSON.parse(req.body));
 
@@ -189,7 +201,7 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
 
     router.route('/api/post/survey/results/:questionId')
         .get<QuestionIdParam, ApiResponse<QuestionResponseDto>>(async (req, res) => {
-            const logger = await Logger.Create(`Dashboard API - Get Survey Result`);
+            const logger = await Logger.Create(`Post API - Get Question Result`);
             logger.traceStart('Api Start');
 
             try {
@@ -208,6 +220,20 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 if (!surveyId || typeof surveyId !== 'string') {
                     logger.error(`SurveyID missing from context (or not a string): ${surveyId ?? 'undefined'}`);
                     return messageResponse(res, 400, 'SurveyID missing from context', 133);
+                }
+
+                // Get survey to check if allowed to see results.
+                const surveyDto = await postRedis.getSurveyById(surveyId, false);
+                if (!surveyDto) {
+                    logger.error('No Survey found with ID: ', surveyId);
+                    return surveyNotFoundResponse(res, surveyId);
+                }
+
+                // Error if user is not allowed to view results
+                const resultsHidden = await getResultsHiddenReason(surveyDto);
+                if (resultsHidden !== null) {
+                    logger.error(`User ${context.userId ?? '<anonymous>'} is not allowed fo view results to survey ${surveyId} for reason ${ResultsHiddenReason[resultsHidden]}`);
+                    return messageResponse(res, 403, 'Not allowed to view results.', resultsHidden);
                 }
 
                 const found = await postRedis.getQuestionResponseById(surveyId, questionId);

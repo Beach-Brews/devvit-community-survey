@@ -5,7 +5,8 @@
 * License: BSD-3-Clause
 */
 
-import { ChangeEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FocusEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { SurveyDto, SurveyQuestionDto } from '../../../../shared/redis/SurveyDto';
 import { CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
@@ -15,6 +16,8 @@ import { DashboardContext } from '../../DashboardContext';
 import * as surveyDashboardApi from '../../api/dashboardApi';
 import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 import { ToastType } from '../../../shared/toast/toastTypes';
+import { SurveyHeaderEditor } from './SurveyHeaderEditor';
+import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
 
 enum SaveIndicatorState {
     Waiting,
@@ -34,8 +37,9 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     if (!ctx) throw Error('Context undefined.');
 
     const [survey, setSurvey] = useState<SurveyDto>(props.survey ?? genSurvey());
-    const [saveIndicator, setSaveIndicator] = useState<SaveIndicatorState>(SaveIndicatorState.Waiting);
+    if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
 
+    const [saveIndicator, setSaveIndicator] = useState<SaveIndicatorState>(SaveIndicatorState.Waiting);
     useEffect(() => {
         if (saveIndicator != SaveIndicatorState.Success) return;
         const timeoutId = setTimeout(() => setSaveIndicator(SaveIndicatorState.Waiting), 2000);
@@ -44,7 +48,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         };
     }, [saveIndicator]);
 
-    if (!survey.questions) throw Error('Survey provided is missing question list. This is unexpected.');
+    const editorContainerRef = useRef<HTMLDivElement | null>(null);
 
     const { setPageContext, addToast } = ctx;
     const saveSurvey = useCallback(async (s: SurveyDto, close: boolean) => {
@@ -98,8 +102,21 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [survey, saveSurvey]);
 
+    // Helper for scrolling to a specific question
+    const scrollToQuestion = (idx: number) => {
+        // Get the question div
+        const c = editorContainerRef?.current?.childNodes;
+        if (!c || c.length < 4) return;
+        const child = c[idx+1] as HTMLElement;
+        if (!child) return;
+
+        // Scroll to it
+        child.scrollIntoView({behavior: 'auto', block: 'start'});
+    };
+
     const modifySurveyQuestion = useCallback((question: SurveyQuestionDto, action?: 'up' | 'down' | 'delete') => {
-        setSurvey(s => {
+        let scrollIdx: number | undefined = undefined;
+        flushSync(() => setSurvey(s => {
             const ql = s.questions ?? [];
             const idx = ql.findIndex(q => q.id == question.id);
             if (idx >= 0) {
@@ -113,6 +130,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             if (thisQ && qBefore) {
                                 newState[idx - 1] = thisQ;
                                 newState[idx] = qBefore;
+                                scrollIdx = idx - 1;
                             }
                         }
                         if (idx < ql.length - 1 && action == 'down') {
@@ -121,6 +139,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             if (thisQ && qAfter) {
                                 newState[idx + 1] = thisQ;
                                 newState[idx] = qAfter;
+                                scrollIdx = idx + 1;
                             }
                         }
                         return { ...s, questions: newState};
@@ -137,6 +156,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                         // Force at least one question
                         if (newState.length <= 0)
                             newState.push(genQuestion(0));
+                        scrollIdx = idx === ql.length-1 ? ql.length-2 : idx;
                         return { ...s, questions: newState};
                     }
 
@@ -150,7 +170,10 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                 console.error(`Failed to find question ${question.id}`);
             }
             return s;
-        });
+        }));
+
+        if (scrollIdx)
+            scrollToQuestion(scrollIdx);
     }, [setSurvey]);
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -162,7 +185,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         });
     };
 
-    const onInputBlur = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    const onInputBlur = (e: FocusEvent<HTMLInputElement> | FocusEvent<HTMLTextAreaElement>) => {
         const fieldName = e.target.name;
         let value = e.target.value;
 
@@ -190,15 +213,45 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
     };
 
     const onAddQuestion = (q?: SurveyQuestionDto) => {
-        setSurvey(s => {
-            return {
-                ...s,
-                questions: [
-                    ...s.questions ?? [],
-                    q ? {...q, id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
-                ]
-            };
+        // If making a coly of an existing question, add #1 to the end
+        let newTitle = '';
+        if (q) {
+            newTitle = q.title;
+            const match = newTitle.match(/^(.*)#(\d)+$/i);
+            if (match && match.length >= 3 && match[2] !== undefined)
+                newTitle = match[1] + '#' + (parseInt(match[2]) + 1);
+            else
+                newTitle = newTitle + ' #1';
+        }
+
+        // Re-render the new question first
+        flushSync(() => {
+            setSurvey(s => {
+                return {
+                    ...s,
+                    questions: [
+                        ...s.questions ?? [],
+                        q ? {...q, title: newTitle.substring(0, 50), id: genQuestionId() } : genQuestion(s.questions?.length ?? 0)
+                    ]
+                };
+            });
         });
+
+        // Get the new question div
+        const c = editorContainerRef?.current?.childNodes;
+        if (!c || c.length < 3) return;
+        const child = c[c.length-3] as HTMLElement;
+        if (!child) return;
+
+        // Scroll to it
+        child.scrollIntoView({behavior: 'auto', block: 'start'});
+
+        // Then focus the title + pre-select the question text for editing
+        const title = child.querySelector('input[name="title"]') as HTMLInputElement;
+        if (!title) return;
+        title.focus();
+        title.selectionStart = 0;
+        title.selectionEnd = title.value.length;
     };
 
     const requestPublish = async () => {
@@ -230,18 +283,8 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                 </div>
             </div>
             <div className="my-4">
-                <div className="flex flex-col gap-8">
-                    <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
-                        {ctx.userInfo.allowDev && (<div className="text-[0.5rem] absolute bottom-4 left-4">{survey.id}</div>)}
-                        <div>
-                            <input name="title" placeholder="Survey Title" maxLength={50} value={survey.title} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full text-2xl border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                            <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${50-survey.title.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.title.length} / 50</div>
-                        </div>
-                        <div>
-                            <textarea name="intro" placeholder="Captivate your audiance with a survey prompt." maxLength={512} value={survey.intro} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full min-h-[4rem] max-h-[10rem] border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                            <div className={`text-xs p-1 text-right bg-white dark:bg-neutral-900 ${512-survey.intro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.intro.length} / 512</div>
-                        </div>
-                    </div>
+                <div ref={editorContainerRef} className="flex flex-col gap-8">
+                    <SurveyHeaderEditor survey={survey} allowDev={ctx?.userInfo?.allowDev ?? false} onInputChange={onInputChange} onInputBlur={onInputBlur} setSurvey={setSurvey} />
                     {survey.questions.map((q,i) => <SurveyQuestionEditor key={`qe_${q.id}`} question={q} modifyQuestion={modifySurveyQuestion} isFirst={i==0} isLast={i==questionCount-1} duplicateAction={!maxReached ? onAddQuestion : undefined} />)}
                     <div className="flex justify-center">
                         <button disabled={maxReached} onClick={() => onAddQuestion()} className="w-1/2 lg:w-1/3 border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex justify-center gap-2 items-center cursor-pointer disabled:pointer-events-none disabled:opacity-50">
@@ -254,7 +297,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                     <div className="text-sm p-4 flex flex-col gap-4 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
                         <div >
                             <textarea name="outro" placeholder="Thank the responders with an outro." maxLength={512} value={survey.outro} onChange={onInputChange} onBlur={onInputBlur} className="p-2 w-full min-h-[4rem] max-h-[10rem] border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white" />
-                            <div className={`text-xs p-1 text-right bg-neutral-50 dark:bg-neutral-900 ${512-survey.outro.length <= 50 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{survey.outro.length} / 512</div>
+                            <InputLengthIndicator current={survey.outro.length} max={512} warnCount={50} />
                         </div>
                     </div>
                 </div>
@@ -270,6 +313,25 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                             default: return 'No changes';
                         }
                     })()}
+                </div>
+            </div>
+
+            <div className="flex justify-end items-center border-t mt-8">
+                <div className="flex gap-4 my-4">
+                    <button
+                        className="border-2 border-blue-800 bg-blue-800 text-white px-2 py-1 rounded-lg text-small hover:bg-blue-700 hover:border-blue-300 dark:hover:border-blue-600 flex gap-2 items-center cursor-pointer"
+                        onClick={requestPublish}
+                    >
+                        <CalendarDaysIcon className="size-6" />
+                        <div>Publish</div>
+                    </button>
+                    <button
+                        className={`border-2 ${saveIndicator == SaveIndicatorState.Saving ? 'animate-pulse duration-200' : ''} bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer`}
+                        onClick={() => saveSurvey(survey, true)}
+                    >
+                        <DocumentCheckIcon className="size-6" />
+                        <div>Save</div>
+                    </button>
                 </div>
             </div>
         </>

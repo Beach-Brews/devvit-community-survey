@@ -7,6 +7,7 @@
 
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
+import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 
 export const ClosedPanel = () => {
 
@@ -30,9 +31,21 @@ export const ClosedPanel = () => {
           <div className="text-xl text-center">
               This survey has closed and is no longer accepting responses.
           </div>
-          <button onClick={showResults} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
-              View Results
-          </button>
+          {ctx.canViewResults
+              ? (
+                  <button onClick={showResults} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
+                      View Results
+                  </button>
+              )
+              : (
+                  <button disabled={true} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
+                      View Results <br />
+                      <span className="text-[0.75rem]">
+                          {ctx.survey.resultVisibility === ResultVisibility.Responders ? '(Responders only) ': '(Mods Only)'}
+                      </span>
+                  </button>
+              )
+          }
           {responses > 0 && (
               <div className="mt-8 w-full flex justify-center">
                   <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">

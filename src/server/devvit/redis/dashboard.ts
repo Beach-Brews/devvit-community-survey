@@ -18,6 +18,7 @@ import { createSurveyPost } from '../../util/publishUtils';
 import { RedisKeys } from './RedisKeys';
 import { QuestionResponseDto, ResponseValuesDto, SurveyResultListDto, SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 import { Constants } from '../../../shared/constants';
+import { PostType } from '../../../shared/types/general';
 
 // TODO: Add pagination parameter. Is there a way to filter too?
 export const getSurveyListForAuthor =
@@ -127,8 +128,13 @@ export const upsertSurvey =
             const configKey = RedisKeys.surveyConfig(surveyId);
             const questionKey = RedisKeys.surveyQuestions(surveyId);
 
-            // Determine if survey exists or not
-            const isNew = (await redis.exists(configKey)) == 0;
+            // Determine if survey exists or if the survey is live (currently, no editing allowed if live)!
+            const conf = await getSurveyById(surveyId, false);
+            if (conf?.publishDate && conf.publishDate < Date.now())
+                throw new Error('Survey has been published and cannot be modified!');
+
+            // Set isNew helper variable
+            const isNew = conf === null;
             logger.debug(isNew ? 'Inserting new survey' : 'Updating existing survey');
 
             // TODO: Should I add a 5-second lock?
@@ -217,12 +223,17 @@ export const closeSurveyById =
         // Parse
         const conf = await Schema.surveyConfig.parseAsync(JSON.parse(confStr));
 
-        // Set close date to now
-        conf.closeDate = Date.now();
+        // Only set the close date to now IF the survey is not already closed
+        const now = Date.now();
+        if (!conf.closeDate || conf.closeDate > now) {
+            conf.closeDate = now;
 
-        // Save and commit
-        await txn.set(configKey, JSON.stringify(conf));
-        await txn.exec();
+            // Save and commit
+            await txn.set(configKey, JSON.stringify(conf));
+            await txn.exec();
+        } else {
+            await txn.discard();
+        }
 
         return true;
     };
@@ -252,6 +263,10 @@ export const deleteSurveyById =
         for (const postId of Object.keys(posts)) {
             const post = await reddit.getPostById(postId as `t3_{string}`);
             if (post) {
+                await post.setPostData({
+                    postType: PostType[PostType.Survey],
+                    surveyId: 'deleted'
+                });
                 await post.remove(false);
                 await post.addRemovalNote({ reasonId: '', modNote: `Survey Deleted by ${context.username}` });
             }

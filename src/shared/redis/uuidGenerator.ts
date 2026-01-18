@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { QuestionOptionDto, SurveyDto, SurveyQuestionDto } from './SurveyDto';
+import { DefaultResponderCriteria, QuestionOptionDto, SurveyDto, SurveyQuestionDto } from './SurveyDto';
 
 const genUid = () => {
     return (Date.now().toString(36).substring(3)
@@ -75,6 +75,7 @@ export const genSurvey = (): SurveyDto => {
         publishDate: null,
         closeDate: null,
         responseCount: 0,
+        responderCriteria: DefaultResponderCriteria,
         questions: [ genQuestion(0) ]
     };
 };

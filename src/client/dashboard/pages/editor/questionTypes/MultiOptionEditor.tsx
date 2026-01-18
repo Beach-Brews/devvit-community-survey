@@ -5,13 +5,15 @@
 * License: BSD-3-Clause
 */
 
-import { ChangeEvent, FocusEvent } from 'react';
+import { ChangeEvent, FocusEvent, useRef } from 'react';
 import { CommonQuestionEditorProps } from './commonEditorTypes';
 import { QuestionOptionDto } from '../../../../../shared/redis/SurveyDto';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import { genOptionId } from '../../../../../shared/redis/uuidGenerator';
 import { Constants } from '../../../../../shared/constants';
 import { BulletIcon, CheckboxIcon, RankIcon } from '../../../../shared/components/CustomIcons';
+import { InputLengthIndicator } from '../../../shared/components/InputLengthIndicator';
+import { flushSync } from 'react-dom';
 
 export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
     // Check that the option type is valid
@@ -21,13 +23,32 @@ export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
 
     const q = props.question;
 
+    // Get reference to option list
+    const optionListRef = useRef<HTMLUListElement | null>(null);
+
     // Adds a new option to the option list
     const addNewOption = () => {
+        // Add option to question
         q.options.push({
             label: `Option #${q.options.length+1}`,
             value: genOptionId()
         });
-        props.modifyQuestion(q);
+
+        // Force re-render
+        flushSync(() => props.modifyQuestion(q));
+
+        // Get the new option li
+        const c = optionListRef?.current?.childNodes;
+        if (!c || c.length < 2) return;
+        const child = c[c.length-2] as HTMLElement;
+        if (!child) return;
+
+        // Then focus the label + pre-select the question text for editing
+        const label = child.querySelector('input') as HTMLInputElement;
+        if (!label) return;
+        label.focus();
+        label.selectionStart = 0;
+        label.selectionEnd = label.value.length;
     };
 
     // When an option is chosen to be deleted via the (x) button
@@ -73,30 +94,39 @@ export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
             onDeleteOption(i);
     };
 
+    // Auto select "Option #" text if default option text
+    const onOptionFocus = (e: FocusEvent<HTMLInputElement>) => {
+        if (e.target.value.indexOf('Option #') === 0) {
+            e.target.selectionStart = 0;
+            e.target.selectionEnd = e.target.value.length;
+        }
+    };
+
     // Choose icon based on type
-    const optionIcon = (idx: number) => {
+    const optionIcon = () => {
         return qType === 'multi'
-            ? <BulletIcon fill={idx === 0} />
+            ? <BulletIcon fill={false} />
             : qType === 'checkbox'
-                ? <CheckboxIcon fill={idx % 2 === 0 || idx === -1} />
+                ? <CheckboxIcon fill={false} />
                 : <RankIcon />;
     }
 
     return (
-        <ul className="flex flex-col gap-4">
+        <ul ref={optionListRef} className="flex flex-col gap-4">
             {q.options.map((o, i) => {
                 return (
                     <li key={`sqo_${i}`} className="flex gap-2 items-center">
-                        {optionIcon(i)}
+                        {optionIcon()}
                         <input
                             onChange={(e) => onOptionChange(e, i)}
                             onBlur={(e) => onOptionBlur(e, i)}
+                            onFocus={onOptionFocus}
                             name={`option${i}`}
                             value={o.label}
                             maxLength={64}
                             className="p-2 w-4/5 border-b-1 rounded-sm border-neutral-500 focus:border-1 focus:outline-1 focus:outline-black dark:focus:outline-white"
                         />
-                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${64-o.label.length <= 15 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{o.label.length} / 64</div>
+                        <InputLengthIndicator current={o.label.length} max={64} warnCount={15} className={`mt-1`} />
                         <button
                             onClick={() => onDeleteOption(i)}
                             className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200"
@@ -108,7 +138,7 @@ export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
             })}
             {q.options.length < Constants.MAX_OPTION_COUNT && (
                 <li className="flex gap-2 items-center cursor-pointer" onClick={addNewOption}>
-                    {optionIcon(-1)}
+                    {optionIcon()}
                     <div className="p-2 border-b-1 rounded-sm">Add new Option</div>
                 </li>
             )}

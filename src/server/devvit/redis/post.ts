@@ -268,7 +268,7 @@ export const deleteUserResponse =
     };
 
 export const getUserLastResponse =
-    async (userId: string, surveyId: string): Promise<UserResponsesDto | undefined> => {
+    async (userId: string, surveyId: string): Promise<UserResponsesDto | null> => {
 
         // Create logger
         const logger = await Logger.Create('Post Redis - Get Last Response');
@@ -282,7 +282,7 @@ export const getUserLastResponse =
             const responseList = await redis.zRange(responseListKey, 0, 1, );
             const latestResponseId = responseList[0]?.member;
             if (!latestResponseId) {
-                return undefined;
+                return null;
             }
 
             // Get all values
@@ -292,7 +292,7 @@ export const getUserLastResponse =
             // If no values, no response
             const responses = Object.entries(userResponses);
             if (responses.length <= 0) {
-                return undefined;
+                return null;
             }
 
             // Parse each response as a string[]

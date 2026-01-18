@@ -7,8 +7,11 @@
 
 import { z } from 'zod';
 import { OptionIdRegex, QuestionIdRegex, SurveyIdRegex } from '../../../shared/redis/uuidGenerator';
+import { FlairType, KarmaType, ResultVisibility } from '../../../shared/redis/SurveyDto';
 
 export class Schema {
+
+    static stringArray = z.array(z.string());
 
     /* ==================== Question Config ==================== */
 
@@ -72,6 +75,34 @@ export class Schema {
 
     static surveyQuestionList = z.array(Schema.question);
 
+    static resultVisibility = z.enum(ResultVisibility);
+
+    static karmaType = z.enum(KarmaType);
+
+    static karmaCriteria = z
+        .looseObject({
+            type: Schema.karmaType,
+            value: z.number()
+        });
+
+    static flairType = z.enum(FlairType);
+
+    static flairCriteria = z
+        .looseObject({
+            type: Schema.flairType,
+            value: z.string()
+        });
+
+    static responderCriteria = z
+        .looseObject({
+            verifiedEmail: z.boolean().default(false),
+            approvedUsers: z.boolean().default(false),
+            minAge: z.number().nullable().default(null),
+            minKarma: Schema.karmaCriteria.nullable().default(null),
+            minSubKarma: Schema.karmaCriteria.nullable().default(null),
+            userFlairs: z.array(Schema.flairCriteria).nullable().default(null)
+        });
+
     static surveyConfig = z
         .looseObject({
             id: z.string().regex(SurveyIdRegex, 'Not a valid survey ID string'),
@@ -80,6 +111,15 @@ export class Schema {
             intro: z.string().default(''),
             outro: z.string().min(1, 'Survey Outro missing'),
             allowMultiple: z.boolean().default(false),
+            responderCriteria: Schema.responderCriteria.nullish().default({
+                verifiedEmail: false,
+                approvedUsers: false,
+                minAge: null,
+                minKarma: null,
+                minSubKarma: null,
+                userFlairs: null
+            }),
+            resultVisibility: Schema.resultVisibility.default(ResultVisibility.Always),
             createDate: z.number().default(() => Date.now()),
             publishDate: z.number().nullable(),
             closeDate: z.number().nullable()
@@ -90,6 +130,4 @@ export class Schema {
             ...Schema.surveyConfig.shape,
             questions: Schema.surveyQuestionList
         });
-
-    static stringArray = z.array(z.string());
 }

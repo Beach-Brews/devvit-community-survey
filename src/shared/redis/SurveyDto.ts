@@ -48,6 +48,59 @@ export type SurveyQuestionDto = TextQuestionDto | ScaleQuestionDto | MultiOption
 
 export type SurveyQuestionList = SurveyQuestionDto[];
 
+export const ResultVisibility = {
+    Always: 'Always',
+    Closed: 'Closed',
+    Responders: 'Resp',
+    Mods: 'Mods'
+} as const;
+
+export type ResultVisibilityType = (typeof ResultVisibility)[keyof typeof ResultVisibility];
+
+export const KarmaType = {
+    Both: 'Both',
+    Comment: 'Comment',
+    Post: 'Post'
+} as const;
+
+export type KarmaTypeType = (typeof KarmaType)[keyof typeof KarmaType];
+
+export type KarmaCriteriaDto = {
+    type: KarmaTypeType;
+    value: number;
+}
+
+export const FlairType = {
+    TextEqual: 'TxtEq',
+    TextPartial: 'TxtPart',
+    CssClass: 'CssCls'
+} as const;
+
+export type FlairTypeType = (typeof FlairType)[keyof typeof FlairType];
+
+export type FlairCriteriaDto = {
+    type: FlairTypeType;
+    value: string;
+};
+
+export type ResponderCriteriaDto = {
+    verifiedEmail: boolean;
+    approvedUsers: boolean;
+    minAge: null | number;
+    minKarma: KarmaCriteriaDto | null;
+    minSubKarma: KarmaCriteriaDto | null;
+    userFlairs: null | FlairCriteriaDto[]
+};
+
+export const DefaultResponderCriteria: ResponderCriteriaDto = {
+    verifiedEmail: false,
+    approvedUsers: false,
+    minAge: null,
+    minKarma: null,
+    minSubKarma:  null,
+    userFlairs: null
+};
+
 export type SurveyDto = {
     id: string;
     owner: string;
@@ -55,6 +108,8 @@ export type SurveyDto = {
     intro: string;
     outro: string;
     allowMultiple: boolean;
+    responderCriteria: ResponderCriteriaDto | null | undefined,
+    resultVisibility: ResultVisibilityType | null | undefined,
     createDate: number;
     publishDate: number | null;
     closeDate: number | null;

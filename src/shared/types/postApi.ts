@@ -8,8 +8,31 @@
 import { SurveyWithQuestionsDto } from '../redis/SurveyDto';
 import { UserResponsesDto } from '../redis/ResponseDto';
 
+export enum ResultsHiddenReason {
+    LIVE,
+    NOT_RESPONDED,
+    NOT_MOD
+}
+
+export enum ResponseBlockedReason {
+    ANONYMOUS,
+    BANNED,
+    MUTED,
+    NOT_VERIFIED,
+    NOT_APPROVED,
+    MIN_AGE,
+    MIN_KARMA,
+    MIN_COMMENT_KARMA,
+    MIN_POST_KARMA,
+    MIN_SUB_KARMA,
+    MIN_SUB_COMMENT_KARMA,
+    MIN_SUB_POST_KARMA,
+    USER_FLAIR
+}
+
 export type UserInfoDto = {
     isMod: boolean;
+    responseBlocked: ResponseBlockedReason | null;
     allowDev: boolean;
     username: string;
     userId: string | undefined;
@@ -19,5 +42,5 @@ export type UserInfoDto = {
 export type InitializeSurveyResponse = {
     survey: SurveyWithQuestionsDto;
     user: UserInfoDto;
-    lastResponse: UserResponsesDto | undefined;
+    lastResponse: UserResponsesDto | null;
 };
