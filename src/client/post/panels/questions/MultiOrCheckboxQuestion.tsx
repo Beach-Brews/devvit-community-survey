@@ -7,6 +7,7 @@
 
 import { QuestionProps } from './QuestionProps';
 import { BulletIcon, CheckboxIcon } from '../../../shared/components/CustomIcons';
+import { useState } from 'react';
 
 export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     // Check that the option type is valid
@@ -21,6 +22,9 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     const chosenValues: boolean[] = response
         ? options.map(o => response.findIndex(v => v === o.value) >= 0)
         : new Array(optionCount).fill(false);
+
+    // Save the last selected value (for mobile line-clamp)
+    const [lastOpt, setLastOpt] = useState<number | undefined>(undefined);
 
     // Handle saving response to Redis
     const setChosenValues = (s: boolean[]) => {
@@ -46,6 +50,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                 break;
             }
         }
+        setLastOpt(idx);
     };
 
     // Choose icon based on type
@@ -56,13 +61,16 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
             : (<CheckboxIcon fill={selected} />);
     };
 
+    // Helper variable for highlighting
+    const lastStyle = `bg-blue-100 dark:bg-blue-950 rounded-md`;
+
     return (
-        <ul className={`flex flex-col ${optionCount > 7 ? 'gap-2 text-base' : 'gap-2 text-base'}`}>
+        <ul className={`flex flex-col text-base ${optionCount > 7 ? 'gap-1' : 'gap-2'}`}>
             {props.question.options.map((o, i) => {
                 return (
-                    <li key={`sqo_${o.value}`} className="flex gap-2 items-center cursor-pointer" onClick={() => void onOptionClick(i)}>
+                    <li key={`sqo_${o.value}`} className={`flex gap-2 items-center cursor-pointer ${chosenValues[i] ? lastStyle : ''}`} onClick={() => void onOptionClick(i)}>
                         {optionIcon(i)}
-                        <div className="line-clamp-1">{o.label}</div>
+                        <div className={lastOpt === i ? '' : `line-clamp-1`}>{o.label}</div>
                     </li>
                 );
             })}

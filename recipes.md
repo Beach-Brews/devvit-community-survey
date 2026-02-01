@@ -65,6 +65,6 @@ Here are a few future features that are planned.
 
 **Survey Posts**
 
-* Bug: Question description - The show description link does not appear when question title is too long and wraps to a second line
-* Bug: Option text cut off on mobile so yo...
+~~* Bug: Question description - The show description link does not appear when question title is too long and wraps to a second line~~
+~~* Bug: Option text cut off on mobile so yo...~~
 ~~* Polish: Survey Intro Text is Too Large~~
