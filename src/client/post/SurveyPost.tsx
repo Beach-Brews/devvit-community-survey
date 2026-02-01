@@ -13,8 +13,7 @@ import { ErrorPanel } from './panels/ErrorPanel';
 import { IntroPanel } from './panels/IntroPanel';
 import { QuestionPanel } from './panels/QuestionPanel';
 import { OutroPanel } from './panels/OutroPanel';
-import { context, navigateTo } from '@devvit/web/client';
-import { Constants } from '../../shared/constants';
+import { context } from '@devvit/web/client';
 import { ClosedPanel } from './panels/ClosedPanel';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
@@ -26,6 +25,7 @@ import { PostToaster } from './PostToaster';
 import { ResultVisibility } from '../../shared/redis/SurveyDto';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { HelpPanel } from './panels/HelpPanel';
+import { SubDefaultIcon } from '../shared/components/CustomIcons';
 
 export const SurveyPost = () => {
 
@@ -40,6 +40,7 @@ export const SurveyPost = () => {
     const [postInit, setPostInit] = useState<InitializeSurveyResponse | null | undefined>(undefined);
     const [lastResponse, setLastResponse] = useState<UserResponsesDto | null | undefined>(undefined);
     const [toasts, addToast, removeToast] = useToaster();
+    const [anonymousMode, setAnonymousMode] = useState<boolean>(true);
     const survey = postInit?.survey;
     const user = postInit?.user;
 
@@ -72,7 +73,7 @@ export const SurveyPost = () => {
 
     // Ensure context is only defined if the survey is defined
     const surveyContext: SurveyContextProps | undefined = survey
-        ? { panelContext, setPanelContext, survey, lastResponse, setLastResponse, addToast, canViewResults }
+        ? { panelContext, setPanelContext, survey, lastResponse, setLastResponse, addToast, canViewResults, anonymousMode, setAnonymousMode }
         : undefined;
 
     // Determine the panel to render
@@ -140,19 +141,19 @@ export const SurveyPost = () => {
                 </div>
                 <footer className="w-full p-2 pt-0 text-xs flex justify-between items-center">
                     <div className="w-3/7 flex gap-1 items-center">
-                        {user?.userId && (
-                            <>
-                                <div  className="w-8 h-8 object-contain overflow-hidden rounded-full"><img src={user?.snoovar !== undefined && user.snoovar.length > 0 ? user.snoovar : defaultSnoo} alt={`snoovar for ${user.username}`} /></div> {user.username}
-                            </>
-                        )}
-                        {postInit && !user?.userId && (
-                            <>
-                                <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" /> Anonymous
-                            </>
-                        )}
-                        {postInit === undefined && (
-                            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2 animate-pulse "></div>
-                        )}
+                        {postInit?.subInfo === undefined
+                            ? (
+                                <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2 animate-pulse "></div>
+                            )
+                            : (
+                                <>
+                                    <div  className="w-8 h-8 object-contain overflow-hidden rounded-full">
+                                        {postInit.subInfo.icon ? (<img alt={postInit.subInfo.name} src={postInit.subInfo.icon} />) : (<SubDefaultIcon />)}
+                                    </div>
+                                    r/{postInit.subInfo.name}
+                                </>
+                            )
+                        }
                     </div>
                     <div className="w-1/7 flex flex-col justify-center items-center">
                         {survey && user?.allowDev === true
@@ -167,7 +168,7 @@ export const SurveyPost = () => {
                                 </div>
                             ) : postInit !== undefined
                                 ? (
-                                    <button onClick={openHelp} className="hidden flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                                    <button onClick={openHelp} className="hidden flex gap-1 justify-center items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
                                         <QuestionMarkCircleIcon className="size-4" />
                                         <span>Help</span>
                                     </button>
@@ -176,9 +177,26 @@ export const SurveyPost = () => {
                                 )
                         }
                     </div>
-                    <div className="w-3/7 flex flex-col items-end justify-end">
-                        <div><span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span></div>
-                        <div className="text-[0.7rem] text-neutral-600 dark:text-neutral-400" >{Constants.SURVEY_VERSION_DISPLAY}</div>
+                    <div className="w-3/7 flex gap-1 items-center justify-end">
+                        {user?.userId && (
+                            <>
+                                <div className="text-right">
+                                    <div className={anonymousMode ? "line-through opacity-30" : ""}>u/{user.username}</div>
+                                    <div className={!anonymousMode ? "line-through opacity-30" : ""}>Anonymous</div>
+                                </div>
+                                <div  className={`w-8 h-8 object-contain overflow-hidden rounded-full ${anonymousMode ? "opacity-30" : ""}`}>
+                                    <img src={user?.snoovar !== undefined && user.snoovar.length > 0 ? user.snoovar : defaultSnoo} alt={`snoovar for ${user.username}`} />
+                                </div>
+                            </>
+                        )}
+                        {postInit && !user?.userId && (
+                            <>
+                                Anonymous <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" />
+                            </>
+                        )}
+                        {postInit === undefined && (
+                            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2 animate-pulse "></div>
+                        )}
                     </div>
                 </footer>
                 <PostToaster key="toaster" toasts={toasts} removeToast={removeToast} />

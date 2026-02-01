@@ -35,6 +35,8 @@ export interface SurveyContextProps {
     setLastResponse: Dispatch<SetStateAction<UserResponsesDto | null | undefined>>;
     addToast: AddToast;
     canViewResults: boolean;
+    anonymousMode: boolean;
+    setAnonymousMode: Dispatch<SetStateAction<boolean>>;
 }
 
 export const SurveyContext = createContext<SurveyContextProps | undefined>(undefined);

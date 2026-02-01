@@ -106,9 +106,9 @@ export const IntroPanel = (props: IntroPanelProps) => {
                 </div>
             </div>
             <div className="w-full flex flex-col gap-4 justify-center items-center flex-grow h-[0%]">
-                <div className="text-4xl font-bold text-center">{ctx.survey.title}</div>
-                {ctx.survey.intro && (<div className="text-xl text-center line-clamp-5">{ctx.survey.intro}</div>)}
-                <div className="mt-8 w-full flex justify-center">
+                <div className="text-2xl font-bold text-center">{ctx.survey.title}</div>
+                {ctx.survey.intro && (<div className="text-base text-center line-clamp-6">{ctx.survey.intro}</div>)}
+                <div className="w-full flex justify-center">
                     <button disabled={disableResponses} onClick={!disableResponses ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
                         {props.isAnonymous
                             ? 'Login to Start Survey'
@@ -126,9 +126,9 @@ export const IntroPanel = (props: IntroPanelProps) => {
                     ? (<div className="text-neutral-700 dark:text-neutral-300 text-center">{blockedReason[1]}</div>)
                     : (<div className="text-neutral-700 dark:text-neutral-300 text-center">{ctx.survey.questions.length} total questions</div>)}
                 {responses > 0 && (
-                    <div className="mt-8 w-full flex justify-center">
+                    <div className="w-full flex justify-center">
                         <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
-                            Delete Response
+                            Delete Responses
                         </button>
                     </div>
                 )}

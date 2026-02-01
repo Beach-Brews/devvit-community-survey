@@ -39,8 +39,14 @@ export type UserInfoDto = {
     snoovar: string | undefined;
 };
 
+export type SubredditInfoDto = {
+    name: string;
+    icon: string | undefined;
+};
+
 export type InitializeSurveyResponse = {
     survey: SurveyWithQuestionsDto;
     user: UserInfoDto;
+    subInfo: SubredditInfoDto;
     lastResponse: UserResponsesDto | null;
 };

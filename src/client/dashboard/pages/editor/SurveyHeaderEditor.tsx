@@ -20,6 +20,7 @@ import { CheckboxIcon } from '../../../shared/components/CustomIcons';
 import { getSubredditUserFlairs } from '../../api/dashboardApi';
 import { SubredditUserFlairsResult } from '../../../../shared/types/dashboardApi';
 import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
+import { context } from '@devvit/web/client';
 
 type HeaderTabs = 'title' | 'criteria' | 'settings';
 type NumericInputs = { minAge: string, minKarma: string, minSubKarma: string };
@@ -259,8 +260,6 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     )}
 
                                     {/* Min Sub Account Karma */}
-                                    {/* TODO: Add sub-karma minimums once supported fully */}
-                                    {/* **********************
                                     <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
                                         <div className="flex justify-start items-center md:justify-end">
                                             <select
@@ -286,14 +285,14 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                     </div>
 
                                     {/* Min Sub  Karma Value */}
-                                    {/* ******************
                                     {criteria.minSubKarma?.type !== undefined && (
                                         <div className="col-span-3 pl-8 md:pl-0 flex flex-col-reverse gap-2 md:contents">
                                             <div className="flex justify-start items-center md:justify-end col-span-2">
                                                 <input
                                                     name="minSubKarma"
                                                     value={numericInputs.minSubKarma}
-                                                    type="number"
+                                                    placeholder="0"
+                                                    onKeyDown={preventNonNumeric}
                                                     onChange={(e) =>
                                                         onChangeKarma(
                                                             'minSubKarma',
@@ -301,7 +300,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                             parseIntSafe(e)
                                                         )
                                                     }
-                                                    className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    className="w-full md:w-[5rem] px-2 py-1 text-sm md:text-right border rounded-lg border-neutral-500 focus:outline-1 focus:outline-black dark:focus:outline-white"
                                                 />
                                             </div>
                                             <div className="flex items-center">
@@ -309,7 +308,6 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                             </div>
                                         </div>
                                     )}
-                                    END TODO: Add sub-karma minimums once supported fully */}
 
                                     <div className="col-span-3 border-t-1"></div>
 
