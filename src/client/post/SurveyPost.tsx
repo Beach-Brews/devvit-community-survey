@@ -147,8 +147,8 @@ export const SurveyPost = () => {
                             )
                             : (
                                 <>
-                                    <div  className="w-8 h-8 object-contain overflow-hidden rounded-full">
-                                        {postInit.subInfo.icon ? (<img alt={postInit.subInfo.name} src={postInit.subInfo.icon} />) : (<SubDefaultIcon />)}
+                                    <div  className="w-8 h-8 flex-shrink-0 object-contain overflow-hidden rounded-full">
+                                        {postInit.subInfo.icon ? (<img width={32} height={32} alt={postInit.subInfo.name} src={postInit.subInfo.icon} />) : (<SubDefaultIcon />)}
                                     </div>
                                     r/{postInit.subInfo.name}
                                 </>
