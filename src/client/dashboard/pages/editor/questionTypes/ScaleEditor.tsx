@@ -9,6 +9,7 @@ import { CommonQuestionEditorProps } from './commonEditorTypes';
 import React, { ChangeEvent, JSX } from 'react';
 import { ScaleKind } from '../../../../../shared/redis/SurveyDto';
 import { BulletIcon } from '../../../../shared/components/CustomIcons';
+import { InputLengthIndicator } from '../../../shared/components/InputLengthIndicator';
 
 export const ScaleEditor = (props: CommonQuestionEditorProps) => {
     // Check that the option type is valid
@@ -47,7 +48,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                 <div className="w-1/3 flex flex-col">
                     <div className="w-full flex justify-between">
                         <label htmlFor={`q_${q.id}_min`}>Min Label</label>
-                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${32-q.minLabel.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.minLabel.length} / 32</div>
+                        <InputLengthIndicator current={q.minLabel.length} max={32} warnCount={10} className="mt-1" />
                     </div>
                     <input
                         id={`q_${q.id}_min`}
@@ -61,7 +62,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                 <div className="w-1/3 flex flex-col">
                     <div className="w-full flex justify-between">
                         <label htmlFor={`q_${q.id}_mid`}>Mid Label</label>
-                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${32-q.midLabel.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.midLabel.length} / 32</div>
+                        <InputLengthIndicator current={q.midLabel.length} max={32} warnCount={10} className="mt-1" />
                     </div>
                     <input
                         id={`q_${q.id}_mid`}
@@ -75,7 +76,7 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
                 <div className="w-1/3 flex flex-col">
                     <div className="w-full flex justify-between">
                         <label htmlFor={`q_${q.id}_max`}>Max Label</label>
-                        <div className={`text-xs mt-1 p-1 text-right bg-white dark:bg-neutral-900 ${32-q.maxLabel.length <= 10 ? 'font-bold text-red-800 dark:text-red-400' : ''}`}>{q.maxLabel.length} / 32</div>
+                        <InputLengthIndicator current={q.maxLabel.length} max={32} warnCount={10} className="mt-1" />
                     </div>
                     <input
                         id={`q_${q.id}_max`}

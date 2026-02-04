@@ -108,9 +108,9 @@ export const QuestionPanel = () => {
     return (
         <div className="flex flex-col h-full">
             <div className="flex-grow h-[0%] flex flex-col gap-2">
-                <div className="text-base md:text-lg font-bold relative">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
+                <div className="text-base md:text-lg font-bold relative leading-none">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
                 {question.description && (
-                    <div className={`text-sm md:text-base line-clamp-4 ${showDescriptionText ? '' : 'underline cursor-pointer'}`} onClick={showDescriptionText ? undefined : showFullDescription}>
+                    <div className={`text-sm md:text-base ${showDescriptionText ? 'line-clamp-4' : 'underline cursor-pointer'}`} onClick={showDescriptionText ? undefined : showFullDescription}>
                         {showDescriptionText ? question.description : 'Show question prompt'}
                     </div>
                 )}

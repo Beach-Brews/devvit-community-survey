@@ -60,7 +60,10 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                 }
 
                 // Get user info
-                const userInfo = await reddit.getCurrentUser();
+                const [userInfo, currentSub] = await Promise.all([
+                    reddit.getCurrentUser(),
+                    reddit.getCurrentSubreddit()
+                ]);
                 const [userIsMod, snoovar, responseBlocked] = userInfo
                     ? await Promise.all([
                         isMod(userInfo),
@@ -83,6 +86,10 @@ export const registerPostRoutes: PathFactory = (router: Router) => {
                         username: userInfo?.username ?? 'anonymous',
                         userId: userInfo?.id,
                         snoovar: snoovar
+                    },
+                    subInfo: {
+                        name: currentSub.name,
+                        icon: currentSub.settings.communityIcon
                     },
                     lastResponse: lastResponse
                 } satisfies InitializeSurveyResponse);

@@ -1,17 +1,38 @@
-![Community Survey App](https://i.redd.it/z0w005dqhvdg1.png)
+![Community Survey App](https://i.redd.it/jk61ar3tkfhg1.png)
 
 # Community Survey
 
+## Key Features
+* 🛠️ **Build:** Create survey questions and options, like multiple choice, scales, and more
+* ⚖️ **Criteria:** Choose who can respond, like minimum subreddit karma
+* 🕒 **Schedule:** Choose survey start and end dates
+* 👁️‍🗨️ **Visibility:** Users can respond directly in Reddit
+* 📊 **Results:** Choose when and who can see results
+
+## Responder Criteria
+* 🏠 **Community Karma** (Post, Comment, or Total)
+* 🌐 Account Karma (Post, Comment, or Total)
+* ⌛ Account Age
+* 🎇 User Flair
+* ✅ Subreddit Approved Users
+* 📧 Verified Email
+
+## Survey Settings
+* 📊 **Result Visibility** (Always, Closed, Responders, Mods)
+* _More Coming Soon!_
+
+## Question Types
+* 🔘 Multiple Choice (One Selection)
+* 🔳 Checkbox (Multiple Selection)
+* ↕️ Rank (Order Options Highest to Lowest)
+* ↔️ Scale (1-5 or 1-10)
+* _More Coming Soon!_
+
+## Introduction
+
 Introducing the Community Survey app for Reddit! A way to provide more advanced polls and surveys directly in Reddit without having to use an external survey provider (such as Google Forms or Survey Monkey). This app ensures confidence and control for both the survey author and responders!
 
-Moderators are able to create surveys, schedule publish and/or close dates, and view aggregated results. Published surveys appear directly the user's feed, allowing them to respond and view results without having to leave Reddit. This not only helps increase user engagement, but also allows the survey author to choose user account criteria to ensure accurate results for the target audience (i.e. no banned users or newly created accounts).
-
-**Question Types**
-* Multiple Choice (One Selection)
-* Checkbox (Multiple Selection)
-* Rank (Order Options Highest to Lowest)
-* Scale (1-5 or 1-10)
-* _More Coming Soon!_
+Moderators are able to create surveys, schedule publish and/or close dates, choose responder criteria, when and who can see results, and view the aggregated responses. Published surveys appear directly in the user's feed, allowing them to respond and view results without having to leave Reddit. This not only helps increase user engagement, but also allows the survey author to choose user account criteria to ensure accurate results for the target audience (e.g. users with a minimum subreddit karma or account age).
 
 Currently, all user responses are anonymously aggregated. Mods do not have the ability to see individual user responses. However, an "application" mode is planned for a future release. Users may delete their response at any time, even after the survey has been closed.
 
@@ -19,7 +40,7 @@ To view tutorials, receive support, report bugs, or request new features, please
 
 ## Ongoing Development
 
-Community Survey is still undergoing development and is currently in an Alpha phase. Please note there are likely glitches. There are also a large number of features planned for future releases. Please visit [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) to report any bugs or make feature requests.
+Community Survey is still in development and is labeled as Alpha because some features are still being developed. There are also a large number of additional features planned for future releases.  Please visit [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) to report any bugs or make feature requests.
 
 ## Terms of Use + Privacy Policy
 

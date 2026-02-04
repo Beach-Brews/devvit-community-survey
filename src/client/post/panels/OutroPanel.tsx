@@ -51,7 +51,7 @@ export const OutroPanel = () => {
           }
           <div className="w-full flex justify-center">
               <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
-                  Delete Response
+                  Delete Responses
               </button>
           </div>
       </div>

@@ -46,7 +46,7 @@ export const RankQuestion = (props: QuestionProps) => {
     const lastStyle = `bg-blue-100 dark:bg-blue-950 rounded-md`;
 
     return (
-        <ul className={`flex flex-col w-full ${optionCount > 7 ? 'gap-1' : 'gap-2'}`}>
+        <ul className={`flex flex-col w-full ${optionCount > 6 ? 'gap-1' : 'gap-2'}`}>
             {valueOrder.map((o, i) => {
                 const lineStyle = lastOpt?.[0] === i ? lastStyle : '';
                 return (
@@ -55,7 +55,7 @@ export const RankQuestion = (props: QuestionProps) => {
                             <button disabled={i === 0} onClick={() => onOptionChange(i, true)} className={buttonStyle}><ArrowUpCircleIcon className="size-6" /></button>
                             <button disabled={i === optionCount-1} onClick={() => onOptionChange(i, false)} className={buttonStyle}><ArrowDownCircleIcon className="size-6" /></button>
                         </div>
-                        <div className="flex-grow line-clamp-1">{o.label}</div>
+                        <div className={`flex-grow ${lastOpt?.[0] === i ? '' : 'line-clamp-1'}`}>{o.label}</div>
                     </li>
                 );
             })}

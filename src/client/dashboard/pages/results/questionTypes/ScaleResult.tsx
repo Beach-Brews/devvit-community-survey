@@ -42,6 +42,13 @@ export const ScaleResult = (props: DashResultProps) => {
                         })
                 }
             </div>
+            {(question.minLabel.length > 0 || question.midLabel.length > 0 || question.maxLabel.length > 0) && (
+                <div className="w-full px-4 mt-2 flex gap-2 justify-between items-center">
+                    <div className="w-1/3">{question.minLabel}</div>
+                    <div className="w-1/3 text-center">{question.midLabel}</div>
+                    <div className="w-1/3 text-right">{question.maxLabel}</div>
+                </div>
+            )}
             <div className="w-full mt-4">
                     Total: {total.toLocaleString()}
             </div>
