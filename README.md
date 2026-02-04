@@ -40,7 +40,7 @@ To view tutorials, receive support, report bugs, or request new features, please
 
 ## Ongoing Development
 
-Community Survey is still undergoing development and is currently in an Alpha phase. Please note there are likely glitches. There are also a large number of features planned for future releases. Please visit [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) to report any bugs or make feature requests.
+Community Survey is still in development and is labeled as Alpha because some features are still being developed. There are also a large number of additional features planned for future releases.  Please visit [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) to report any bugs or make feature requests.
 
 ## Terms of Use + Privacy Policy
 
