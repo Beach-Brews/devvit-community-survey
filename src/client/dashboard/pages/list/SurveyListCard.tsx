@@ -6,12 +6,13 @@
 */
 
 import { useContext } from 'react';
-import { DocumentArrowDownIcon, DocumentArrowUpIcon, PencilSquareIcon, PresentationChartBarIcon, StopCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { DocumentArrowDownIcon, DocumentArrowUpIcon, PencilSquareIcon, PresentationChartBarIcon, StopCircleIcon, TrashIcon, ArrowTopRightOnSquareIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { CalendarIcon, NoSymbolIcon, PencilIcon, RssIcon } from '@heroicons/react/24/solid';
 import { DashboardContext } from '../../DashboardContext';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { formatDateTime } from '../../../shared/dateFormat';
 import { SurveyDeleteConfirmModal } from './SurveyDeleteConfirmModal';
+import { context, navigateTo } from '@devvit/web/client';
 
 export interface SurveyListCardProps {
     survey: SurveyDto;
@@ -30,6 +31,11 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
     const isPublished = survey.publishDate && survey.publishDate <= now;
     const isScheduled = survey.publishDate && survey.publishDate > now;
 
+    const gotoPost = () => {
+        if (!survey.postId) return;
+        navigateTo(`https://www.reddit.com/r/${context.subredditName}/comments/${survey.postId.substring(3)}`);
+    };
+
     const status = isDeleted
         ? (<div className="flex items-center px-1 gap-1 text-rose-700 dark:text-rose-300">delete queued <TrashIcon className="size-3" /></div>)
         : isClosed
@@ -42,6 +48,9 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
 
     const editSurvey = () => {
         ctx.setPageContext({page: 'edit', surveyId: survey.id});
+    };
+    const viewSurvey = () => {
+        ctx.setPageContext({page: 'view', surveyId: survey.id});
     };
     const deleteSurvey = () => {
         ctx.setModal(<SurveyDeleteConfirmModal action={'delete'} survey={survey} updateSurveyList={props.updateSurveyList} />);
@@ -59,6 +68,8 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
                 <div className="px-1 text-[0.70rem] uppercase font-bold">{status}</div>
                 <div className="flex gap-1">
                     {!isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={editSurvey}><PencilSquareIcon className="size-5" /></div>)}
+                    {isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurvey}><EyeIcon className="size-5" /></div>)}
+                    {isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={gotoPost}><ArrowTopRightOnSquareIcon className="size-5" /></div>)}
                     {(!isPublished || isClosed) && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={deleteSurvey}><TrashIcon className="size-5" /></div>)}
                     {isPublished && !isClosed && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={closeSurvey}><StopCircleIcon className="size-5" /></div>)}
                 </div>

@@ -278,7 +278,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                         onClick={() => saveSurvey(survey, true)}
                     >
                         <DocumentCheckIcon className="size-6" />
-                        <div>Save</div>
+                        <div>Save & Close</div>
                     </button>
                 </div>
             </div>

@@ -44,7 +44,8 @@ export const getSurveyListForAuthor =
             .map(async (sid) =>
                 [sid, [
                     await redis.zScore(RedisKeys.surveyResponderList(sid), 'total'),
-                    (await redis.hGet(deleteQueueKey, sid)) !== undefined
+                    (await redis.hGet(deleteQueueKey, sid)) !== undefined, // Would it be faster to just fetch full delete list first?
+                    (await redis.hGetAll(RedisKeys.surveyPostList(sid)))?.[0]
                 ]] as const
             );
         const responseCounts = new Map(await Promise.all(responseCountPromise));
@@ -59,6 +60,7 @@ export const getSurveyListForAuthor =
                 if (responseCount) {
                     dto.responseCount = responseCount[0] ?? 0;
                     dto.deleteQueued = responseCount[1];
+                    dto.postId = responseCount[2];
                 }
                 return dto;
             });

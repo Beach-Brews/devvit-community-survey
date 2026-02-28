@@ -17,6 +17,7 @@ import { DebugPage } from './pages/debug/DebugPage';
 import { UserInfoDto } from '../../shared/types/postApi';
 import { DashboardToaster } from './shared/components/DashboardToaster';
 import { useToaster } from '../shared/toast/useToaster';
+import { SurveyViewerPage } from './pages/viewer/SurveyViewerPage';
 
 interface SurveyDashboardProps {
     userInfo: UserInfoDto;
@@ -58,6 +59,8 @@ export const SurveyDashboard = (props: SurveyDashboardProps) => {
                             switch (pageContext.page) {
                                 case 'edit':
                                     return <SurveyEditorPage />;
+                                case 'view':
+                                    return <SurveyViewerPage />;
                                 case 'results':
                                     return <SurveyResultsPage />;
                                 case 'debug':
