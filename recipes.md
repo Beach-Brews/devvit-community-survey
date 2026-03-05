@@ -8,13 +8,14 @@
     * Will need expanded view for these
 
 ## Dashboard
-* Auth-Token Timeout Modal/Message
+* ~~Auth-Token Timeout Modal/Message~~ (resolved by Reddit?)
 * ~~Link to survey post for published surveys~~
 * ~~View live survey config (settings, questions, etc.)~~
-* Update notice + release notes within dashboard
-* Provide feedback within dashboard (and post help)
+* ~~€Intro and descriptions do not allow paragraphs/markdown~~ Basic markdown support
 * Import/Export Survey Config
 * Export Survey Responses to CSV/Xlsx
+* Update notice + release notes within dashboard
+* Provide feedback within dashboard (and post help)
 * Modify dashboard post for non-mods to a list of live/closed surveys
 * Send Welcome Modmail on Install (link to Wiki for Tutorials/Setup)
 * Handle cross-device/multi-tab editing. Channels? Lock?
@@ -30,7 +31,8 @@
   * Required
   * Randomize question options
   * (Checkbox) Max selection (e.g. only 3 of 5 can be selected)
-* Intro and descriptions do not allow paragraphs/markdown
+* Markdown support for images, including options
+  * Maybe a media library?
 * Preview survey (theme, mobile vs desktop, etc.)
 * Duplicate/Copy survey
 * Rolling/Repeating survey (i.e. monthly reposts)
