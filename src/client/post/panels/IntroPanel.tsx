@@ -12,6 +12,7 @@ import { formatRelativeDateTime } from '../../shared/dateFormat';
 import { DocumentArrowDownIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ResponseBlockedReason } from '../../../shared/types/postApi';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
+import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
 
 export interface IntroPanelProps {
     isAnonymous: boolean,
@@ -107,7 +108,7 @@ export const IntroPanel = (props: IntroPanelProps) => {
             </div>
             <div className="w-full flex flex-col gap-4 justify-center items-center flex-grow h-[0%]">
                 <div className="text-2xl font-bold text-center leading-tight">{ctx.survey.title}</div>
-                {ctx.survey.intro && (<div className={`text-center ${ctx.survey.intro.length > 300 ? 'text-sm line-clamp-9' : 'text-base line-clamp-6'}`}>{ctx.survey.intro}</div>)}
+                {ctx.survey.intro && (<div className={`text-center ${ctx.survey.intro.length > 300 ? 'text-sm line-clamp-9' : 'text-base line-clamp-6'}`}>{renderMarkdown(ctx.survey.intro)}</div>)}
                 <div className="w-full flex justify-center">
                     <button disabled={disableResponses} onClick={!disableResponses ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
                         {props.isAnonymous
