@@ -45,7 +45,7 @@ const DashboardToastCard = (props: DashboardToastCardProps) => {
     return (
         <div className={`w-full p-2 border-1 border-l-6 ${borderColor} rounded flex gap-2 items-center text-neutral-900 bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-950`}>
             {icon && (<div className="size-6">{icon}</div>)}
-            <div className="flex-grow">
+            <div className="flex-grow flex justify-between items-center gap-1">
                 {toast.heading && (<strong>{toast.heading}</strong>)}
                 {toast.message}
             </div>

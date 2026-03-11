@@ -5,14 +5,15 @@
 * License: BSD-3-Clause
 */
 
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ArrowUpTrayIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { DashboardContext } from '../../DashboardContext';
 import { SurveyListCard } from './SurveyListCard';
 import { SurveyListCardLoading } from './SurveyListCardLoading';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { getSurveyList } from '../../api/dashboardApi';
 import { navigateTo } from '@devvit/web/client';
+import { importSurvey } from '../../shared/importExport';
 
 export const SurveyListPage = () => {
     const ctx = useContext(DashboardContext);
@@ -39,11 +40,27 @@ export const SurveyListPage = () => {
         void updateSurveyList();
     }, [updateSurveyList]);
 
+    const importField = useRef<HTMLInputElement | null>(null);
+
     return (
         <>
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey Dashboard</h1>
                 <div className="my-4 flex gap-4">
+                    <input
+                        className="hidden"
+                        ref={importField}
+                        id="import-file"
+                        type="file"
+                        accept="application/json, .survey"
+                        onChange={e => importSurvey(e, ctx)} />
+                    <button
+                        className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
+                        onClick={() => importField.current?.click()}
+                    >
+                        <ArrowUpTrayIcon className="size-6" />
+                        <div>Import</div>
+                    </button>
                     <button
                         className="border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex gap-2 items-center cursor-pointer"
                         onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}

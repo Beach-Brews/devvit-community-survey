@@ -7,10 +7,12 @@
 
 import { useContext } from 'react';
 import { KarmaType, ResultVisibility, SurveyDto } from '../../../../shared/redis/SurveyDto';
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import { ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { DashboardContext } from '../../DashboardContext';
 import { MultiOptionViewer } from './questionTypes/MultiOptionViewer';
 import { ScaleViewer } from './questionTypes/ScaleViewer';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
+import { exportSurvey } from '../../shared/importExport';
 
 export interface SurveyViewerProps {
     survey: SurveyDto | null;
@@ -66,6 +68,13 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
                 <h1 className="text-md lg:text-2xl font-bold my-4">Survey Viewer</h1>
                 <div className="flex gap-4 my-4">
                     <button
+                        className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
+                        onClick={() => exportSurvey(survey)}
+                    >
+                        <ArrowDownTrayIcon className="size-6" />
+                        <div>Export</div>
+                    </button>
+                    <button
                         className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer"
                         onClick={() => ctx.setPageContext({ page: 'list' })}
                     >
@@ -79,11 +88,11 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
                     <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
                         <h2 className="text-xl font-bold">{survey.title}</h2>
                         {survey.intro && (
-                            <p>{survey.intro}</p>
+                            <div>{renderMarkdown(survey.intro)}</div>
                         )}
                         <h3 className="border-b-1">Responder Criteria</h3>
                         <ul className="list-disc pl-5">
-                            {criteriaItems.map(i => <li>{i}</li>)}
+                            {criteriaItems.map((c, i) => <li key={i}>{c}</li>)}
                         </ul>
                         <h3 className="border-b-1">Survey Settings</h3>
                         <p>
@@ -104,7 +113,7 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
                         <div key={`qe_${q.id}`} className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
                             <h3 className="text-lg font-bold">{q.title}</h3>
                             {q.description && (
-                                <p>{q.description}</p>
+                                <div>{renderMarkdown(q.description)}</div>
                             )}
                             {(() => {
                                 switch (q.type) {
@@ -123,12 +132,19 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
                         </div>
                     ))}
                     <div className="relative text-sm p-4 flex flex-col gap-2 text-neutral-700 dark:text-neutral-300 rounded-md bg-white dark:bg-neutral-900 border-1 border-neutral-300 dark:border-neutral-700">
-                        <p>{survey.outro}</p>
+                        {renderMarkdown(survey.outro)}
                     </div>
                 </div>
             </div>
             <div className="flex justify-end items-center border-t mt-8">
                 <div className="flex gap-4 my-4">
+                    <button
+                        className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
+                        onClick={() => exportSurvey(survey)}
+                    >
+                        <ArrowDownTrayIcon className="size-6" />
+                        <div>Export</div>
+                    </button>
                     <button
                         className="border-2 bg-neutral-200 border-neutral-200 dark:border-neutral-800 dark:bg-neutral-800 px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500 flex gap-2 items-center cursor-pointer"
                         onClick={() => ctx.setPageContext({ page: 'list' })}

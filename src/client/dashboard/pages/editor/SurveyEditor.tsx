@@ -8,7 +8,7 @@
 import { ChangeEvent, FocusEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { SurveyDto, SurveyQuestionDto } from '../../../../shared/redis/SurveyDto';
-import { CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
+import { ArrowDownTrayIcon, CalendarDaysIcon, DocumentCheckIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { SurveyQuestionEditor } from './questionTypes/SurveyQuestionEditor';
 import { Constants } from '../../../../shared/constants';
 import { genQuestion, genQuestionId, genSurvey } from '../../../../shared/redis/uuidGenerator';
@@ -18,6 +18,7 @@ import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 import { ToastType } from '../../../shared/toast/toastTypes';
 import { SurveyHeaderEditor } from './SurveyHeaderEditor';
 import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
+import { exportSurvey } from '../../shared/importExport';
 
 enum SaveIndicatorState {
     Waiting,
@@ -258,14 +259,24 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
         ctx.setModal(<SurveyEditorPublishModal survey={survey} />);
     };
 
+
     const questionCount = survey.questions.length;
     const maxReached = questionCount == Constants.MAX_QUESTION_COUNT;
 
     return (
         <>
             <div className="flex justify-between items-center border-b">
-                <h1 className="text-md lg:text-2xl font-bold my-4">Survey Editor</h1>
-                <div className="flex gap-4 my-4">
+                <h1 className="text-md lg:text-2xl font-bold my-4">Editor</h1>
+                <div className="flex flex-wrap-reverse justify-end gap-4 my-4">
+                    <div className="flex justify-end items-center basis-full sm:basis-auto">
+                        <button
+                            className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
+                            onClick={() => exportSurvey(survey)}
+                        >
+                            <ArrowDownTrayIcon className="size-6" />
+                            <div>Export</div>
+                        </button>
+                    </div>
                     <button
                         className="border-2 border-blue-800 bg-blue-800 text-white px-2 py-1 rounded-lg text-small hover:bg-blue-700 hover:border-blue-300 dark:hover:border-blue-600 flex gap-2 items-center cursor-pointer"
                         onClick={requestPublish}
@@ -319,6 +330,13 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
             <div className="flex justify-end items-center border-t mt-8">
                 <div className="flex gap-4 my-4">
                     <button
+                        className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
+                        onClick={() => exportSurvey(survey)}
+                    >
+                        <ArrowDownTrayIcon className="size-6" />
+                        <div>Export</div>
+                    </button>
+                    <button
                         className="border-2 border-blue-800 bg-blue-800 text-white px-2 py-1 rounded-lg text-small hover:bg-blue-700 hover:border-blue-300 dark:hover:border-blue-600 flex gap-2 items-center cursor-pointer"
                         onClick={requestPublish}
                     >
@@ -330,7 +348,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                         onClick={() => saveSurvey(survey, true)}
                     >
                         <DocumentCheckIcon className="size-6" />
-                        <div>Save</div>
+                        <div>Save & Close</div>
                     </button>
                 </div>
             </div>

@@ -76,6 +76,7 @@ export const genSurvey = (): SurveyDto => {
         closeDate: null,
         responseCount: 0,
         responderCriteria: DefaultResponderCriteria,
+        resultVisibility: 'Always',
         questions: [ genQuestion(0) ]
     };
 };
