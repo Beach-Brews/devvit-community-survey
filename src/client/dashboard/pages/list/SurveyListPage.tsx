@@ -13,7 +13,7 @@ import { SurveyListCardLoading } from './SurveyListCardLoading';
 import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { getSurveyList } from '../../api/dashboardApi';
 import { navigateTo } from '@devvit/web/client';
-import { importSurvey } from '../../shared/importExport';
+import { importSurvey } from '../../shared/importExport/importExport';
 
 export const SurveyListPage = () => {
     const ctx = useContext(DashboardContext);

@@ -69,7 +69,7 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
                 <div className="flex gap-1">
                     {!isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={editSurvey}><PencilSquareIcon className="size-5" /></div>)}
                     {isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={viewSurvey}><EyeIcon className="size-5" /></div>)}
-                    {isPublished && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={gotoPost}><ArrowTopRightOnSquareIcon className="size-5" /></div>)}
+                    {isPublished && !isDeleted && survey.postId && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200" onClick={gotoPost}><ArrowTopRightOnSquareIcon className="size-5" /></div>)}
                     {(!isPublished || isClosed) && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={deleteSurvey}><TrashIcon className="size-5" /></div>)}
                     {isPublished && !isClosed && !isDeleted && (<div className="p-0.5 rounded-lg cursor-pointer hover:bg-rose-200 hover:text-rose-700 hover:dark:bg-rose-700 hover:dark:text-rose-200" onClick={closeSurvey}><StopCircleIcon className="size-5" /></div>)}
                 </div>

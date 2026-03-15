@@ -5,44 +5,61 @@
 * License: BSD-3-Clause
 */
 
-import { SurveyDto, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyDto';
+import { SurveyDto, SurveyWithQuestionsDto } from '../../../../shared/redis/SurveyDto';
 import { ChangeEvent } from 'react';
-import { genSurveyId } from '../../../shared/redis/uuidGenerator';
-import { DashboardContextProps } from '../DashboardContext';
-import { ToastType } from '../../shared/toast/toastTypes';
-import * as surveyDashboardApi from '../api/dashboardApi';
+import { genSurveyId } from '../../../../shared/redis/uuidGenerator';
+import { DashboardContextProps } from '../../DashboardContext';
+import { ToastType } from '../../../shared/toast/toastTypes';
+import * as surveyDashboardApi from '../../api/dashboardApi';
+import { SurveyExportModal } from './SurveyExportModal';
 
-export const exportSurvey = async (survey: SurveyDto | SurveyWithQuestionsDto) => {
+export const exportSurvey = async (survey: SurveyDto | SurveyWithQuestionsDto, ctx: DashboardContextProps) => {
     // Remove some properties for exports
     const replacer = (key: string, value: unknown) => {
-        if (key === 'id' || key === 'value' || key === 'owner' || key === 'postId' || key === 'responseCount' || key.indexOf('Date') >= 0) return undefined;
+        // TODO: Fix value import errors for responder criteria
+        if (key === 'id' || key === 'value' || key === 'owner' || key === 'postId' || key === 'responseCount') return undefined;
+        if (key.indexOf('Date') >= 0) return null;
         return value;
     };
 
     // Stringify with the replacer
     const exportedSurvey = JSON.stringify(survey, replacer, 2);
 
-    // Convert to a blob and generate a data URL
-    const blob = new Blob([exportedSurvey], { type: 'application/json;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    // Try to auto copy to clipboard
+    try {
+        await navigator.clipboard.writeText(exportedSurvey);
+        ctx.addToast({
+            heading: 'Survey Copied',
+            message: 'The survey config has been copied to your clipboard. Open the import screen to paste the config, or save it to a file for later use.',
+            type: ToastType.Success,
+            time: 10000
+        });
+    } catch(e) {
+        // Fallback to modal if copy fails
+        ctx.setModal(<SurveyExportModal survey={exportedSurvey} />);
+    }
 
-    // Generate the file name from survey title (strip special characters, limit to 30 characters)
-    let fileName = survey.title.replace(/\s+/g, '-')
-        .replace(/[^A-Za-z0-9-_]/g, '')
-        .replace(/--*/g, '-');
-    if (fileName.length > 30)
-        fileName = fileName.substring(0, 30);
-
-    // Create a temporary "download" anchor
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', fileName + '.survey');
-    link.style.display = 'none';
-
-    // Add the link and trigger a click to start the download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // FUTURE: This code may be used in the future to
+    // // Convert to a data URL
+    // const url = `data:application/json;charset=UTF-8,${encodeURIComponent(exportedSurvey)}`;
+    //
+    // // Generate the file name from survey title (strip special characters, limit to 30 characters)
+    // let fileName = survey.title.replace(/\s+/g, '-')
+    //     .replace(/[^A-Za-z0-9-_]/g, '')
+    //     .replace(/--*/g, '-');
+    // if (fileName.length > 30)
+    //     fileName = fileName.substring(0, 30);
+    //
+    // // Create a temporary "download" anchor
+    // const link = document.createElement('a');
+    // link.setAttribute('href', url);
+    // link.setAttribute('download', fileName + '.survey');
+    // link.style.display = 'none';
+    //
+    // // Add the link and trigger a click to start the download
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
 };
 
 export const importSurvey = async (event: ChangeEvent<HTMLInputElement>, ctx: DashboardContextProps) => {

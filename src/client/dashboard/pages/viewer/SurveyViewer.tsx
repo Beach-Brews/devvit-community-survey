@@ -12,7 +12,7 @@ import { DashboardContext } from '../../DashboardContext';
 import { MultiOptionViewer } from './questionTypes/MultiOptionViewer';
 import { ScaleViewer } from './questionTypes/ScaleViewer';
 import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
-import { exportSurvey } from '../../shared/importExport';
+import { exportSurvey } from '../../shared/importExport/importExport';
 
 export interface SurveyViewerProps {
     survey: SurveyDto | null;
@@ -69,7 +69,7 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
                 <div className="flex gap-4 my-4">
                     <button
                         className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
-                        onClick={() => exportSurvey(survey)}
+                        onClick={() => exportSurvey(survey, ctx)}
                     >
                         <ArrowDownTrayIcon className="size-6" />
                         <div>Export</div>
@@ -140,7 +140,7 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
                 <div className="flex gap-4 my-4">
                     <button
                         className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
-                        onClick={() => exportSurvey(survey)}
+                        onClick={() => exportSurvey(survey, ctx)}
                     >
                         <ArrowDownTrayIcon className="size-6" />
                         <div>Export</div>

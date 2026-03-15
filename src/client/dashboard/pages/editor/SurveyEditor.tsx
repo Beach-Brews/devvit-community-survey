@@ -18,7 +18,7 @@ import { SurveyEditorPublishModal } from './SurveyEditorPublishModal';
 import { ToastType } from '../../../shared/toast/toastTypes';
 import { SurveyHeaderEditor } from './SurveyHeaderEditor';
 import { InputLengthIndicator } from '../../shared/components/InputLengthIndicator';
-import { exportSurvey } from '../../shared/importExport';
+import { exportSurvey } from '../../shared/importExport/importExport';
 
 enum SaveIndicatorState {
     Waiting,
@@ -271,7 +271,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                     <div className="flex justify-end items-center basis-full sm:basis-auto">
                         <button
                             className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
-                            onClick={() => exportSurvey(survey)}
+                            onClick={() => exportSurvey(survey, ctx)}
                         >
                             <ArrowDownTrayIcon className="size-6" />
                             <div>Export</div>
@@ -331,7 +331,7 @@ export const SurveyEditor = (props: SurveyEditorProps) => {
                 <div className="flex gap-4 my-4">
                     <button
                         className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
-                        onClick={() => exportSurvey(survey)}
+                        onClick={() => exportSurvey(survey, ctx)}
                     >
                         <ArrowDownTrayIcon className="size-6" />
                         <div>Export</div>
