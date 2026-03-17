@@ -61,7 +61,7 @@ export const SurveyExportModal = (props: SurveyExportModalProps) => {
             cancelLabel="Close"
             onAccept={copyConfig}
         >
-            <textarea ref={exportArea} className="w-[75vw] h-[75vh] border-1 rounded-md p-2" readOnly={true} value={props.survey}></textarea>
+            <textarea ref={exportArea} className="w-full h-[75vh] border-1 rounded-md p-2" readOnly={true} value={props.survey}></textarea>
         </DashboardModal>
     );
 };

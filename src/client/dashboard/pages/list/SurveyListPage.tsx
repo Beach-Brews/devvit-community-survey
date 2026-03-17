@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { ArrowUpTrayIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { DashboardContext } from '../../DashboardContext';
 import { SurveyListCard } from './SurveyListCard';
@@ -40,13 +40,15 @@ export const SurveyListPage = () => {
         void updateSurveyList();
     }, [updateSurveyList]);
 
-    const importField = useRef<HTMLInputElement | null>(null);
+    // FUTURE: If downloads are supported
+    // const importField = useRef<HTMLInputElement | null>(null);
 
     return (
         <>
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey Dashboard</h1>
                 <div className="my-4 flex gap-4">
+                    {/* FUTURE: If downloads are supported
                     <input
                         className="hidden"
                         ref={importField}
@@ -54,9 +56,10 @@ export const SurveyListPage = () => {
                         type="file"
                         accept="application/json, .survey"
                         onChange={e => importSurvey(e, ctx)} />
+                    */}
                     <button
                         className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
-                        onClick={() => importField.current?.click()}
+                        onClick={() => /*importField.current?.click()*/ importSurvey(ctx)}
                     >
                         <ArrowUpTrayIcon className="size-6" />
                         <div>Import</div>
