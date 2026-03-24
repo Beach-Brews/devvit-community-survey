@@ -9,6 +9,24 @@ import { assertSurveyId, assertUserId, assertQuestionId, assertResponseId } from
 
 export const RedisKeys = {
     /**
+     * Saves the current app update state from the update wiki page. A scheduler will periodically check for updates to
+     * the centralized wiki page, and update the individual install value.
+     *
+     * **Type:** Hash Set (hSet)
+     *
+     * **Field-Value:**
+     * - Time - The timestamp the wiki was last checked for changes
+     * - Content - The contents of the wiki page
+     * - Update - Boolean, representing whether wiki has a newer version
+     *
+     * **Actions:**
+     * - DashboardList - Get info object
+     * - OnApUpdate - Clear redis key
+     * - Scheduler - Check wiki for version info. Unset if app is latest.
+     */
+    appUpdateInfo: () => `dash:updateInfo`,
+
+    /**
      * Saves the ID of the dashboard post, so multiple are not created.
      *
      * **Type:** Hash Set (hSet)
@@ -313,5 +331,5 @@ export const RedisKeys = {
         assertSurveyId(surveyId);
         assertResponseId(responseId);
         return `usr:${userId}:sv:${surveyId}:sr:${responseId}`;
-    }
+    },
 };

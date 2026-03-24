@@ -143,4 +143,11 @@ export class Schema {
             ...Schema.surveyConfig.shape,
             questions: Schema.surveyQuestionList
         });
+
+    static appUpdateInfo = z
+        .looseObject({
+            latestVersion: z.string().regex(/\d+\.\d+\.\d+(\.\d+)?/),
+            urgent: z.boolean().default(false),
+            message: z.string().nullish()
+        });
 }

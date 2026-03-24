@@ -6,7 +6,7 @@
 */
 
 import { useState } from 'react';
-import { navigateTo } from '@devvit/web/client';
+import { navigateTo, context } from '@devvit/web/client';
 import { DashboardContext, DashboardModalContent, DashboardPageContext } from './DashboardContext';
 import { SurveyListPage } from './pages/list/SurveyListPage';
 import { SurveyEditorPage } from './pages/editor/SurveyEditorPage';
@@ -72,8 +72,27 @@ export const SurveyDashboard = (props: SurveyDashboardProps) => {
                         })()}
                     </div>
                     <footer className="p-2 text-xs flex justify-between items-center rounded-t-lg bg-neutral-200 dark:bg-neutral-700">
-                        <div className="max-w-1/2">Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Feedback and Support</div>
-                        <div className="max-w-1/2 flex items-center">{debugButton()}{Constants.SURVEY_VERSION_DISPLAY}</div>
+                        <div className="max-w-1/2">
+                            Visit{' '}
+                            <span
+                                className="underline cursor-pointer"
+                                onClick={() => navigateTo('https://www.reddit.com/r/CommunitySurvey')}
+                            >
+                                r/CommunitySurvey
+                            </span>{' '}
+                            for Feedback and Support
+                        </div>
+                        <div className="max-w-1/2 flex items-center">
+                            {debugButton()} v{context?.appVersion ?? Constants.SURVEY_VERSION_DISPLAY}
+                            {/*(
+                                <>
+                                    &nbsp;-&nbsp;
+                                    <span onClick={updateApp} className="font-bold border-b-1 cursor-pointer">
+                                        Update Available!
+                                    </span>
+                                </>
+                            )*/}
+                        </div>
                     </footer>
                 </div>
                 {modal}

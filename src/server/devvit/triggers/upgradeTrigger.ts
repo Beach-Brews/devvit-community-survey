@@ -8,6 +8,8 @@
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
 import { Logger } from "../../util/Logger";
+import { redis } from '@devvit/web/server';
+import { RedisKeys } from '../redis/RedisKeys';
 
 export const registerAppUpgradeTrigger: PathFactory = (router: Router) => {
     router.post('/internal/trigger/on-upgrade', async (_req, res): Promise<void> => {
@@ -15,6 +17,9 @@ export const registerAppUpgradeTrigger: PathFactory = (router: Router) => {
         logger.traceStart("/internal/trigger/on-upgrade");
 
         try {
+
+            // Clear update info key to reset polling from update wiki page
+            await redis.del(RedisKeys.appUpdateInfo());
 
             res.status(200).json({ status: 'ok' });
 

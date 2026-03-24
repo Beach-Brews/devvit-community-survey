@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import { getWebViewMode, navigateTo, requestExpandedMode, WebViewMode } from '@devvit/web/client';
+import { getWebViewMode, navigateTo, requestExpandedMode, WebViewMode, context } from '@devvit/web/client';
 import { MouseEvent, useEffect, useState } from 'react';
 import { SurveyDashboard } from './SurveyDashboard';
 import { getUserInfo } from './api/dashboardApi';
@@ -103,7 +103,7 @@ export const SurveyDashboardInline = () => {
                 </div>
                 <div className="w-1/2 flex flex-col items-end justify-end">
                     <div><span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span></div>
-                    <div className="text-[0.7rem] text-neutral-600 dark:text-neutral-400" >{Constants.SURVEY_VERSION_DISPLAY}</div>
+                    <div className="text-[0.7rem] text-neutral-600 dark:text-neutral-400" >v{context?.appVersion ?? Constants.SURVEY_VERSION_DISPLAY}</div>
                 </div>
             </footer>
         </div>

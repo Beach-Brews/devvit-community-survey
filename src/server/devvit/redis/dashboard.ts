@@ -19,6 +19,7 @@ import { RedisKeys } from './RedisKeys';
 import { QuestionResponseDto, ResponseValuesDto, SurveyResultListDto, SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 import { Constants } from '../../../shared/constants';
 import { PostType } from '../../../shared/types/general';
+import { AppUpdateInfoDto } from '../../../shared/types/dashboardApi';
 
 // TODO: Add pagination parameter. Is there a way to filter too?
 export const getSurveyListForAuthor =
@@ -65,6 +66,20 @@ export const getSurveyListForAuthor =
                 return dto;
             });
         return Promise.all(asyncParse);
+    };
+
+export const getAppUpdateInfo =
+    async (): Promise<AppUpdateInfoDto | undefined> => {
+        try {
+            const [ update, content ] = await redis.hMGet(RedisKeys.appUpdateInfo(), ['update', 'content']);
+            return update === 'true' && content
+                ? (await Schema.appUpdateInfo.parseAsync(JSON.parse(content))) satisfies AppUpdateInfoDto
+                : undefined;
+        } catch (e) {
+            const logger = await Logger.Create('Dash Redis - App Update Info');
+            logger.error('Error getting update info: ', e);
+        }
+        return undefined;
     };
 
 export const getSurveyById =
