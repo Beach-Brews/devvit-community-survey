@@ -58,9 +58,10 @@ export const SurveyViewer = (props: SurveyViewerProps) => {
         if (criteria.userFlairs && criteria.userFlairs.length > 0) {
             criteriaItems.push(criteria.userFlairs.map(f => `${f.type} => ${f.value}`).join(' '));
         }
-    } else {
-        criteriaItems.push('None');
     }
+
+    if (criteriaItems.length <= 0)
+        criteriaItems.push('None');
 
     return (
         <>

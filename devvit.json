@@ -105,7 +105,11 @@
     }
   },
   "marketingAssets": {
-	"icon": "assets/community-survey-app-icon.png"
+    "icon": "assets/community-survey-app-icon.png"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build"
   },
   "dev": {
     "subreddit": "beachbrewsboil"

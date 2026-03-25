@@ -14,7 +14,7 @@
 * ~~€Intro and descriptions do not allow paragraphs/markdown~~
 * ~~Import/Export Survey Config~~
 * ~~Send Welcome Modmail on Install (link to Wiki for Tutorials/Setup)~~
-* Update notice + release notes within dashboard
+* ~~Update notice + release notes within dashboard~~
 * Export Survey Responses to CSV/Xlsx
 * Modify dashboard post for non-mods to a list of live/closed surveys
 * Provide feedback within dashboard (and post help)

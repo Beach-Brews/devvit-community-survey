@@ -128,16 +128,11 @@ export const upsertSurvey =
         try {
             logger.debug(userId, surveyId, surveyData);
 
-            // Parse object
-            const parsedObj = JSON.parse(surveyData);
-
-            // Add user to config
-            parsedObj.id = surveyId;
-            parsedObj.owner = userId;
-
-            // Parse data (confirm valid)
-            const { questions, ...config } = await Schema.surveyConfigWithQuestions.parseAsync(parsedObj);
-            logger.debug(questions, config);
+            // Abort if userId or surveyId are missing
+            if (!userId)
+                throw  new Error('userId is required');
+            if (!surveyId)
+                throw  new Error('surveyId is required');
 
             // Get all keys to watch
             const authorListKey = RedisKeys.authorList();
@@ -153,6 +148,16 @@ export const upsertSurvey =
             // Set isNew helper variable
             const isNew = conf === null;
             logger.debug(isNew ? 'Inserting new survey' : 'Updating existing survey');
+
+            // Force overwrite some properties.
+            const parsedObj = JSON.parse(surveyData);
+            parsedObj.id = surveyId;
+            parsedObj.owner = userId;
+            parsedObj.createDate = isNew ? Date.now() : conf.createDate;
+
+            // Parse data (confirm valid)
+            const { questions, ...config } = await Schema.surveyConfigWithQuestions.parseAsync(parsedObj);
+            logger.debug(questions, config);
 
             // TODO: Should I add a 5-second lock?
 
