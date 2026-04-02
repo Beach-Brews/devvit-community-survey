@@ -19,9 +19,12 @@ export const registerAppInstallTrigger: PathFactory = (router: Router) => {
         try {
 
             // Send modmail about tutorials and getting started
-            await reddit.modMail.createModInboxConversation({
+            await reddit.modMail.createConversation({
+                isAuthorHidden: false,
+                subredditName: 'CommunitySurvey',
+                to: `r/${context.subredditName}`,
                 subject: 'CommunitySurvey Quick Start Guide',
-                bodyMarkdown: `Hi mods of r/${context.subredditName},
+                body: `Hi mods of r/${context.subredditName},
 
 Thank you for installing CommunitySurvey!
 
@@ -43,12 +46,13 @@ Below is a quick guide on creating your first survey. Additional help and suppor
 
 Done!
 
-A new survey post will be created on the publish date, and users will be able to respond to your first survey!
+A new survey post will be created on the publish date, and users will be able to respond to your first survey! If you
+have questions, bugs or app issues, or new feature ideas, head over to r/CommunitySurvey and create a post, send a 
+Mod Mail, or message me directly.
 
 Enjoy,  
-u/Beach-Brews
+u/Beach-Brews - Community Survey developer
 `,
-                subredditId: context.subredditId,
             });
 
             res.status(200).json({ status: 'ok' });

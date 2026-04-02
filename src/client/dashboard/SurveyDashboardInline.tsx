@@ -40,7 +40,7 @@ export const SurveyDashboardInline = () => {
 
     // Handler for launching into expanded mode
     const launchDashboard = async (e: MouseEvent) => {
-        await requestExpandedMode(e.nativeEvent as PointerEvent, 'dashboard');
+        requestExpandedMode(e.nativeEvent as PointerEvent, 'dashboard');
     };
 
     return (

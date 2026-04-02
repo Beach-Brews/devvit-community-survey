@@ -16,6 +16,11 @@
         "height": "tall",
         "inline": true
       },
+      "hub": {
+        "entry": "hub.html",
+        "height": "tall",
+        "inline": true
+      },
       "dashboard": {
         "entry": "dashboard.html",
         "height": "tall",

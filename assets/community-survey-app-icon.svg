@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Community Survey App Icon">
-    <style>.fb { fill: #28859c; } .fr { fill: #9c2828; } .pc { fill: #9c2828; }</style>
+    <!-- ClipBoardFill (cbf) | UAT Red: #9c2828 | App Blue: #28859c -->
+    <style>.cbf { fill: #28859c; }</style>
     <!-- Background: rounded square teal -->
-    <rect x="0" y="0" width="1024" height="1024" rx="128" ry="128" class="pc"/>
+    <rect x="0" y="0" width="1024" height="1024" rx="128" ry="128" class="cbf"/>
 
     <!-- Clipboard -->
     <g>
@@ -11,7 +12,7 @@
         <!-- Clip -->
         <path d="M 460 140 a 20 20 0 0 1 95 0 h 45 a 20 20 0 0 1 20 20 v 35 a 20 20 0 0 1 -20 20 h -180 a 20 20 0 0 1 -20 -20 v -35 a 20 20 0 0 1 20 -20 z" stroke="none" fill="#FFFFFF" />
         <!-- Clip hole -->
-        <ellipse cx="510" cy="130" rx="20" ry="20" stroke="none" class="pc"/>
+        <ellipse cx="510" cy="130" rx="20" ry="20" stroke="none" class="cbf"/>
     </g>
 
     <!-- Responses -->

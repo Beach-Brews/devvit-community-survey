@@ -15,8 +15,8 @@
 * ~~Import/Export Survey Config~~
 * ~~Send Welcome Modmail on Install (link to Wiki for Tutorials/Setup)~~
 * ~~Update notice + release notes within dashboard~~
-* Export Survey Responses to CSV/Xlsx
 * Modify dashboard post for non-mods to a list of live/closed surveys
+* Export Survey Responses to CSV/Xlsx
 * Provide feedback within dashboard (and post help)
 * Handle cross-device/multi-tab editing. Channels? Lock?
     * Allow all mods to see all surveys?
