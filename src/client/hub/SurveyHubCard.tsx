@@ -9,6 +9,7 @@ import { ResultVisibility, SurveyDto } from '../../shared/redis/SurveyDto';
 import { DocumentArrowDownIcon, PresentationChartBarIcon, NoSymbolIcon, RssIcon } from '@heroicons/react/24/outline';
 import { formatRelativeDateTime } from '../shared/dateFormat';
 import { context, navigateTo } from '@devvit/web/client';
+import { renderMarkdown } from '../shared/markdown/markdownFlavor';
 
 export interface SurveyHubCardProps {
     survey: SurveyDto;
@@ -60,7 +61,7 @@ export const SurveyHubCard = (props: SurveyHubCardProps) => {
                 <div>{closeDate ? formatRelativeDateTime(closeDate) : 'No close date'}</div>
             </div>
             <div className={`text-base font-semibold text-rl-text dark:text-rd-text ${live ? "" : "line-clamp-1"}`}>{title}</div>
-            <div className={live ? "line-clamp-2" : "line-clamp-1"}>{intro}</div>
+            <div className={live ? "line-clamp-2" : "line-clamp-1"}>{renderMarkdown(intro)}</div>
         </div>
     );
 };

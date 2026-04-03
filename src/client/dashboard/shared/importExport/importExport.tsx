@@ -13,15 +13,30 @@ import { SurveyImportModal } from './SurveyImportModal';
 
 export const exportSurvey = async (survey: SurveyDto | SurveyWithQuestionsDto, ctx: DashboardContextProps) => {
     // Remove some properties for exports
-    const replacer = (key: string, value: unknown) => {
-        // TODO: Fix value import errors for responder criteria
-        if (key === 'id' || key === 'value' || key === 'owner' || key === 'postId' || key === 'responseCount') return undefined;
-        if (key.indexOf('Date') >= 0) return null;
-        return value;
-    };
+    const toExport = {
+        ...survey,
+        id: undefined,
+        postId: undefined,
+        owner: undefined,
+        createDate: undefined,
+        publishDate: null,
+        closeDate: null,
+        responseCount: undefined,
+        deleteQueued: undefined,
+        questions: survey.questions?.map(q => {
+            if ('options' in q) {
+                return {
+                    ...q,
+                    id: undefined,
+                    options: q.options.map(({ label }) => ({ label }))
+                };
+            }
+            return { ...q, id: undefined };
+        })
+    }
 
     // Stringify with the replacer
-    const exportedSurvey = JSON.stringify(survey, replacer, 2);
+    const exportedSurvey = JSON.stringify(toExport, null, 2);
 
     // Try to auto copy to clipboard
     try {
