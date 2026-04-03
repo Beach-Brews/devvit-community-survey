@@ -20,10 +20,12 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
     const q = props.question;
 
     const onChangeKind = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        q.kind = e.target.value as ScaleKind;
-        q.min = 1;
-        q.max = q.kind == 'ott' ? 10 : 5;
-        props.modifyQuestion(q);
+        props.modifyQuestion({
+            ...q,
+            kind: e.target.value as ScaleKind,
+            min: 1,
+            max: q.kind === 'ott' ? 10 : 5,
+        });
     };
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {

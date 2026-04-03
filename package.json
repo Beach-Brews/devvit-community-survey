@@ -11,9 +11,9 @@
     "launch": "npm run deploy && devvit publish",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "login": "devvit login",
-    "prettier": "prettier --write .",
     "test": "vitest run",
     "type-check": "tsc --build",
+    "check": "npm run type-check && npm run lint",
     "uat": "npm run build && devvit playtest UAT4CommunitySurvey",
     "local": "cd src/client && vite --port 7474"
   },

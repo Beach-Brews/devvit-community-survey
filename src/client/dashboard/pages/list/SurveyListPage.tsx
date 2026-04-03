@@ -38,8 +38,20 @@ export const SurveyListPage = () => {
         }
     }, []);
     useEffect(() => {
-        void updateSurveyList();
-    }, [updateSurveyList]);
+        const initSurveyList = async () => {
+            try {
+                const list = await getSurveyList();
+                setSurveyList(list);
+                setLoading(false);
+                setError(false);
+            } catch(e) {
+                setSurveyList(null);
+                setLoading(false);
+                setError(true);
+            }
+        }
+        void initSurveyList();
+    }, []);
 
     // FUTURE: If downloads are supported
     // const importField = useRef<HTMLInputElement | null>(null);

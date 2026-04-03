@@ -82,7 +82,7 @@ export const SurveyHub = () => {
     }, [updatePagination]);
 
     const launchDashboard = useCallback((e: MouseEvent) => {
-        requestExpandedMode(e.nativeEvent as PointerEvent, 'dashboard');
+        requestExpandedMode(e.nativeEvent as PointerEvent, 'editor');
     }, []);
 
     // Handle loading or error

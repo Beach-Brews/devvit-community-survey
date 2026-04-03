@@ -33,6 +33,7 @@ export const HelpPanel = () => {
     const scrollContent = (factor: number) => {
         const div = contDiv?.current;
         if (!div) return;
+        // eslint-disable-next-line react-hooks/immutability
         div.scrollTop = div.scrollTop + div.clientHeight * factor;
         setContScroll([
             div.scrollTop > 0,

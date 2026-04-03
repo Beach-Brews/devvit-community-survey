@@ -16,7 +16,7 @@ export const SurveyDashboardInline = () => {
 
     // Create state for mod status. Undefined = loading, Null = error
     const [userInfo, setUserInfo] = useState<UserInfoDto | null | undefined>(undefined);
-    const [defaultSnoo] = useState<string>(`https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
+    const [defaultSnoo] = useState<string>(() => `https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
     const allowDashboard = userInfo?.isMod || userInfo?.allowDev || false;
 
     // Make API call on initial load

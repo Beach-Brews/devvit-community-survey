@@ -14,6 +14,16 @@ import { SurveyResultSummaryDto } from '../../../../shared/redis/ResponseDto';
 import { SurveyResultsLoading } from './SurveyResultsLoading';
 import { SurveyResultCard } from './SurveyResultCard';
 
+const SurveyResultsError = () => {
+    return (
+        <div className="col-span-1 md:col-span-2 flex justify-center">
+            <p className="border-1 px-4 py-2 bg-red-100 dark:bg-red-950 rounded-md border-red-300 dark:border-red-700">
+                There was an error loading the survey results. Please try again later. Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Support.
+            </p>
+        </div>
+    );
+}
+
 export const SurveyResultsPage = () => {
     const ctx = useContext(DashboardContext);
     if (!ctx) throw Error('Context undefined.');
@@ -30,16 +40,6 @@ export const SurveyResultsPage = () => {
             setSurveySummary(null);
         });
     }, [surveyId]);
-
-    const SurveyResultsError = () => {
-        return (
-            <div className="col-span-1 md:col-span-2 flex justify-center">
-                <p className="border-1 px-4 py-2 bg-red-100 dark:bg-red-950 rounded-md border-red-300 dark:border-red-700">
-                    There was an error loading the survey results. Please try again later. Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Support.
-                </p>
-            </div>
-        );
-    }
 
     return (
         <>

@@ -25,7 +25,10 @@ export const SurveyListCard = (props: SurveyListCardProps) => {
 
     const { survey } = props;
 
+    // Date at rendering time (calculate if now closed)
+    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
+
     const isDeleted = survey.deleteQueued === true;
     const isClosed = survey.closeDate && survey.closeDate < now;
     const isPublished = survey.publishDate && survey.publishDate <= now;

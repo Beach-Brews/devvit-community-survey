@@ -35,6 +35,10 @@ export const SurveyPost = () => {
         context?.postData?.surveyId;
     const isDeleted = surveyId === 'deleted';
 
+    // Get render date (calculate now closed or not)
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now();
+
     // State for loading survey context
     const [panelContext, setPanelContext] = useState<SurveyPanelContext>({panel: PanelType.Intro});
     const [postInit, setPostInit] = useState<InitializeSurveyResponse | null | undefined>(undefined);
@@ -45,7 +49,7 @@ export const SurveyPost = () => {
     const user = postInit?.user;
 
     // Prevents default URL from changing on re-rendering
-    const [defaultSnoo] = useState<string>(`https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
+    const [defaultSnoo] = useState<string>(() => `https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
 
     // Load survey from backend
     useEffect(() => {
@@ -68,7 +72,7 @@ export const SurveyPost = () => {
         (user && user.isMod) ||
         (survey && (survey.resultVisibility ?? ResultVisibility.Always) === ResultVisibility.Always) ||
         (survey && lastResponse && Object.keys(lastResponse).length >= survey.questions.length && survey.resultVisibility === ResultVisibility.Responders) ||
-        (!!survey?.closeDate && survey.closeDate <= Date.now() && survey.resultVisibility === ResultVisibility.Closed)
+        (!!survey?.closeDate && survey.closeDate <= now && survey.resultVisibility === ResultVisibility.Closed)
     );
 
     // Ensure context is only defined if the survey is defined
@@ -100,7 +104,7 @@ export const SurveyPost = () => {
             return (<HelpPanel />);
 
         // If the survey is now closed
-        if (survey.closeDate && survey.closeDate <= Date.now())
+        if (survey.closeDate && survey.closeDate <= now)
             return panelContext.panel === PanelType.Result && canViewResults
                 ? (<ResultPanel />)
                 : panelContext.panel === PanelType.Delete

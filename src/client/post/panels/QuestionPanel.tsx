@@ -13,7 +13,6 @@ import { RankQuestion } from './questions/RankQuestion';
 import { ScaleQuestion } from './questions/ScaleQuestion';
 import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
-import { UserResponsesDto } from '../../../shared/redis/ResponseDto';
 import { upsertResponse } from '../api/surveyApi';
 import { ToastType } from '../../shared/toast/toastTypes';
 
@@ -60,13 +59,14 @@ export const QuestionPanel = () => {
             if (!validResponse) return;
 
             // Only save response if a response was provided
-            const lastResponse = ctx.lastResponse ?? {} as UserResponsesDto;
             if (response) {
                 await upsertResponse(question.id, response);
 
                 // Update context response
-                lastResponse[question.id] = response;
-                ctx.setLastResponse(lastResponse);
+                ctx.setLastResponse({
+                    ...(ctx.lastResponse ?? {}),
+                    [question.id]: response,
+                });
             }
 
             ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });

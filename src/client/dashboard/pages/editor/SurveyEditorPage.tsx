@@ -25,7 +25,6 @@ export const SurveyEditorPage = () => {
     const [surveyDto, setSurveyInfo] = useState<SurveyDto | null>(null);
     useEffect(() => {
         if (isNew) {
-            setLoading(false);
             return;
         }
 
