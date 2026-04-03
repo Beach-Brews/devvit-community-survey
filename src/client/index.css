@@ -24,4 +24,23 @@ html {
     --color-rd-btn-primary: #0045ac;
     --color-rd-btn-sec-selected: #3D494E;
     --color-rd-btn-sec-hover: #333D42;
+
+    --animate-bar1: bar1 1s ease-in-out infinite;
+    --animate-bar2: bar2 1s ease-in-out infinite;
+    --animate-bar3: bar3 1s ease-in-out infinite;
+}
+
+@keyframes bar1 {
+    0%, 100% { height: 0.75rem; }
+    50% { height: 1.5rem; }
+}
+
+@keyframes bar2 {
+    0%, 100% { height: 1.25rem; }
+    50% { height: 0.5rem; }
+}
+
+@keyframes bar3 {
+    0%, 100% { height: 1rem; }
+    50% { height: 1.75rem; }
 }

@@ -38,7 +38,7 @@
   "menu": {
     "items": [
       {
-        "label": "Create Survey Dashboard",
+        "label": "Create Survey Hub",
         "description": "r/CommunitySurvey",
         "location": "subreddit",
         "forUserType": "moderator",

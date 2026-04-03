@@ -35,7 +35,7 @@ export const SurveyDashboardInline = () => {
     // If user is a mod and expanded mode is active, render the dashboard
     const renderMode: WebViewMode = getWebViewMode();
     if (userInfo && allowDashboard && renderMode === 'expanded') {
-        return (<SurveyDashboard userInfo={userInfo} />);
+        return (<SurveyDashboard  />);
     }
 
     // Handler for launching into expanded mode
