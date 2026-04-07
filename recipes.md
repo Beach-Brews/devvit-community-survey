@@ -1,4 +1,6 @@
 ﻿## General
+* Migration Framework
+  * Migrate postIds + hub API
 * Discuss if there is a way to build in bot-bouncer checks (i.e. read wiki?)
 * Add trigger to detect user bans immediately
 * Text field support
@@ -11,11 +13,11 @@
 * ~~Auth-Token Timeout Modal/Message~~ (resolved by Reddit?)
 * ~~Link to survey post for published surveys~~
 * ~~View live survey config (settings, questions, etc.)~~
-* ~~€Intro and descriptions do not allow paragraphs/markdown~~
+* ~~Intro and descriptions do not allow paragraphs/markdown~~
 * ~~Import/Export Survey Config~~
 * ~~Send Welcome Modmail on Install (link to Wiki for Tutorials/Setup)~~
 * ~~Update notice + release notes within dashboard~~
-* Modify dashboard post for non-mods to a list of live/closed surveys
+* ~~Modify dashboard post for non-mods to a list of live/closed surveys~~
 * Export Survey Responses to CSV/Xlsx
 * Provide feedback within dashboard (and post help)
 * Handle cross-device/multi-tab editing. Channels? Lock?
@@ -34,13 +36,15 @@
 * Markdown support for images, including options
   * Maybe a media library?
 * Preview survey (theme, mobile vs desktop, etc.)
-* Duplicate/Copy survey
+* Duplicate/Copy survey (automatic export/import)
 * Rolling/Repeating survey (i.e. monthly reposts)
+* Repost live survey
 * Better error handling with mute/mod/karma failing 500 errors
   * Site banned and shadowbanned user seem to throw 500s?
 * Survey list filter / pagination
 * Survey Post option to RunAs Author
   * is this possible as a scheduled post? Might only work as "immediate" posts.
+  * May be possible at some point in the future, but no official confirmation yet.
 
 ## Survey Post
 * Text responses (added as comment)
@@ -51,6 +55,14 @@
 * Expanded view for taking survey
 
 ## Know Issues
+
+**General**
+
+* Bug: Safari does not follow user's Reddit theme preference. OS theme takes priority.
+
+**Hub**
+
+* Bug: Visual - iPad landscape is a bit wonky with the width being cut-off.
 
 **Dashboard**
 

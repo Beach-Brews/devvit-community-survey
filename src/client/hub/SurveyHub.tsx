@@ -112,19 +112,19 @@ export const SurveyHub = () => {
     return (
         <div className="w-full h-screen overflow-auto">
             <div className="container max-w-screen-lg min-h-screen mx-auto flex flex-col relative z-0 h-full">
-                <div className="flex justify-between items-center flex-wrap gap-2 p-2">
-                    <div className="flex justify-start items-center flex-wrap gap-2">
+                <div className="flex justify-between items-center gap-2 p-2">
+                    <div className="flex justify-start items-center gap-2">
                         <div  className="w-8 h-8 flex-shrink-0 object-contain overflow-hidden rounded-full">
                             {hubInit.subInfo.icon ? (<img width={32} height={32} alt={hubInit.subInfo.name} src={hubInit.subInfo.icon} />) : (<SubDefaultIcon />)}
                         </div>
-                        <h1 className="text-md lg:text-2xl font-bold">r/{hubInit.subInfo.name} Surveys</h1>
+                        <h1 className="text-sm md:text-md lg:text-2xl font-bold">r/{hubInit.subInfo.name} Surveys</h1>
                     </div>
                     {allowDashboard && (
                         <button
-                            className="rounded-full h-10 px-4 ml-auto font-semibold text-sm cursor-pointer flex justify-center items-center text-white bg-rl-btn-primary dark:bg-rd-btn-primary"
+                            className="rounded-full h-10 px-4 ml-auto font-semibold text-sm cursor-pointer text-center text-white bg-rl-btn-primary dark:bg-rd-btn-primary"
                             onClick={launchDashboard}
                         >
-                            Launch Dashboard
+                            <span className="hidden xs:inline">Survey</span> Editor
                         </button>
                     )}
                 </div>
@@ -139,29 +139,29 @@ export const SurveyHub = () => {
                     : (
                     <>
                         {/* Pagination + Survey List */}
-                        <div className="flex justify-between items-center p-2 gap-2 border-b border-b-rl-border-weak dark:border-b-rd-border-weak">
-                            <div className="flex justify-start items-center gap-2">
+                        <div className="text-xs xs:text-base flex justify-between items-center p-2 gap-2 border-b border-b-rl-border-weak dark:border-b-rd-border-weak">
+                            <div className="flex justify-start items-center gap-1 xs:gap-2">
                                 <button
                                     onClick={() => updatePagination(hubInit.surveys, 'live', 1)}
-                                    className={`min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'live' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
+                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'live' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
                                 >
                                     Live
                                 </button>
                                 <button
                                     onClick={() => updatePagination(hubInit.surveys, 'closed', 1)}
-                                    className={`min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'closed' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
+                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'closed' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
                                 >
                                     Closed
                                 </button>
                                 <button
                                     onClick={() => updatePagination(hubInit.surveys, 'all', 1)}
-                                    className={`min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'all' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
+                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'all' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
                                 >
                                     All
                                 </button>
                             </div>
                             <div className="flex justify-end items-center gap-2">
-                                <div>{(pagination.page-1)*pagination.pageSize+1}-{Math.min(pagination.page*pagination.pageSize, pagination.total)} of {pagination.total}</div>
+                                <div>{(pagination.page-1)*pagination.pageSize+1}-{Math.min(pagination.page*pagination.pageSize, pagination.total)} of&nbsp;{pagination.total}</div>
                                 <button
                                     disabled={pagination.page <= 1}
                                     onClick={() => { if(pagination.page > 1) updatePagination(hubInit.surveys, undefined, pagination.page-1); }}

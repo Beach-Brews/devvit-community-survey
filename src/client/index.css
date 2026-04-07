@@ -5,6 +5,8 @@ html {
 }
 
 @theme {
+    --breakpoint-xs: 28rem;
+
     --color-rl-bg: #FFFFFF;
     --color-rl-border-weak: #00000019;
     --color-rl-section-hover: #F6F8F9;

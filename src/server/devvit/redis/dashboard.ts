@@ -46,11 +46,11 @@ export const getSurveyListForAuthor =
                 [sid, [
                     await redis.zScore(RedisKeys.surveyResponderList(sid), 'total'),
                     (await redis.hGet(deleteQueueKey, sid)) !== undefined, // Would it be faster to just fetch full delete list first?
-                    (await redis.hGetAll(RedisKeys.surveyPostList(sid)))?.[0]
+                    (await redis.hKeys(RedisKeys.surveyPostList(sid)))?.[0]
                 ]] as const
             );
         const responseCounts = new Map(await Promise.all(responseCountPromise));
-        logger.debug('Got response counts from Redis: ', responseCounts);
+        logger.debug('Got response counts from Redis: ', Object.fromEntries(responseCounts));
 
         // Finally, parse each config
         const asyncParse = configs
