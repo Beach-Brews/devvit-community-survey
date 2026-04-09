@@ -34,9 +34,9 @@ Below is a quick guide on creating your first survey. Additional help and suppor
 **Getting Started**
 
 1. Navigate to r/${context.subredditName} and click on the three dot menu in the right corner.
-2. Click on "Create Survey Dashboard".
-3. A new dashboard post is created. Mods use this to create surveys, but users will only see a list of surveys (none initially).
-4. Click on "Launch Dashboard". You can only see your created surveys, not the surveys of your co-mods. A future release will allow collaborative editing!
+2. Click on "Create Survey Hub".
+3. A new Survey Hub post is created. Mods use this to access the survey editor, but users will only see a list of surveys (none initially).
+4. Click on "Survey Editor". You can only see your created surveys, not the surveys of your co-mods. A future release will allow collaborative editing!
 5. Click the "Add" button to create a new survey.
 6. At the top you can set the survey title, description, responder criteria, result visibility, etc.
 7. Add up to ${Constants.MAX_QUESTION_COUNT} questions, with up to ${Constants.MAX_OPTION_COUNT} options each.

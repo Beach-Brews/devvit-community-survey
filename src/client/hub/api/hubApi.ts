@@ -1,5 +1,5 @@
 ﻿/*!
-* API for getting survey questions and sending responses.
+* API for getting surveys for the Survey Hub.
 *
 * Author:  u/Beach-Brews
 * License: BSD-3-Clause

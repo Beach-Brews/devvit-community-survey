@@ -63,11 +63,14 @@
 **Hub**
 
 * Bug: Visual - iPad landscape is a bit wonky with the width being cut-off.
+* Bug: Visual - Text for "there are no closed/live surveys" (filter selection is empty) should be centered
 
 **Dashboard**
 
 * Bug: Editing surveys on two separate devices at the same time
 * Bug: If survey list is scrolled, the editor also starts already scrolled, which cuts off the setting tabs.
+* Bug: Editing a "scheduled" survey, the publish dialog does not show the previously selected publish or close date.
+* Bug: Visual - Flair criteria shows "code" (TxtEq)
 
 **Survey Posts**
 
