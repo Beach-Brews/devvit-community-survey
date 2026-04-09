@@ -24,7 +24,7 @@ import { QuestionResponseDto, SurveyResultSummaryDto } from '../../shared/redis/
 import { reddit } from '@devvit/web/server';
 import { UserInfoDto } from '../../shared/types/postApi';
 import { debugEnabled } from '../util/debugUtils';
-import { SubredditUserFlairsResult, UserFlairTemplate } from '../../shared/types/dashboardApi';
+import { DashboardListDto, SubredditUserFlairsResult, UserFlairTemplate } from '../../shared/types/dashboardApi';
 
 export const registerDashboardRoutes: PathFactory = (router: Router) => {
 
@@ -71,7 +71,16 @@ export const registerDashboardRoutes: PathFactory = (router: Router) => {
                 const userId = await errorIfNoUserId(res);
                 if (!userId) return;
                 if (await errorIfNotMod(res)) return;
-                return successResponse(res, await dashRedis.getSurveyListForAuthor(userId));
+
+                const [surveys, appUpdateInfo] = await Promise.all([
+                    dashRedis.getSurveyListForAuthor(userId),
+                    dashRedis.getAppUpdateInfo(),
+                ]);
+                
+                return successResponse(res, {
+                    surveys: surveys,
+                    appUpdateInfo: appUpdateInfo,
+                } satisfies DashboardListDto);
 
             } catch(e) {
                 logger.error('Error executing API: ', e);

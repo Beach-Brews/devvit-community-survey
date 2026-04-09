@@ -15,3 +15,9 @@ export type MessageResponse = ApiResponse<void>;
 
 export type SurveyIdParam = {surveyId: string};
 export type QuestionIdParam = {questionId: string};
+
+export type Pagination = {
+    page: number;
+    pageSize: number;
+    total: number;
+};

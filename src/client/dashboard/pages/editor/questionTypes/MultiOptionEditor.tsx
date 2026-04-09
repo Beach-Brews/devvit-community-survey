@@ -76,16 +76,23 @@ export const MultiOptionEditor = (props: CommonQuestionEditorProps) => {
         }
 
         // Then update the option list with the new list
-        q.options = newList;
-        props.modifyQuestion(q);
+        props.modifyQuestion({
+            ...q,
+            options: newList
+        });
     };
 
     // When an option input value changes, update the value on the question
     const onOptionChange = (e: ChangeEvent<HTMLInputElement>, i: number) => {
-        const o = q.options[i];
-        if (!o) return;
-        o.label = e.target.value;
-        props.modifyQuestion(q);
+        const options = [...q.options];
+        if (!options[i]) return;
+
+        options[i] = { ...options[i], label: e.target.value };
+
+        props.modifyQuestion({
+            ...q,
+            options: options
+        });
     };
 
     // When an option input looses focus, if the value is empty, delete the option

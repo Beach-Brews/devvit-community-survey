@@ -59,19 +59,15 @@ export const registerCreateDashboardMenu: PathFactory = (router: Router) => {
             // Create the new Dashboard post
             const post = await reddit.submitCustomPost({
                 subredditName: context.subredditName,
-                title: 'Community Survey - Dashboard',
+                title: 'Community Survey - Hub',
                 postData: {
                     postType: PostType[PostType.Dashboard]
                 },
                 textFallback: {
                     text: 'Sorry, this app is not supported on Old Reddit.'
                 },
-                entry: 'dashboard'
+                entry: 'hub'
             });
-
-            // Immediately remove it from sub feed
-            // TODO: Either wait for Reddit to allow interactive views on removed posts, or menu item webviews
-            //await post.remove(false);
 
             // Save the ID to Redis (reset if force-created)
             await redis.del(dashPostKey);

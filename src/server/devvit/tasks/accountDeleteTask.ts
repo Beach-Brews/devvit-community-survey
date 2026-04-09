@@ -161,6 +161,15 @@ export const registerAccountDeletedTask: PathFactory = (router: Router) => {
             logger.info(`Delete account check completed in ${deleteContext.runtime}ms.`);
 
         } catch (error) {
+            if (error instanceof DeleteAccountExecutionLimitError) {
+                logger.warn(error);
+                res.status(200).json({
+                    status: 'complete',
+                    message: 'Ended delete task early due to processing time. Resuming next run.'
+                });
+                return;
+            }
+
             logger.error('Error processing account delete trigger: ', error);
             res.status(500).json({
                 status: 'error',

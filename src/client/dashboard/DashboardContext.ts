@@ -13,7 +13,7 @@ export type DashboardListPageContext = {
     page: 'list' | 'debug';
 };
 export type DashboardSurveyIdPageContext = {
-    page: 'edit' | 'results';
+    page: 'edit' | 'results' | 'view';
     surveyId: string | null;
 };
 

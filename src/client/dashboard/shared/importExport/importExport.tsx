@@ -1,0 +1,145 @@
+﻿/*!
+* Helper functions for handling importing and exporting surveys.
+*
+* Author:  u/Beach-Brews
+* License: BSD-3-Clause
+*/
+
+import { SurveyDto, SurveyWithQuestionsDto } from '../../../../shared/redis/SurveyDto';
+import { DashboardContextProps } from '../../DashboardContext';
+import { ToastType } from '../../../shared/toast/toastTypes';
+import { SurveyExportModal } from './SurveyExportModal';
+import { SurveyImportModal } from './SurveyImportModal';
+
+export const exportSurvey = async (survey: SurveyDto | SurveyWithQuestionsDto, ctx: DashboardContextProps) => {
+    // Remove some properties for exports
+    const toExport = {
+        ...survey,
+        id: undefined,
+        postId: undefined,
+        owner: undefined,
+        createDate: undefined,
+        publishDate: null,
+        closeDate: null,
+        responseCount: undefined,
+        deleteQueued: undefined,
+        questions: survey.questions?.map(q => {
+            if ('options' in q) {
+                return {
+                    ...q,
+                    id: undefined,
+                    options: q.options.map(({ label }) => ({ label }))
+                };
+            }
+            return { ...q, id: undefined };
+        })
+    }
+
+    // Stringify with the replacer
+    const exportedSurvey = JSON.stringify(toExport, null, 2);
+
+    // Try to auto copy to clipboard
+    try {
+        await navigator.clipboard.writeText(exportedSurvey);
+        ctx.addToast({
+            heading: 'Survey Copied',
+            message: 'The survey config has been copied to your clipboard. Open the import screen to paste the config, or save it to a file for later use.',
+            type: ToastType.Success,
+            time: 10000
+        });
+    } catch(e) {
+        // Fallback to modal if copy fails
+        ctx.setModal(<SurveyExportModal survey={exportedSurvey} />);
+    }
+
+    // FUTURE: This code may be used in the future if download is every allowed
+    // // Convert to a data URL
+    // const url = `data:application/json;charset=UTF-8,${encodeURIComponent(exportedSurvey)}`;
+    //
+    // // Generate the file name from survey title (strip special characters, limit to 30 characters)
+    // let fileName = survey.title.replace(/\s+/g, '-')
+    //     .replace(/[^A-Za-z0-9-_]/g, '')
+    //     .replace(/--*/g, '-');
+    // if (fileName.length > 30)
+    //     fileName = fileName.substring(0, 30);
+    //
+    // // Create a temporary "download" anchor
+    // const link = document.createElement('a');
+    // link.setAttribute('href', url);
+    // link.setAttribute('download', fileName + '.survey');
+    // link.style.display = 'none';
+    //
+    // // Add the link and trigger a click to start the download
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+};
+
+export const importSurvey = async (ctx: DashboardContextProps) => {
+
+    // For now, just open the modal
+    ctx.setModal(<SurveyImportModal />);
+
+    // FUTURE: If download is allowed, this will allow import (skipping import modal to paste
+    // // Helper for showing a toast if the import fails.
+    // const failToast = () => {
+    //     ctx.addToast({
+    //         heading: 'Import Error',
+    //         message: 'Failed to import survey',
+    //         type: ToastType.Error
+    //     });
+    // };
+    //
+    // try {
+    //     // First, get input file value
+    //     const file = event.target.files && event.target.files[0]
+    //     if (!file) {
+    //         event.target.value = '';
+    //         return;
+    //     }
+    //
+    //     // Create a file reader to read provided file
+    //     const reader = new FileReader();
+    //     reader.onload = async (e) => {
+    //         try {
+    //             // Get the contents of the file from the reader
+    //             const content = e.target?.result;
+    //             if (!content) return failToast();
+    //
+    //             // If content is not a string, use a text decoder to get the contents as a string.
+    //             const text = typeof content === 'string'
+    //                 ? content
+    //                 : (new TextDecoder()).decode(content);
+    //
+    //             // Parse the file contents as JSON
+    //             const parsed = JSON.parse(text);
+    //
+    //             // Generate a new survey ID and set the ID
+    //             const surveyId = genSurveyId();
+    //             parsed.id = surveyId;
+    //
+    //             // Send data to general Save endpoint (which will create the survey)
+    //             await surveyDashboardApi.saveSurvey(parsed);
+    //
+    //             // Toast success and navigate to the editor page
+    //             ctx.addToast({
+    //                 message: 'Import Successful',
+    //                 type: ToastType.Success
+    //             });
+    //             ctx.setPageContext({
+    //                 page: 'edit',
+    //                 surveyId: surveyId
+    //             });
+    //         } catch (e) {
+    //             failToast();
+    //         }
+    //     };
+    //     reader.readAsText(file);
+    //     event.target.value = '';
+    //
+    // } catch (e) {
+    //     failToast();
+    // }
+    //
+    // event.target.value = '';
+};

@@ -2,10 +2,10 @@ import '../index.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { SurveyDashboardInline } from './SurveyDashboardInline';
+import { SurveyDashboard } from './SurveyDashboard';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <SurveyDashboardInline />
-  </StrictMode>
+    <StrictMode>
+        <SurveyDashboard />
+    </StrictMode>
 );

@@ -115,6 +115,7 @@ export type SurveyDto = {
     closeDate: number | null;
     deleteQueued?: boolean;
     responseCount?: number;
+    postId?: string | null | undefined,
     questions?: SurveyQuestionList;
 };
 

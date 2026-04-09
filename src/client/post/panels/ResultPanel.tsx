@@ -121,6 +121,7 @@ export const ResultPanel = () => {
     const resultScroll = (factor: number) => {
         const div = resDiv?.current;
         if (!div) return;
+        // eslint-disable-next-line react-hooks/immutability
         div.scrollTop = div.scrollTop + div.clientHeight * factor;
         setResScroll([
             div.scrollTop > 0,

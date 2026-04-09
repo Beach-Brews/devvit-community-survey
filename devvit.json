@@ -17,9 +17,17 @@
         "inline": true
       },
       "dashboard": {
-        "entry": "dashboard.html",
+        "entry": "hub.html",
         "height": "tall",
         "inline": true
+      },
+      "hub": {
+        "entry": "hub.html",
+        "height": "tall",
+        "inline": true
+      },
+      "editor": {
+        "entry": "dashboard.html"
       }
     }
   },
@@ -33,7 +41,7 @@
   "menu": {
     "items": [
       {
-        "label": "Create Survey Dashboard",
+        "label": "Create Survey Hub",
         "description": "r/CommunitySurvey",
         "location": "subreddit",
         "forUserType": "moderator",
@@ -105,7 +113,11 @@
     }
   },
   "marketingAssets": {
-	"icon": "assets/community-survey-app-icon.png"
+    "icon": "assets/community-survey-app-icon.png"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build"
   },
   "dev": {
     "subreddit": "beachbrewsboil"

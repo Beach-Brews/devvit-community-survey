@@ -6,13 +6,15 @@
 */
 
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
+import { ArrowUpTrayIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import { DashboardContext } from '../../DashboardContext';
 import { SurveyListCard } from './SurveyListCard';
 import { SurveyListCardLoading } from './SurveyListCardLoading';
-import { SurveyDto } from '../../../../shared/redis/SurveyDto';
 import { getSurveyList } from '../../api/dashboardApi';
 import { navigateTo } from '@devvit/web/client';
+import { importSurvey } from '../../shared/importExport/importExport';
+import { AppUpdateNotice } from './AppUpdateNotice';
+import { DashboardListDto } from '../../../../shared/types/dashboardApi';
 
 export const SurveyListPage = () => {
     const ctx = useContext(DashboardContext);
@@ -20,7 +22,7 @@ export const SurveyListPage = () => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
-    const [surveyList, setSurveyList] = useState<SurveyDto[] | null>(null);
+    const [surveyList, setSurveyList] = useState<DashboardListDto | null>(null);
     const updateSurveyList = useCallback(async () => {
         try {
             setLoading(true);
@@ -36,17 +38,49 @@ export const SurveyListPage = () => {
         }
     }, []);
     useEffect(() => {
-        void updateSurveyList();
-    }, [updateSurveyList]);
+        const initSurveyList = async () => {
+            try {
+                const list = await getSurveyList();
+                setSurveyList(list);
+                setLoading(false);
+                setError(false);
+            } catch(e) {
+                setSurveyList(null);
+                setLoading(false);
+                setError(true);
+            }
+        }
+        void initSurveyList();
+    }, []);
+
+    // FUTURE: If downloads are supported
+    // const importField = useRef<HTMLInputElement | null>(null);
 
     return (
         <>
+            {surveyList?.appUpdateInfo && (<AppUpdateNotice appUpdateInfo={surveyList.appUpdateInfo} />)}
             <div className="flex justify-between items-center border-b">
                 <h1 className="text-md lg:text-2xl font-bold">Community Survey Dashboard</h1>
                 <div className="my-4 flex gap-4">
+                    {/* FUTURE: If downloads are supported
+                    <input
+                        className="hidden"
+                        ref={importField}
+                        id="import-file"
+                        type="file"
+                        accept="application/json, .survey"
+                        onChange={e => importSurvey(e, ctx)} />
+                    */}
+                    <button
+                        className="flex gap-2 items-center cursor-pointer dark:text-white px-2 py-1 rounded-lg text-small hover:bg-neutral-300 hover:border-neutral-500 dark:hover:bg-neutral-700 dark:hover:border-neutral-500"
+                        onClick={() => /*importField.current?.click()*/ importSurvey(ctx)}
+                    >
+                        <ArrowUpTrayIcon className="size-6" />
+                        <div>Import</div>
+                    </button>
                     <button
                         className="border-2 border-lime-800 bg-lime-800 text-white px-2 py-1 rounded-lg text-small hover:bg-lime-700 hover:border-lime-600 flex gap-2 items-center cursor-pointer"
-                        onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}
+                        onClick={() => ctx.setPageContext({ page: 'edit', surveyId: null })}
                     >
                         <PlusCircleIcon className="size-6" />
                         <div>New</div>
@@ -54,19 +88,41 @@ export const SurveyListPage = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-                {loading && [<SurveyListCardLoading key="load1" />, <SurveyListCardLoading key="load2" />, <SurveyListCardLoading key="load3" />]}
-                {!loading && !error && surveyList?.map(s => <SurveyListCard key={`card_${s.id}`} survey={s} updateSurveyList={updateSurveyList} />)}
-                {!loading && !error && (!surveyList || surveyList.length <= 0) && (
+                {loading && [
+                    <SurveyListCardLoading key="load1" />,
+                    <SurveyListCardLoading key="load2" />,
+                    <SurveyListCardLoading key="load3" />,
+                ]}
+                {!loading &&
+                    !error &&
+                    surveyList?.surveys.map((s) => (
+                        <SurveyListCard key={`card_${s.id}`} survey={s} updateSurveyList={updateSurveyList} />
+                    ))}
+                {!loading && !error && (!surveyList || surveyList.surveys.length <= 0) && (
                     <div className="col-span-1 md:col-span-2 flex justify-center">
                         <p className="border-1 px-4 py-2 bg-sky-100 dark:bg-sky-950 rounded-md border-sky-300 dark:border-sky-700">
-                            You have not created any surveys yet. Start by <span className="underline cursor-pointer" onClick={() => ctx.setPageContext({page: 'edit', surveyId: null})}>creating a new survey</span>!
+                            You have not created any surveys yet. Start by{' '}
+                            <span
+                                className="underline cursor-pointer"
+                                onClick={() => ctx.setPageContext({ page: 'edit', surveyId: null })}
+                            >
+                                creating a new survey
+                            </span>
+                            !
                         </p>
                     </div>
                 )}
                 {!loading && error && (
                     <div className="col-span-1 md:col-span-2 flex justify-center">
                         <p className="border-1 px-4 py-2 bg-red-100 dark:bg-red-950 rounded-md border-red-300 dark:border-red-700">
-                            There was an error loading the survey list. Please try again later. Visit <span className="underline cursor-pointer" onClick={() => navigateTo("https://www.reddit.com/r/CommunitySurvey")}>r/CommunitySurvey</span> for Support.
+                            There was an error loading the survey list. Please try again later. Visit{' '}
+                            <span
+                                className="underline cursor-pointer"
+                                onClick={() => navigateTo('https://www.reddit.com/r/CommunitySurvey')}
+                            >
+                                r/CommunitySurvey
+                            </span>{' '}
+                            for Support.
                         </p>
                     </div>
                 )}

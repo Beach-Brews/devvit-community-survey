@@ -51,13 +51,16 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
     const setModal = ctx.setModal;
     const setPageContext = ctx.setPageContext;
 
-    const [options, setOptions] = useState<SurveyPublishOptionsState>({
-        immediate: true,
-        scheduleDateInput: toLocalISOString(new Date()),
-        scheduleDate: Date.now(),
-        noCloseDate: true,
-        closeDateInput: toLocalISOString(new Date(Date.now() + (7 * 24 * 60 * 60000))),
-        closeDate: Date.now() + (7 * 24 * 60 * 60000)
+    const [options, setOptions] = useState<SurveyPublishOptionsState>(() => {
+        const now = Date.now();
+        return {
+            immediate: true,
+            scheduleDateInput: toLocalISOString(new Date(now)),
+            scheduleDate: now,
+            noCloseDate: true,
+            closeDateInput: toLocalISOString(new Date(now + (7 * 24 * 60 * 60000))),
+            closeDate: now + (7 * 24 * 60 * 60000)
+        };
     });
 
     const survey = props.survey;
@@ -69,33 +72,34 @@ export const SurveyEditorPublishModal = (props: SurveyEditorPublishModalProps) =
         try {
             setState({ processing: true, error: false });
 
+            let publishDate = Date.now();
             if (!options.immediate) {
                 if (isNaN(options.scheduleDate)) {
                     setState({ processing: false, error: true });
                     return false;
                 }
 
-                survey.publishDate = options.scheduleDate;
+                publishDate = options.scheduleDate;
 
-            } else {
-                survey.publishDate = Date.now();
             }
 
             // BUG: Check to make sure the close date is AFTER the publish date
             // Maybe set a "min-open" period / time too?
+            let closeDate: number | null = null;
             if (!options.noCloseDate) {
                 if (isNaN(options.closeDate)) {
                     setState({ processing: false, error: true });
                     return false;
                 }
 
-                survey.closeDate = options.closeDate;
-
-            } else {
-                survey.closeDate = null;
+                closeDate = options.closeDate;
             }
 
-            const saved = await saveSurvey(survey);
+            const saved = await saveSurvey({
+                ...survey,
+                publishDate,
+                closeDate
+            });
 
             setState({ processing: false, error: !saved });
             setModal(undefined);

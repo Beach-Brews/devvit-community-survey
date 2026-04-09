@@ -7,7 +7,9 @@
 
 import { PathFactory } from '../../PathFactory';
 import { Router } from 'express';
-import { Logger } from "../../util/Logger";
+import { Logger } from '../../util/Logger';
+import { context, reddit } from '@devvit/web/server';
+import { Constants } from '../../../shared/constants';
 
 export const registerAppInstallTrigger: PathFactory = (router: Router) => {
     router.post('/internal/trigger/on-install', async (_req, res): Promise<void> => {
@@ -15,6 +17,43 @@ export const registerAppInstallTrigger: PathFactory = (router: Router) => {
         logger.traceStart("/internal/trigger/on-install");
 
         try {
+
+            // Send modmail about tutorials and getting started
+            await reddit.modMail.createConversation({
+                isAuthorHidden: false,
+                subredditName: 'CommunitySurvey',
+                to: `r/${context.subredditName}`,
+                subject: 'CommunitySurvey Quick Start Guide',
+                body: `Hi mods of r/${context.subredditName},
+
+Thank you for installing CommunitySurvey!
+
+Below is a quick guide on creating your first survey. Additional help and support can be found in the r/CommunitySurvey
+[Getting Started Wiki Page](https://www.reddit.com/r/CommunitySurvey/wiki/app/gerring-started/).
+
+**Getting Started**
+
+1. Navigate to r/${context.subredditName} and click on the three dot menu in the right corner.
+2. Click on "Create Survey Hub".
+3. A new Survey Hub post is created. Mods use this to access the survey editor, but users will only see a list of surveys (none initially).
+4. Click on "Survey Editor". You can only see your created surveys, not the surveys of your co-mods. A future release will allow collaborative editing!
+5. Click the "Add" button to create a new survey.
+6. At the top you can set the survey title, description, responder criteria, result visibility, etc.
+7. Add up to ${Constants.MAX_QUESTION_COUNT} questions, with up to ${Constants.MAX_OPTION_COUNT} options each.
+8. At the bottom you can edit the outro text shown to users when they have completed the survey.
+9. Click the "Publish" button and set the publish date and/or close date of your survey.
+10. Click the "Publish Now/Later" button.
+
+Done!
+
+A new survey post will be created on the publish date, and users will be able to respond to your first survey! If you
+have questions, bugs or app issues, or new feature ideas, head over to r/CommunitySurvey and create a post, send a 
+Mod Mail, or message me directly.
+
+Enjoy,  
+u/Beach-Brews - Community Survey developer
+`,
+            });
 
             res.status(200).json({ status: 'ok' });
 

@@ -9,22 +9,22 @@ import { SurveyDto, SurveyWithQuestionsDto } from '../../../shared/redis/SurveyD
 import { ApiResponse } from '../../../shared/types/api';
 import { SurveyResultSummaryDto } from '../../../shared/redis/ResponseDto';
 import { UserInfoDto } from '../../../shared/types/postApi';
-import { SubredditUserFlairsResult } from '../../../shared/types/dashboardApi';
+import { DashboardListDto, SubredditUserFlairsResult } from '../../../shared/types/dashboardApi';
 
 export const getUserInfo = async (): Promise<UserInfoDto | null> => {
     const resp = await fetch(`/api/dash/user-info`);
     return resp.ok ? (await resp.json() as ApiResponse<UserInfoDto>)?.result ?? null : null;
 };
 
-export const getSurveyList = async (): Promise<SurveyDto[]> => {
+export const getSurveyList = async (): Promise<DashboardListDto> => {
     // Fetch survey list from API
     const resp = await fetch('/api/dash/survey/list');
     if (!resp.ok) throw new Error('Failed to fetch survey list');
-    const apiResponse = await resp.json() as ApiResponse<SurveyDto[]> | undefined;
+    const apiResponse = (await resp.json()) as ApiResponse<DashboardListDto> | undefined;
 
     // If empty, return empty
-    const list = apiResponse?.result;
-    if (!list) return [];
+    const api = apiResponse?.result;
+    if (!api) return { surveys: [], appUpdateInfo: undefined };
 
     // Sort based on status
     const now = Date.now();
@@ -34,9 +34,9 @@ export const getSurveyList = async (): Promise<SurveyDto[]> => {
         if (s.publishDate && s.publishDate <= now) return 2;
         return s.publishDate && s.publishDate > now ? 3 : 4;
     };
-    list.sort((a,b) => sStatus(a) - sStatus(b));
+    api.surveys.sort((a, b) => sStatus(a) - sStatus(b));
 
-    return list;
+    return api;
 };
 
 export const getSurveyById = async (id: string): Promise<SurveyWithQuestionsDto | null> => {

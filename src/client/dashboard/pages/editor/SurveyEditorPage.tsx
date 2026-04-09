@@ -25,7 +25,6 @@ export const SurveyEditorPage = () => {
     const [surveyDto, setSurveyInfo] = useState<SurveyDto | null>(null);
     useEffect(() => {
         if (isNew) {
-            setLoading(false);
             return;
         }
 
@@ -45,7 +44,7 @@ export const SurveyEditorPage = () => {
     return (
         <>
             <div className="flex justify-between items-center border-b">
-                <h1 className="text-md lg:text-2xl font-bold my-4">Survey Editor</h1>
+                <h1 className="text-md lg:text-2xl font-bold my-4">Editor</h1>
                 {!loading && (
                     <div className="my-4">
                         <button

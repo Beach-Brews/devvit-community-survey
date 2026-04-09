@@ -6,13 +6,6 @@ import { SurveyDashboard } from './SurveyDashboard';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SurveyDashboard userInfo={{
-        userId: 't2_asdfg12345',
-        username: 'Beach-Brews',
-        snoovar: '',
-        isMod: true,
-        allowDev: true,
-        responseBlocked: null
-    }} />
+    <SurveyDashboard />
   </StrictMode>
 );

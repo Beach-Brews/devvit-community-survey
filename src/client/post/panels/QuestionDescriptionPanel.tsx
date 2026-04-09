@@ -8,6 +8,7 @@
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
+import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
 
 export const QuestionDescriptionPanel = () => {
 
@@ -29,7 +30,7 @@ export const QuestionDescriptionPanel = () => {
 
     return (
       <div className="flex flex-col gap-4 justify-start items-center h-full">
-          <div>{question?.description}</div>
+          <div>{question?.description && renderMarkdown(question.description)}</div>
           <div>
               <button onClick={returnToSurvey} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
                   <ArrowUturnLeftIcon className="size-5" />

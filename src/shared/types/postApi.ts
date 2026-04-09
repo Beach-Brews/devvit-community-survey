@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-import { SurveyWithQuestionsDto } from '../redis/SurveyDto';
+import { SurveyDto, SurveyWithQuestionsDto } from '../redis/SurveyDto';
 import { UserResponsesDto } from '../redis/ResponseDto';
 
 export enum ResultsHiddenReason {
@@ -49,4 +49,10 @@ export type InitializeSurveyResponse = {
     user: UserInfoDto;
     subInfo: SubredditInfoDto;
     lastResponse: UserResponsesDto | null;
+};
+
+export type InitializeHubResponse = {
+    surveys: SurveyDto[];
+    user: UserInfoDto;
+    subInfo: SubredditInfoDto;
 };

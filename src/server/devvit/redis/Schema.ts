@@ -6,7 +6,14 @@
 */
 
 import { z } from 'zod';
-import { OptionIdRegex, QuestionIdRegex, SurveyIdRegex } from '../../../shared/redis/uuidGenerator';
+import {
+    genOptionId,
+    genQuestionId,
+    genSurveyId,
+    OptionIdRegex,
+    QuestionIdRegex,
+    SurveyIdRegex,
+} from '../../../shared/redis/uuidGenerator';
 import { FlairType, KarmaType, ResultVisibility } from '../../../shared/redis/SurveyDto';
 
 export class Schema {
@@ -18,12 +25,16 @@ export class Schema {
     static questionOption = z
         .looseObject({
             label: z.string().min(1, 'Option label missing'),
-            value: z.string().regex(OptionIdRegex, 'Not a valid option ID string')
+            value: z.string()
+                .regex(OptionIdRegex, 'Not a valid option ID string')
+                .default(genOptionId)
         });
 
     static commonQuestionProps = z
         .looseObject({
-            id: z.string().regex(QuestionIdRegex, 'Not a valid question ID string'),
+            id: z.string()
+                .regex(QuestionIdRegex, 'Not a valid question ID string')
+                .default(genQuestionId),
             title: z.string().min(1, 'Question title missing'),
             description: z.string().default(''),
             required: z.boolean().default(true)
@@ -105,7 +116,9 @@ export class Schema {
 
     static surveyConfig = z
         .looseObject({
-            id: z.string().regex(SurveyIdRegex, 'Not a valid survey ID string'),
+            id: z.string()
+                .regex(SurveyIdRegex, 'Not a valid survey ID string')
+                .default(genSurveyId),
             owner: z.string().min(1, 'Survey Owner missing'),
             title: z.string().min(1, 'Survey Title missing'),
             intro: z.string().default(''),
@@ -129,5 +142,12 @@ export class Schema {
         .looseObject({
             ...Schema.surveyConfig.shape,
             questions: Schema.surveyQuestionList
+        });
+
+    static appUpdateInfo = z
+        .looseObject({
+            latestVersion: z.string().regex(/\d+\.\d+\.\d+(\.\d+)?/),
+            urgent: z.boolean().default(false),
+            message: z.string().nullish()
         });
 }

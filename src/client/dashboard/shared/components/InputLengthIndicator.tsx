@@ -1,5 +1,5 @@
 ﻿/*!
-* Widget that displays the current input length + max length.
+* Component that displays the current input length + max length.
 *
 * Author:  u/Beach-Brews
 * License: BSD-3-Clause
