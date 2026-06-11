@@ -15,6 +15,7 @@ import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
 import { upsertResponse } from '../api/surveyApi';
 import { ToastType } from '../../shared/toast/toastTypes';
+import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
 
 export const QuestionPanel = () => {
 
@@ -111,7 +112,7 @@ export const QuestionPanel = () => {
                 <div className="text-base md:text-lg font-bold relative leading-none">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
                 {question.description && (
                     <div className={`text-sm md:text-base ${showDescriptionText ? 'line-clamp-4' : 'underline cursor-pointer'}`} onClick={showDescriptionText ? undefined : showFullDescription}>
-                        {showDescriptionText ? question.description : 'Show question prompt'}
+                        {showDescriptionText ? renderMarkdown(question.description) : 'Show question prompt'}
                     </div>
                 )}
                 <div className={`flex ${question.type === 'scale' ? ' justify-center' : 'justify-start'} items-center w-full`}>

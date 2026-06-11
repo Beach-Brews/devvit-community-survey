@@ -2,14 +2,15 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import tailwind from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import {mockDevServerPlugin} from "vite-plugin-mock-dev-server";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwind()],
+    plugins: [react(), tailwind(), mockDevServerPlugin()],
     build: {
         outDir: '../../dist/client',
         sourcemap: true,
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 dashboard: resolve(__dirname, 'dashboard.html'),
                 survey: resolve(__dirname, 'survey.html'),
@@ -20,7 +21,6 @@ export default defineConfig({
                 entryFileNames: '[name].js',
                 chunkFileNames: '[name].js',
                 assetFileNames: '[name][extname]',
-                sourcemapFileNames: '[name].js.map',
             },
         },
     },

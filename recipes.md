@@ -1,4 +1,35 @@
-﻿## General
+﻿## Roadmap
+* Develop design system
+* Mock designs
+* Requirements docks
+* Mock api with vite
+
+* Update documentation
+* Create demo video for ModEvents
+* Setup GitHub Project
+
+* 0.1.1
+  * High - Fix welcome wiki link...
+  * High - Export Results to CSV
+  * Medium - Text fallback changes (update fallback text on delete)
+  * Low - Fix hub "there are no closed/live surveys" copy styling
+  * Low - ??Add "shareImageUrl" - Generate an image with survey text, upload??
+
+* 0.2.0
+    * High - Survey Post Expanded View
+    * High - Survey Post Redesign (more Reddit Like)
+      * Include subreddit theme coloring?
+
+* 0.3.0
+  * High - ??Text Responses??
+
+* 0.4.0
+  * High - Dashboard redesign
+  * High - Results charts revamp
+
+## General
+* Update text fallback for old reddit to include link to new reddit (try markdown)
+  * Update fallback text when survey is deleted. Would need trigger to update as well if mod deletes the post itself? Could fallback set it if config fetched and not exists.
 * Migration Framework
   * Migrate postIds + hub API
 * Discuss if there is a way to build in bot-bouncer checks (i.e. read wiki?)
@@ -19,6 +50,7 @@
 * ~~Update notice + release notes within dashboard~~
 * ~~Modify dashboard post for non-mods to a list of live/closed surveys~~
 * Export Survey Responses to CSV/Xlsx
+* When surveys are published, add new "shareImageUrl" => https://developers.reddit.com/docs/capabilities/creating_custom_post#custom-post-styles
 * Provide feedback within dashboard (and post help)
 * Handle cross-device/multi-tab editing. Channels? Lock?
     * Allow all mods to see all surveys?
@@ -74,4 +106,4 @@
 
 **Survey Posts**
 
-* No know issues
+* Bug: Text fallback confusion - Update text on delete to show deleted. Add link to new reddit.
