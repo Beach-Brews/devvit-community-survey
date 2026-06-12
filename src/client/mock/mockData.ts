@@ -8,7 +8,7 @@
 import { genOptionId, genQuestionId, genSurveyId } from '../../shared/redis/uuidGenerator';
 import { SurveyQuestionList, SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
 
-const smallCase = true;
+const smallCase = false;
 
 const title = smallCase ? 'This is the question? ' : 'This is the question title and is longer for test!';
 const description = smallCase
@@ -86,7 +86,7 @@ export const SampleQuestionList = [
 export const SampleSurveyList = [
     {
         id: genSurveyId(),
-        title: "This is my awesome survey with a long title for me",
+        title: "This is my awesome survey with a long title full length",
         intro: description,
         outro: "**Thank you** for your response.",
         allowMultiple: false,
@@ -103,7 +103,7 @@ export const SampleSurveyList = [
             minSubKarma:  { type: 'Both', value: 1000 },
             userFlairs: [ { type: 'TxtEq', value: 'World' } ]
         },
-        resultVisibility: 'Resp',
+        resultVisibility: 'Always',
         questions: SampleQuestionList
     },
     {
@@ -140,7 +140,7 @@ export const SampleSurveyList = [
             minSubKarma:  { type: 'Both', value: 1000 },
             userFlairs: [ { type: 'TxtEq', value: 'World' } ]
         },
-        resultVisibility: 'Always',
+        resultVisibility: 'Resp',
         postId: 't3_x89sk2',
         questions: SampleQuestionList
     },
@@ -188,7 +188,7 @@ export const SampleSurveyList = [
 export const SampleUserInfo = {
     isMod: true,
     responseBlocked: 0,
-    allowDev: true,
+    allowDev: false,
     username: 'Beach-Brews',
     userId: 't2_ds8dkw924l',
     snoovar: 'https://i.redd.it/snoovatar/avatars/39b6f849-b2de-4c8f-9c97-4946152dc878.png'

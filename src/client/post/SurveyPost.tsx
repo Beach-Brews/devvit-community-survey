@@ -23,7 +23,6 @@ import { QuestionDescriptionPanel } from './panels/QuestionDescriptionPanel';
 import { useToaster } from '../shared/toast/useToaster';
 import { PostToaster } from './PostToaster';
 import { ResultVisibility } from '../../shared/redis/SurveyDto';
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { HelpPanel } from './panels/HelpPanel';
 import { SubDefaultIcon } from '../shared/components/CustomIcons';
 
@@ -87,7 +86,7 @@ export const SurveyPost = () => {
         if (isDeleted)
             return (
                 <div className="flex flex-col gap-4 justify-center items-center h-full">
-                    <div className="text-xl text-center">This survey has been deleted.</div>
+                    <div className="text-xl text-center">This survey has been deleted by a moderator.</div>
                 </div>
             );
 
@@ -127,6 +126,7 @@ export const SurveyPost = () => {
         }
     };
 
+    /*
     const openHelp = () => {
         setPanelContext(cc => {
             return {
@@ -136,22 +136,19 @@ export const SurveyPost = () => {
             };
         });
     };
+    */
 
     return (
         <SurveyContext value={surveyContext}>
             <div className="h-full max-h-full flex flex-col justify-between">
-                <div className="p-2 flex-grow h-[0%]">
+                <div className="grow h-[0%]">
                     {getPanel()}
                 </div>
                 <footer className="w-full p-2 pt-0 text-xs flex justify-between items-center">
                     <div className="w-3/7 flex gap-1 items-center">
-                        {postInit?.subInfo === undefined
-                            ? (
-                                <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2 animate-pulse "></div>
-                            )
-                            : (
+                        {postInit?.subInfo && (
                                 <>
-                                    <div  className="w-8 h-8 flex-shrink-0 object-contain overflow-hidden rounded-full">
+                                    <div  className="w-8 h-8 shrink-0 object-contain overflow-hidden rounded-full">
                                         {postInit.subInfo.icon ? (<img width={32} height={32} alt={postInit.subInfo.name} src={postInit.subInfo.icon} />) : (<SubDefaultIcon />)}
                                     </div>
                                     r/{postInit.subInfo.name}
@@ -162,7 +159,7 @@ export const SurveyPost = () => {
                     <div className="w-1/7 flex flex-col justify-center items-center">
                         {survey && user?.allowDev === true
                             ? (
-                                <div className="text-center text-[0.7rem] text-neutral-600 dark:text-neutral-400">
+                                <div className="text-center text-[0.7rem] text-neutral-content-weak">
                                     {panelContext.panel == PanelType.Question || panelContext.panel == PanelType.QuestionDescription || panelContext.panel == PanelType.Result
                                         ? panelContext?.number !== undefined
                                             ? survey.id + ' ' + (survey.questions?.[panelContext.number]?.id ?? `Q${panelContext.number} ??`)
@@ -170,6 +167,8 @@ export const SurveyPost = () => {
                                         : survey.id
                                     }
                                 </div>
+                            ) : undefined
+                            /*
                             ) : postInit !== undefined
                                 ? (
                                     <button onClick={openHelp} className="hidden flex gap-1 justify-center items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
@@ -177,8 +176,9 @@ export const SurveyPost = () => {
                                         <span>Help</span>
                                     </button>
                                 ) : (
-                                    <div className="h-4 bg-neutral-300 rounded-full dark:bg-neutral-700 w-3/4 annimate-pulse"></div>
+                                    <div className="h-4 bg-secondary-background-selected rounded-full w-3/4 animate-pulse"></div>
                                 )
+                           */
                         }
                     </div>
                     <div className="w-3/7 flex gap-1 items-center justify-end">
@@ -197,9 +197,6 @@ export const SurveyPost = () => {
                             <>
                                 Anonymous <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" />
                             </>
-                        )}
-                        {postInit === undefined && (
-                            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-1/2 animate-pulse "></div>
                         )}
                     </div>
                 </footer>

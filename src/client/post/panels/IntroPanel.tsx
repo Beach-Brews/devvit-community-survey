@@ -9,7 +9,7 @@
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { formatRelativeDateTime } from '../../shared/dateFormat';
-import { DocumentArrowDownIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
+import { DocumentArrowDownIcon, PresentationChartBarIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { ResponseBlockedReason } from '../../../shared/types/postApi';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
@@ -78,13 +78,13 @@ export const IntroPanel = (props: IntroPanelProps) => {
 
     return (
         <div className="flex flex-col gap-2 justify-between items-center h-full">
-            <div className="w-full flex justify-between">
-                <div className="text-neutral-700 dark:text-neutral-300">
+            <div className="w-full px-2 flex justify-between items-center text-neutral-content-weak border-b border-b-neutral-border">
+                <div>
                     {ctx.canViewResults
                         ? (
-                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                                <PresentationChartBarIcon className="size-5" />
-                                <span>{ctx.survey.responseCount?.toLocaleString() ?? 0}</span>
+                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2">
+                                <div className="size-7 rounded-full flex justify-center items-center bg-upvote-background"><PresentationChartBarIcon className="size-5 text-upvote-onbackground" /></div>
+                                <div><span className="text-upvote-plain">{ctx.survey.responseCount?.toLocaleString() ?? 0}</span> responses</div>
                             </button>
                         )
                         : (
@@ -100,17 +100,33 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         )
                     }
                 </div>
-                <div className="p-2 text-neutral-700 dark:text-neutral-300">
+                <div className="p-2">
                     {ctx.survey.closeDate
-                        ? (<div className="flex gap-1 items-center"><DocumentArrowDownIcon className="size-5" /><span>{formatRelativeDateTime(ctx.survey.closeDate)}</span></div>)
+                        ? (
+                            <div className="flex gap-1 items-center">
+                                <DocumentArrowDownIcon className="size-5" />
+                                <span>{formatRelativeDateTime(ctx.survey.closeDate)}</span>
+                            </div>
+                        )
                         : 'No close date'}
                 </div>
             </div>
-            <div className="w-full flex flex-col gap-4 justify-center items-center flex-grow h-[0%]">
-                <div className="text-2xl font-bold text-center leading-tight">{ctx.survey.title}</div>
-                {ctx.survey.intro && (<div className={`text-center ${ctx.survey.intro.length > 300 ? 'text-sm line-clamp-9' : 'text-base line-clamp-6'}`}>{renderMarkdown(ctx.survey.intro)}</div>)}
+            <div className="w-full px-2 flex flex-col gap-4 justify-center items-center grow h-[0%]">
+                <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong">{ctx.survey.title}</div>
+                {ctx.survey.intro && (
+                    <div className={`text-center ${ctx.survey.intro.length > 300 ? 'text-sm line-clamp-9' : 'text-base line-clamp-6'}`}>
+                        {renderMarkdown(ctx.survey.intro)}</div>
+                )}
                 <div className="w-full flex justify-center">
-                    <button disabled={disableResponses} onClick={!disableResponses ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
+                    <button
+                        disabled={disableResponses}
+                        onClick={!disableResponses ? onStartSurvey : undefined}
+                        className={`w-2/3 max-w-75 font-bold text-survey-primary-onbackground
+                        bg-survey-primary-background hover:bg-survey-primary-background-hovered
+                        disabled:bg-secondary-background disabled:text-secondary-onbackground
+                        px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}
+                        `}
+                    >
                         {props.isAnonymous
                             ? 'Login to Start Survey'
                             : blockedReason?.[0] !== undefined
@@ -124,12 +140,12 @@ export const IntroPanel = (props: IntroPanelProps) => {
                     </button>
                 </div>
                 {blockedReason?.[1] !== undefined
-                    ? (<div className="text-neutral-700 dark:text-neutral-300 text-center">{blockedReason[1]}</div>)
-                    : (<div className="text-neutral-700 dark:text-neutral-300 text-center">{ctx.survey.questions.length} total questions</div>)}
+                    ? (<div className="text-center">{blockedReason[1]}</div>)
+                    : (<div className="text-center text-sm text-neutral-content-weak">{ctx.survey.questions.length} total questions</div>)}
                 {responses > 0 && (
                     <div className="w-full flex justify-center">
-                        <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
-                            Delete Responses
+                        <button onClick={onDelete} className="w-2/3 max-w-75 flex items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
+                            <TrashIcon className="size-4" /> Delete Responses
                         </button>
                     </div>
                 )}

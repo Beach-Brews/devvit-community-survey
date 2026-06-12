@@ -48,7 +48,7 @@ export const HelpPanel = () => {
 
     return (
       <div className="flex flex-col gap-4 justify-start items-center h-full">
-          <div className="relative flex-grow h-[0%] w-full p-2">
+          <div className="relative grow h-[0%] w-full p-2">
               <div ref={contDiv} className="h-full overflow-hidden">
                   {
                       (() => {

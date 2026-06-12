@@ -6,7 +6,7 @@
  */
 
 import { defineMock } from 'vite-plugin-mock-dev-server';
-import { SampleSubInfo, SampleSurveyList, SampleUserInfo } from './mockData';
+import { SampleQuestionList, SampleSubInfo, SampleSurveyList, SampleUserInfo } from './mockData';
 import { ApiResponse } from '../../shared/types/api';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
 
@@ -17,12 +17,12 @@ export default defineMock([
         method: 'GET',
         body: {
             code: 200,
-            message: 'OK',
+            message: 'Ok',
             result: {
                 survey: SampleSurveyList[0]!,
                 user: SampleUserInfo,
                 subInfo: SampleSubInfo,
-                lastResponse: null
+                lastResponse: { [SampleQuestionList[0]!.id]: [SampleQuestionList[0]!.options![0]!.value] }
             } satisfies InitializeSurveyResponse
         } satisfies ApiResponse<InitializeSurveyResponse>
     }

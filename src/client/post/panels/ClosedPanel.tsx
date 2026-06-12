@@ -33,12 +33,12 @@ export const ClosedPanel = () => {
           </div>
           {ctx.canViewResults
               ? (
-                  <button onClick={showResults} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer`}>
+                  <button onClick={showResults} className={`w-2/3 max-w-75 bg-survey-primary-background text-survey-primary-onbackground font-bold hover:bg-survey-primary-background-hovered px-8 py-2 rounded-xl cursor-pointer`}>
                       View Results
                   </button>
               )
               : (
-                  <button disabled={true} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
+                  <button disabled={true} className={`w-2/3 max-w-75 bg-survey-primary-background text-survey-primary-onbackground font-bold hover:bg-survey-primary-background-hovered disabled:bg-secondary-background disabled:text-secondary-onbackground px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
                       View Results <br />
                       <span className="text-[0.75rem]">
                           {ctx.survey.resultVisibility === ResultVisibility.Responders ? '(Responders only) ': '(Mods Only)'}
@@ -48,7 +48,7 @@ export const ClosedPanel = () => {
           }
           {responses > 0 && (
               <div className="mt-8 w-full flex justify-center">
-                  <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
+                  <button onClick={onDelete} className="w-2/3 max-w-75 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
                       Delete Responses
                   </button>
               </div>

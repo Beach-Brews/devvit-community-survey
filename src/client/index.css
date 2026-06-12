@@ -29,6 +29,10 @@
     --animate-bar2: bar2 1s ease-in-out infinite;
     --animate-bar3: bar3 1s ease-in-out infinite;
 
+    --color-survey-primary-background: var(--survey-primary-background);
+    --color-survey-primary-background-hovered: var(--survey-primary-background-hovered);
+    --color-survey-primary-onbackground: var(--survey-primary-onbackground);
+
     /* == Reddit color definitions == */
     --color-coolgray-50: var(--coolgray-50);
     --color-coolgray-100: var(--coolgray-100);
@@ -191,6 +195,8 @@
     --color-lime-800: var(--lime-800);
     --color-lime-900: var(--lime-900);
     --color-lime-950: var(--lime-950);
+
+    --color-reddit-lime: var(--reddit-lime);
 
     --color-yellow-50: var(--yellow-50);
     --color-yellow-100: var(--yellow-100);
@@ -527,6 +533,9 @@ html {
     --lime-900: #151e05;
     --lime-950: #0d1304;
 
+    --reddit-lime: #aeef0f;
+    --reddit-lime-light: #e4ff45;
+
     --yellow-50: #fff3c0;
     --yellow-100: #ffe284;
     --yellow-200: #ffbf0b;
@@ -693,6 +702,10 @@ html {
     --downvote-onstrongscrim: var(--periwinkle-400);
     --downvote-onstrongscrim-weaker: var(--periwinkle-500);
     --downvote-onstrongscrim-disabled: color-mix(in srgb, var(--periwinkle-400) 30%, transparent);
+
+    --survey-primary-background: var(--reddit-lime);
+    --survey-primary-background-hovered: var(--reddit-lime-light);
+    --survey-primary-onbackground: var(--global-black);
 }
 
 @media (prefers-color-scheme: dark) {
