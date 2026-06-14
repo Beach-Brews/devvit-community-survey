@@ -9,7 +9,12 @@
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { formatRelativeDateTime } from '../../shared/dateFormat';
-import { DocumentArrowDownIcon, PresentationChartBarIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+    DocumentArrowDownIcon,
+    PencilSquareIcon,
+    PresentationChartBarIcon,
+    TrashIcon,
+} from '@heroicons/react/24/outline';
 import { ResponseBlockedReason } from '../../../shared/types/postApi';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
@@ -82,8 +87,10 @@ export const IntroPanel = (props: IntroPanelProps) => {
                 <div>
                     {ctx.canViewResults
                         ? (
-                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2">
-                                <div className="size-7 rounded-full flex justify-center items-center bg-upvote-background"><PresentationChartBarIcon className="size-5 text-upvote-onbackground" /></div>
+                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 group">
+                                <div className="size-7 rounded-full flex justify-center items-center bg-upvote-background group-hover:bg-upvote-background-hovered">
+                                    <PresentationChartBarIcon className="size-5 text-upvote-onbackground" />
+                                </div>
                                 <div><span className="text-upvote-plain">{ctx.survey.responseCount?.toLocaleString() ?? 0}</span> responses</div>
                             </button>
                         )
@@ -111,40 +118,46 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         : 'No close date'}
                 </div>
             </div>
-            <div className="w-full px-2 flex flex-col gap-4 justify-center items-center grow h-[0%]">
-                <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong">{ctx.survey.title}</div>
-                {ctx.survey.intro && (
-                    <div className={`text-center ${ctx.survey.intro.length > 300 ? 'text-sm line-clamp-9' : 'text-base line-clamp-6'}`}>
-                        {renderMarkdown(ctx.survey.intro)}</div>
-                )}
-                <div className="w-full flex justify-center">
+            <div className="w-full p-2 flex flex-col gap-2 justify-center items-center grow h-[0%]">
+                <div className="flex flex-col gap-2 items-center">
+                    <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong">{ctx.survey.title}</div>
+                    {ctx.survey.intro && (
+                        <div className={`text-center ${ctx.survey.intro.length > 300 || (ctx.survey.intro.match(/\n|\r\r/) || []).length > 6 ? 'text-sm line-clamp-8' : 'text-base line-clamp-6'}`}>
+                            {renderMarkdown(ctx.survey.intro)}</div>
+                    )}
+                </div>
+                <div className="w-full flex flex-col items-center gap-1">
                     <button
                         disabled={disableResponses}
                         onClick={!disableResponses ? onStartSurvey : undefined}
-                        className={`w-2/3 max-w-75 font-bold text-survey-primary-onbackground
+                        className={`w-2/3 max-w-75 flex justify-center items-center gap-1
+                        font-bold text-survey-primary-onbackground
                         bg-survey-primary-background hover:bg-survey-primary-background-hovered
                         disabled:bg-secondary-background disabled:text-secondary-onbackground
-                        px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}
+                        p-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}
                         `}
                     >
-                        {props.isAnonymous
-                            ? 'Login to Start Survey'
-                            : blockedReason?.[0] !== undefined
-                                ? blockedReason[0]
-                                : responses <= 0
-                                    ? 'Start Survey'
-                                    : responses < ctx.survey.questions.length
-                                        ? 'Continue Survey'
-                                        : 'Change Responses'
-                        }
+                        <PencilSquareIcon className="size-4" />
+                        <div>
+                            {props.isAnonymous
+                                ? 'Login to Start Survey'
+                                : blockedReason?.[0] !== undefined
+                                    ? blockedReason[0]
+                                    : responses <= 0
+                                        ? 'Start Survey'
+                                        : responses < ctx.survey.questions.length
+                                            ? 'Continue Survey'
+                                            : 'Change Responses'
+                            }
+                        </div>
                     </button>
+                    {blockedReason?.[1] !== undefined
+                        ? (<div className="text-center">{blockedReason[1]}</div>)
+                        : (<div className="text-center text-sm text-neutral-content-weak">{ctx.survey.questions.length} total questions</div>)}
                 </div>
-                {blockedReason?.[1] !== undefined
-                    ? (<div className="text-center">{blockedReason[1]}</div>)
-                    : (<div className="text-center text-sm text-neutral-content-weak">{ctx.survey.questions.length} total questions</div>)}
                 {responses > 0 && (
                     <div className="w-full flex justify-center">
-                        <button onClick={onDelete} className="w-2/3 max-w-75 flex items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
+                        <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
                             <TrashIcon className="size-4" /> Delete Responses
                         </button>
                     </div>

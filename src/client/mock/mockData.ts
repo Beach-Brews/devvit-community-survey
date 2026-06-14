@@ -21,7 +21,9 @@ And not a line break.
 
 \\*test escape\\* and \\*\\*test escape\\*\\* and \\__Test Escape\\_\\\\_ and \\~~test escape\\~\\~
 
-Finally a test of [***link** text*](https://google.com)`;
+Finally a test of [***link** text*](https://google.com)
+
+Need to test exceeding the total lines for the line-clamp. It just needs to be line enough to be cut off.`;
 
 const options =  [1,2,3,4,5,6,7,8,9,10]
     .map(i => ({
@@ -88,7 +90,7 @@ export const SampleSurveyList = [
         id: genSurveyId(),
         title: "This is my awesome survey with a long title full length",
         intro: description,
-        outro: "**Thank you** for your response.",
+        outro: description,
         allowMultiple: false,
         createDate: Date.now(),
         publishDate: null,
@@ -103,7 +105,7 @@ export const SampleSurveyList = [
             minSubKarma:  { type: 'Both', value: 1000 },
             userFlairs: [ { type: 'TxtEq', value: 'World' } ]
         },
-        resultVisibility: 'Always',
+        resultVisibility: 'Resp',
         questions: SampleQuestionList
     },
     {
@@ -186,7 +188,7 @@ export const SampleSurveyList = [
 ] satisfies SurveyWithQuestionsDto[];
 
 export const SampleUserInfo = {
-    isMod: true,
+    isMod: false,
     responseBlocked: 0,
     allowDev: false,
     username: 'Beach-Brews',

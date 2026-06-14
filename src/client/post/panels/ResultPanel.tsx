@@ -130,7 +130,7 @@ export const ResultPanel = () => {
     };
 
     return (
-        <div className="flex flex-col gap-2 h-full">
+        <div className="p-2 flex flex-col gap-2 h-full">
             <div className="flex gap-2 justify-between items-center">
                 <button onClick={onClose} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
                     <ArrowUturnLeftIcon className="size-5" />

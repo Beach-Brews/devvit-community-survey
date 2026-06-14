@@ -25,5 +25,14 @@ export default defineMock([
                 lastResponse: { [SampleQuestionList[0]!.id]: [SampleQuestionList[0]!.options![0]!.value] }
             } satisfies InitializeSurveyResponse
         } satisfies ApiResponse<InitializeSurveyResponse>
+    },
+    {
+        url: '/api/post/survey/:questionId',
+        method: 'POST',
+        body: {
+            code: 200,
+            message: 'Ok',
+            result: true
+        } satisfies ApiResponse<boolean>
     }
 ]);

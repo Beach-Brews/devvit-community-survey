@@ -144,62 +144,64 @@ export const SurveyPost = () => {
                 <div className="grow h-[0%]">
                     {getPanel()}
                 </div>
-                <footer className="w-full p-2 pt-0 text-xs flex justify-between items-center">
-                    <div className="w-3/7 flex gap-1 items-center">
-                        {postInit?.subInfo && (
-                                <>
-                                    <div  className="w-8 h-8 shrink-0 object-contain overflow-hidden rounded-full">
-                                        {postInit.subInfo.icon ? (<img width={32} height={32} alt={postInit.subInfo.name} src={postInit.subInfo.icon} />) : (<SubDefaultIcon />)}
-                                    </div>
-                                    r/{postInit.subInfo.name}
-                                </>
-                            )
-                        }
-                    </div>
-                    <div className="w-1/7 flex flex-col justify-center items-center">
-                        {survey && user?.allowDev === true
-                            ? (
-                                <div className="text-center text-[0.7rem] text-neutral-content-weak">
-                                    {panelContext.panel == PanelType.Question || panelContext.panel == PanelType.QuestionDescription || panelContext.panel == PanelType.Result
-                                        ? panelContext?.number !== undefined
-                                            ? survey.id + ' ' + (survey.questions?.[panelContext.number]?.id ?? `Q${panelContext.number} ??`)
-                                            : survey.id + ' QNaN'
-                                        : survey.id
-                                    }
-                                </div>
-                            ) : undefined
-                            /*
-                            ) : postInit !== undefined
-                                ? (
-                                    <button onClick={openHelp} className="hidden flex gap-1 justify-center items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                                        <QuestionMarkCircleIcon className="size-4" />
-                                        <span>Help</span>
-                                    </button>
-                                ) : (
-                                    <div className="h-4 bg-secondary-background-selected rounded-full w-3/4 animate-pulse"></div>
+                {postInit && (
+                    <footer className="w-full p-2 border-t border-t-neutral-border text-xs flex justify-between items-center">
+                        <div className="w-3/7 flex gap-1 items-center">
+                            {postInit?.subInfo && (
+                                    <>
+                                        <div  className="w-8 h-8 shrink-0 object-contain overflow-hidden rounded-full">
+                                            {postInit.subInfo.icon ? (<img width={32} height={32} alt={postInit.subInfo.name} src={postInit.subInfo.icon} />) : (<SubDefaultIcon />)}
+                                        </div>
+                                        r/{postInit.subInfo.name}
+                                    </>
                                 )
-                           */
-                        }
-                    </div>
-                    <div className="w-3/7 flex gap-1 items-center justify-end">
-                        {user?.userId && (
-                            <>
-                                <div className="text-right">
-                                    <div className={anonymousMode ? "line-through opacity-30" : ""}>u/{user.username}</div>
-                                    <div className={!anonymousMode ? "line-through opacity-30" : ""}>Anonymous</div>
-                                </div>
-                                <div  className={`w-8 h-8 object-contain overflow-hidden rounded-full ${anonymousMode ? "opacity-30" : ""}`}>
-                                    <img src={user?.snoovar !== undefined && user.snoovar.length > 0 ? user.snoovar : defaultSnoo} alt={`snoovar for ${user.username}`} />
-                                </div>
-                            </>
-                        )}
-                        {postInit && !user?.userId && (
-                            <>
-                                Anonymous <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" />
-                            </>
-                        )}
-                    </div>
-                </footer>
+                            }
+                        </div>
+                        <div className="w-1/7 flex flex-col justify-center items-center">
+                            {survey && user?.allowDev === true
+                                ? (
+                                    <div className="text-center text-[0.7rem] text-neutral-content-weak">
+                                        {panelContext.panel == PanelType.Question || panelContext.panel == PanelType.QuestionDescription || panelContext.panel == PanelType.Result
+                                            ? panelContext?.number !== undefined
+                                                ? survey.id + ' ' + (survey.questions?.[panelContext.number]?.id ?? `Q${panelContext.number} ??`)
+                                                : survey.id + ' QNaN'
+                                            : survey.id
+                                        }
+                                    </div>
+                                ) : undefined
+                                /*
+                                ) : postInit !== undefined
+                                    ? (
+                                        <button onClick={openHelp} className="hidden flex gap-1 justify-center items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                                            <QuestionMarkCircleIcon className="size-4" />
+                                            <span>Help</span>
+                                        </button>
+                                    ) : (
+                                        <div className="h-4 bg-secondary-background-selected rounded-full w-3/4 animate-pulse"></div>
+                                    )
+                               */
+                            }
+                        </div>
+                        <div className="w-3/7 flex gap-1 items-center justify-end">
+                            {user?.userId && (
+                                <>
+                                    <div className="text-right">
+                                        <div className={anonymousMode ? "line-through opacity-30" : ""}>u/{user.username}</div>
+                                        <div className={!anonymousMode ? "line-through opacity-30" : ""}>Anonymous</div>
+                                    </div>
+                                    <div  className={`w-8 h-8 object-contain overflow-hidden rounded-full ${anonymousMode ? "opacity-30" : ""}`}>
+                                        <img src={user?.snoovar !== undefined && user.snoovar.length > 0 ? user.snoovar : defaultSnoo} alt={`snoovar for ${user.username}`} />
+                                    </div>
+                                </>
+                            )}
+                            {!user?.userId && (
+                                <>
+                                    Anonymous <img src={defaultSnoo} alt="default snoovar" className="w-8 h-8 rounded-full" />
+                                </>
+                            )}
+                        </div>
+                    </footer>
+                )}
                 <PostToaster key="toaster" toasts={toasts} removeToast={removeToast} />
             </div>
         </SurveyContext>

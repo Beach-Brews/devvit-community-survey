@@ -34,6 +34,17 @@
     --color-survey-primary-onbackground: var(--survey-primary-onbackground);
 
     /* == Reddit color definitions == */
+    --color-reddit-orangered: var(--reddit-orangered);
+    --color-reddit-orangered-light: var(--reddit-orangered-light);
+    --color-reddit-guavapink: var(--reddit-guavapink);
+    --color-reddit-guavapink-light: var(--reddit-guavapink-light);
+    --color-reddit-bananayellow: var(--reddit-bananayellow);
+    --color-reddit-bananayellow-light: var(--reddit-bananayellow-light);
+    --color-reddit-lime: var(--reddit-lime);
+    --color-reddit-lime-light: var(--reddit-lime-light);
+    --color-reddit-juniperblue: var(--reddit-juniperblue);
+    --color-reddit-juniperblue-light: var(--reddit-juniperblue-light);
+    
     --color-coolgray-50: var(--coolgray-50);
     --color-coolgray-100: var(--coolgray-100);
     --color-coolgray-150: var(--coolgray-150);
@@ -195,8 +206,6 @@
     --color-lime-800: var(--lime-800);
     --color-lime-900: var(--lime-900);
     --color-lime-950: var(--lime-950);
-
-    --color-reddit-lime: var(--reddit-lime);
 
     --color-yellow-50: var(--yellow-50);
     --color-yellow-100: var(--yellow-100);
@@ -371,6 +380,7 @@ html {
 }
 
 :root {
+
     --coolgray-50: #eef1f3;
     --coolgray-100: #dbe4e9;
     --coolgray-150: #c9d7de;
@@ -532,9 +542,6 @@ html {
     --lime-800: #1e3702;
     --lime-900: #151e05;
     --lime-950: #0d1304;
-
-    --reddit-lime: #aeef0f;
-    --reddit-lime-light: #e4ff45;
 
     --yellow-50: #fff3c0;
     --yellow-100: #ffe284;
@@ -702,6 +709,17 @@ html {
     --downvote-onstrongscrim: var(--periwinkle-400);
     --downvote-onstrongscrim-weaker: var(--periwinkle-500);
     --downvote-onstrongscrim-disabled: color-mix(in srgb, var(--periwinkle-400) 30%, transparent);
+
+    --reddit-orangered: #ff4500;
+    --reddit-orangered-light: #ff8864;
+    --reddit-guavapink: #ff5fc2;
+    --reddit-guavapink-light: #ff9fdf;
+    --reddit-bananayellow: #ffbf0b;
+    --reddit-bananayellow-light: #ffde55;
+    --reddit-lime: #aeef0f;
+    --reddit-lime-light: #e4ff45;
+    --reddit-juniperblue: #00e2b7;
+    --reddit-juniperblue-light: #92ffea;
 
     --survey-primary-background: var(--reddit-lime);
     --survey-primary-background-hovered: var(--reddit-lime-light);

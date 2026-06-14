@@ -8,6 +8,7 @@
 import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
+import { PresentationChartBarIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export const ClosedPanel = () => {
 
@@ -27,29 +28,36 @@ export const ClosedPanel = () => {
     };
 
     return (
-      <div className="flex flex-col gap-4 justify-center items-center h-full">
-          <div className="text-xl text-center">
+      <div className="p-2 flex flex-col gap-4 justify-center items-center h-full">
+          <div className="text-xl text-center font-bold">
+              {ctx.survey.title}
+          </div>
+          <div className="text-center">
               This survey has closed and is no longer accepting responses.
           </div>
           {ctx.canViewResults
               ? (
-                  <button onClick={showResults} className={`w-2/3 max-w-75 bg-survey-primary-background text-survey-primary-onbackground font-bold hover:bg-survey-primary-background-hovered px-8 py-2 rounded-xl cursor-pointer`}>
-                      View Results
+                  <button onClick={showResults}  className={`w-2/3 max-w-75 flex justify-center items-center gap-1 bg-primary-background text-primary-onbackground font-bold hover:bg-primary-background-hovered px-8 py-2 rounded-xl cursor-pointer`}>
+                      <PresentationChartBarIcon className="size-4" />
+                      <div>View Results</div>
                   </button>
               )
               : (
-                  <button disabled={true} className={`w-2/3 max-w-75 bg-survey-primary-background text-survey-primary-onbackground font-bold hover:bg-survey-primary-background-hovered disabled:bg-secondary-background disabled:text-secondary-onbackground px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
-                      View Results <br />
-                      <span className="text-[0.75rem]">
+                  <button disabled={true} className={`w-2/3 max-w-75 bg-primary-background text-primary-onbackground font-bold hover:bg-primary-background-hovered disabled:bg-secondary-background disabled:text-secondary-onbackground px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
+                      <div className="flex justify-center items-center gap-1">
+                          <PresentationChartBarIcon className="size-4" />
+                          <div>View Results</div>
+                      </div>
+                      <div className="text-[0.75rem]">
                           {ctx.survey.resultVisibility === ResultVisibility.Responders ? '(Responders only) ': '(Mods Only)'}
-                      </span>
+                      </div>
                   </button>
               )
           }
           {responses > 0 && (
               <div className="mt-8 w-full flex justify-center">
-                  <button onClick={onDelete} className="w-2/3 max-w-75 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
-                      Delete Responses
+                  <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
+                      <TrashIcon className="size-4" /> Delete Responses
                   </button>
               </div>
           )}
