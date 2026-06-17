@@ -48,8 +48,8 @@ export const SurveyResponseView = () => {
                         <div className="text-xs">
                             <button className="cursor-pointer hover:underline">Clear Selection</button>
                         </div>
-                        <div className="flex justify-between flex-wrap gap-2">
-                            <div className="flex items-center gap-2">
+                        <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
+                            <div className="flex items-center gap-2 order-2 xs:order-1">
                                 <button className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
                                     <ArrowLeftIcon className="size-5" />
                                     <span>Previous</span>
@@ -59,13 +59,13 @@ export const SurveyResponseView = () => {
                                     <span>Results</span>
                                 </button>
                             </div>
-                            <div className="flex-1 flex flex-col gap-1 justify-center items-center text-sm">
+                            <div className="flex-1 order-1 xs:order-2 basis-full xs:basis-0 flex flex-col gap-1 justify-center items-center text-sm">
                                 <div>Question 1 of 3</div>
                                 <div className="relative w-full max-w-50 h-1.5 rounded-full bg-neutral-border-weak">
                                     <div className="absolute inset-0 w-[33%] h-full rounded-full bg-survey-button-primary-background"></div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 order-3">
                                 <button className={`flex gap-1 items-center p-2 text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal rounded-xl cursor-pointer`}>
                                     <span>Next</span>
                                     <ArrowRightIcon className="size-5" />
