@@ -34,7 +34,7 @@ export const OutroPanel = () => {
     return (
       <div className="p-2 flex flex-col gap-4 justify-center items-center h-full">
           <div className={`${outroText.length > 180 ? 'text-base line-clamp-8' : 'text-xl'} text-center`}>{outroText && outroText.length > 0 ? renderMarkdown(outroText) : 'Thank you for your response.'}</div>
-          <button onClick={restartSurvey} className={`w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold text-survey-primary-onbackground bg-survey-primary-background hover:bg-survey-primary-background-hovered p-2 rounded-xl cursor-pointer`}>
+          <button onClick={restartSurvey} className={`w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered p-2 rounded-xl cursor-pointer`}>
               <PencilSquareIcon className="size-4" />
               <div>Change Responses</div>
           </button>
@@ -58,7 +58,7 @@ export const OutroPanel = () => {
               )
           }
           <div className="w-full flex justify-center">
-              <button onClick={onDelete}  className="w-2/3 max-w-75 flex justify-center items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
+              <button onClick={onDelete}  className="w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
                   <TrashIcon className="size-4" /> Delete Responses
               </button>
           </div>

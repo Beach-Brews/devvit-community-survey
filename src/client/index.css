@@ -30,20 +30,31 @@
     --animate-bar3: bar3 1s ease-in-out infinite;
 
     --color-survey-primary-background: var(--survey-primary-background);
-    --color-survey-primary-background-hovered: var(--survey-primary-background-hovered);
-    --color-survey-primary-onbackground: var(--survey-primary-onbackground);
+    --color-survey-button-primary-background: var(--survey-button-primary-background);
+    --color-survey-button-primary-background-hovered: var(--survey-button-primary-background-hovered);
+    --color-survey-button-primary-onbackground: var(--survey-button-primary-onbackground);
 
     /* == Reddit color definitions == */
     --color-reddit-orangered: var(--reddit-orangered);
+    --color-reddit-orangered-secondary: var(--reddit-orangered-secondary);
     --color-reddit-orangered-light: var(--reddit-orangered-light);
+    --color-reddit-orangered-dark: var(--reddit-orangered-dark);
     --color-reddit-guavapink: var(--reddit-guavapink);
+    --color-reddit-guavapink-secondary: var(--reddit-guavapink-secondary);
     --color-reddit-guavapink-light: var(--reddit-guavapink-light);
+    --color-reddit-guavapink-dark: var(--reddit-guavapink-dark);
     --color-reddit-bananayellow: var(--reddit-bananayellow);
+    --color-reddit-bananayellow-secondary: var(--reddit-bananayellow-secondary);
     --color-reddit-bananayellow-light: var(--reddit-bananayellow-light);
+    --color-reddit-bananayellow-dark: var(--reddit-bananayellow-dark);
     --color-reddit-lime: var(--reddit-lime);
+    --color-reddit-lime-secondary: var(--reddit-lime-secondary);
     --color-reddit-lime-light: var(--reddit-lime-light);
+    --color-reddit-lime-dark: var(--reddit-lime-dark);
     --color-reddit-juniperblue: var(--reddit-juniperblue);
+    --color-reddit-juniperblue-secondary: var(--reddit-juniperblue-secondary);
     --color-reddit-juniperblue-light: var(--reddit-juniperblue-light);
+    --color-reddit-juniperblue-dark: var(--reddit-juniperblue-dark);
     
     --color-coolgray-50: var(--coolgray-50);
     --color-coolgray-100: var(--coolgray-100);
@@ -711,23 +722,37 @@ html {
     --downvote-onstrongscrim-disabled: color-mix(in srgb, var(--periwinkle-400) 30%, transparent);
 
     --reddit-orangered: #ff4500;
-    --reddit-orangered-light: #ff8864;
+    --reddit-orangered-secondary: #ff8864;
+    --reddit-orangered-light: #ffdad7;
     --reddit-guavapink: #ff5fc2;
-    --reddit-guavapink-light: #ff9fdf;
+    --reddit-guavapink-secondary: #ff9fdf;
+    --reddit-guavapink-light: #ffe6f9;
     --reddit-bananayellow: #ffbf0b;
-    --reddit-bananayellow-light: #ffde55;
+    --reddit-bananayellow-secondary: #ffde55;
+    --reddit-bananayellow-light: #fff3c0;
     --reddit-lime: #aeef0f;
-    --reddit-lime-light: #e4ff45;
+    --reddit-lime-secondary: #e4ff45;
+    --reddit-lime-light: #f0ffb3;
     --reddit-juniperblue: #00e2b7;
-    --reddit-juniperblue-light: #92ffea;
+    --reddit-juniperblue-secondary: #92ffea;
+    --reddit-juniperblue-light: #e6fffa;
+    
+    --reddit-orangered-dark: #3a1207;
+    --reddit-guavapink-dark: #351126;
+    --reddit-bananayellow-dark: #332608;
+    --reddit-lime-dark: #223006;
+    --reddit-juniperblue-dark: #06332b;
 
-    --survey-primary-background: var(--reddit-lime);
-    --survey-primary-background-hovered: var(--reddit-lime-light);
-    --survey-primary-onbackground: var(--global-black);
+    --survey-primary-background: var(--reddit-lime-light);
+    --survey-button-primary-background: var(--reddit-lime);
+    --survey-button-primary-background-hovered: var(--reddit-lime-secondary);
+    --survey-button-primary-onbackground: var(--global-black);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
+        --survey-primary-background: var(--reddit-lime-dark);
+
         --global-stars: var(--yellow-400);
 
         --neutral-content-strong: var(--puregray-100);

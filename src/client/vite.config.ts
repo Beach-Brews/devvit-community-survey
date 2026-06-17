@@ -12,10 +12,12 @@ export default defineConfig({
         sourcemap: true,
         rolldownOptions: {
             input: {
+                hub: resolve(__dirname, 'hub.html'),
                 dashboard: resolve(__dirname, 'dashboard.html'),
+                post: resolve(__dirname, 'post.html'),
                 survey: resolve(__dirname, 'survey.html'),
-                dashDev: resolve(__dirname, 'dash-dev.html'),
-                surveyCont: resolve(__dirname, 'survey-container.html')
+                hubDev: resolve(__dirname, 'hub-dev.html'),
+                postDev: resolve(__dirname, 'post-dev.html')
             },
             output: {
                 entryFileNames: '[name].js',

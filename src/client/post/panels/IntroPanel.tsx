@@ -118,7 +118,7 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         : 'No close date'}
                 </div>
             </div>
-            <div className="w-full p-2 flex flex-col gap-2 justify-center items-center grow h-[0%]">
+            <div className="w-full p-2 pt-0 flex flex-col gap-2 justify-evenly items-center grow h-[0%]">
                 <div className="flex flex-col gap-2 items-center">
                     <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong">{ctx.survey.title}</div>
                     {ctx.survey.intro && (
@@ -131,8 +131,8 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         disabled={disableResponses}
                         onClick={!disableResponses ? onStartSurvey : undefined}
                         className={`w-2/3 max-w-75 flex justify-center items-center gap-1
-                        font-bold text-survey-primary-onbackground
-                        bg-survey-primary-background hover:bg-survey-primary-background-hovered
+                        font-bold text-survey-button-primary-onbackground
+                        bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered
                         disabled:bg-secondary-background disabled:text-secondary-onbackground
                         p-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}
                         `}
@@ -151,17 +151,20 @@ export const IntroPanel = (props: IntroPanelProps) => {
                             }
                         </div>
                     </button>
-                    {blockedReason?.[1] !== undefined
-                        ? (<div className="text-center">{blockedReason[1]}</div>)
-                        : (<div className="text-center text-sm text-neutral-content-weak">{ctx.survey.questions.length} total questions</div>)}
-                </div>
-                {responses > 0 && (
-                    <div className="w-full flex justify-center">
-                        <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
-                            <TrashIcon className="size-4" /> Delete Responses
-                        </button>
+                    <div className="text-center text-sm text-neutral-content-weak">
+                        {blockedReason?.[1] !== undefined
+                            ? blockedReason[1]
+                            : `${ctx.survey.questions.length} total questions`
+                        }
                     </div>
-                )}
+                    {responses > 0 && (
+                        <div className="mt-4 w-full flex justify-center">
+                            <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
+                                <TrashIcon className="size-4" /> Delete Responses
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

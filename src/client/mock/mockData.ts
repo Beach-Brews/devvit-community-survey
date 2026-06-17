@@ -105,7 +105,7 @@ export const SampleSurveyList = [
             minSubKarma:  { type: 'Both', value: 1000 },
             userFlairs: [ { type: 'TxtEq', value: 'World' } ]
         },
-        resultVisibility: 'Resp',
+        resultVisibility: 'Always',
         questions: SampleQuestionList
     },
     {

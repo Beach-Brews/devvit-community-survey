@@ -19,7 +19,7 @@ export const DeletePanel = () => {
     if (!ctx) throw Error('Context undefined.');
 
     const returnToSurvey = () => {
-        ctx.setPanelContext({ ...ctx.panelContext, panel: PanelType.Intro });
+        ctx.setPanelContext(c => ({ ...c, panel: c.prev === PanelType.Outro ? PanelType.Outro : PanelType.Intro }));
     };
 
     const onDelete = async () => {
@@ -44,7 +44,7 @@ export const DeletePanel = () => {
                   <XMarkIcon className="size-4" />
                   <span>Cancel</span>
               </button>
-              <button onClick={onDelete} className="w-1/3 flex justify-center items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
+              <button onClick={onDelete} className="w-1/3 flex justify-center items-center gap-1 font-bold bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
                   <TrashIcon className="size-4" /><span>DELETE</span>
               </button>
           </div>

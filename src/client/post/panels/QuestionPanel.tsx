@@ -123,20 +123,20 @@ export const QuestionPanel = () => {
                 <div className="flex justify-between items-center w-full">
                     <div className="flex justify-center w-1/5">
                         {qNo > 0 && (
-                            <button onClick={onPrevious} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                            <button onClick={onPrevious} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
                                 <ArrowUturnLeftIcon className="size-5" />
                                 <span className="hidden md:block">Previous</span>
                             </button>
                         )}
                     </div>
                     <div className="flex justify-center items-center w-3/5">
-                        <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className={`w-full max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${!validResponse ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
+                        <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className={`w-full max-w-75 font-bold text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal p-2 rounded-xl ${!validResponse ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
                             {isLast ? 'Finish Survey' : 'Next Question'}
                         </button>
                     </div>
                     <div className="flex justify-center w-1/5">
                         {ctx.canViewResults && (
-                            <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+                            <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
                                 <PresentationChartBarIcon className="size-5" />
                                 <span className="hidden md:block">Results</span>
                             </div>

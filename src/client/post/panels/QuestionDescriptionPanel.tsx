@@ -29,10 +29,10 @@ export const QuestionDescriptionPanel = () => {
     };
 
     return (
-      <div className="flex flex-col gap-4 justify-start items-center h-full">
+      <div className="p-2 flex flex-col gap-4 justify-start items-center h-full">
           <div>{question?.description && renderMarkdown(question.description)}</div>
           <div>
-              <button onClick={returnToSurvey} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
+              <button onClick={returnToSurvey} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
                   <ArrowUturnLeftIcon className="size-5" />
                   <span>Close</span>
               </button>

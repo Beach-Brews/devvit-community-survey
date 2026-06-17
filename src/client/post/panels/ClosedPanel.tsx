@@ -56,7 +56,7 @@ export const ClosedPanel = () => {
           }
           {responses > 0 && (
               <div className="mt-8 w-full flex justify-center">
-                  <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered px-8 py-2 rounded-xl cursor-pointer">
+                  <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
                       <TrashIcon className="size-4" /> Delete Responses
                   </button>
               </div>
