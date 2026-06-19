@@ -11,10 +11,24 @@
     <link rel="stylesheet" href="index.css" />
 </head>
 <body class="h-full text-neutral-content bg-[#0c1316] p-4 flex flex-col gap-10 items-center justify-center">
+<div id="expanded-view" class="fixed inset-0 z-10 flex flex-col" style="display: none">
+    <div class="flex shrink-0 justify-between border-b bg-black p-2">
+        <span class="text-xl font-bold">Post Title</span>
+        <button id="close-expand" class="cursor-pointer">Close</button>
+    </div>
+
+    <div class="flex min-h-0 flex-1">
+        <div id="expanded-area" class="flex h-full w-full">
+        </div>
+    </div>
+</div>
 <div class="w-full relative overflow-hidden pointer-cursor isolate mt-xs xs:rounded-4 flex items-center justify-center">
     <div id="post-container" style="width: 340px; max-width: 340px; height: 512px; min-height: 512px; max-height: 512px; overflow: hidden" class=" box-border overflow-hidden relative shrink-0 flex flex-col p-0 items-stretch border-0 rounded-dx-sm pointer-events-none [&>:not(.pointer-events-none)]:pointer-events-auto ">
-        <div style="width: 100%; height: 100%;" class="flex box-border relative shrink-0 ">
-            <iframe class="border border-neutral-border-weak rounded-2xl" style="flex-grow: 1; max-width: 100%; max-height: 100%" src="post.html"></iframe>
+        <div id="post-area" class="w-full h-full flex box-border relative">
+            <iframe id="post-frame"
+                    class="border border-neutral-border-weak rounded-2xl flex-1 w-full min-h-0"
+                    src="post.html"
+            ></iframe>
         </div>
     </div>
 </div>
@@ -35,6 +49,62 @@
         post.style.width = `${val}px`;
         post.style.maxWidth = `${val}px`;
         ctl.value = val;
+    });
+
+
+    const postFrame = document.getElementById('post-frame');
+
+    document.getElementById('close-expand').addEventListener('click', () => {
+        const post = document.getElementById('post-container');
+        const expandedView = document.getElementById('expanded-view');
+        const postArea = document.getElementById('post-area');
+
+        expandedView.style.display = 'none';
+        post.style.display = 'block';
+        postArea.moveBefore(postFrame, null);
+        postFrame.focus();
+
+        postFrame.contentWindow.devvit = {
+            webViewMode: 1,
+            entrypoints: {
+                'default': 'http:/localhost:7474/post.html'
+            }
+        };
+    });
+
+    postFrame.addEventListener('load', () => {
+        postFrame.contentWindow.devvit = {
+            webViewMode: 1,
+            entrypoints: {
+                'default': 'http:/localhost:7474/post.html'
+            }
+        };
+        window.addEventListener('message', (data) => {
+            if (!data?.data?.immersiveMode) return;
+
+            const post = document.getElementById('post-container');
+            const expandedView = document.getElementById('expanded-view');
+            const postArea = document.getElementById('post-area');
+            const expandedArea = document.getElementById('expanded-area');
+
+            if (data.data.immersiveMode.immersiveMode === 2) {
+                expandedView.style.display = 'flex';
+                post.style.display = 'none';
+                expandedArea.moveBefore(postFrame, null);
+            } else {
+                expandedView.style.display = 'none';
+                post.style.display = 'block';
+                postArea.moveBefore(postFrame, null);
+            }
+
+            postFrame.contentWindow.devvit = {
+                webViewMode: data.data.immersiveMode.immersiveMode,
+                entrypoints: {
+                    'default': 'http:/localhost:7474/post.html'
+                }
+            };
+            postFrame.focus();
+        })
     });
 </script>
 </body>

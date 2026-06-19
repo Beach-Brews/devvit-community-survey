@@ -6,7 +6,7 @@
 * License: BSD-3-Clause
 */
 
-import { useContext } from 'react';
+import { MouseEvent, useCallback, useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { formatRelativeDateTime } from '../../shared/dateFormat';
 import {
@@ -18,6 +18,7 @@ import {
 import { ResponseBlockedReason } from '../../../shared/types/postApi';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
+import { requestExpandedMode } from '@devvit/web/client';
 
 export interface IntroPanelProps {
     isAnonymous: boolean,
@@ -32,16 +33,20 @@ export const IntroPanel = (props: IntroPanelProps) => {
 
     // Handler for starting survey
     const responses = ctx.lastResponse ? Object.keys(ctx.lastResponse).length : 0;
-    const onStartSurvey = () => {
+    const onStartSurvey = useCallback((e: MouseEvent) => {
+        requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
+        ctx.setExpandedMode(true);
         const startIndex = responses > 0 && responses < ctx.survey.questions.length
             ? responses
             : 0;
         ctx.setPanelContext({ panel: PanelType.Question, number: startIndex });
-    };
+    }, [ctx, responses]);
 
-    const showResults = () => {
+    const showResults = useCallback((e: MouseEvent) => {
+        requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
+        ctx.setExpandedMode(true);
         ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true });
-    };
+    }, [ctx]);
 
     const onDelete = () => {
         ctx.setPanelContext({ panel: PanelType.Delete, prev: PanelType.Intro });

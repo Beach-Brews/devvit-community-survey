@@ -15,7 +15,6 @@ export default defineConfig({
                 hub: resolve(__dirname, 'hub.html'),
                 dashboard: resolve(__dirname, 'dashboard.html'),
                 post: resolve(__dirname, 'post.html'),
-                survey: resolve(__dirname, 'survey.html'),
                 hubDev: resolve(__dirname, 'hub-dev.html'),
                 postDev: resolve(__dirname, 'post-dev.html')
             },

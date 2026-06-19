@@ -28,10 +28,7 @@
       },
       "editor": {
         "entry": "dashboard.html"
-      },
-      "survey": {
-        "entry": "survey.html"
-      },
+      }
     }
   },
   "server": {
