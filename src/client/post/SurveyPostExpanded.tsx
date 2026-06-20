@@ -25,6 +25,10 @@ export const SurveyPostExpanded = () => {
     if (!ctx) throw Error('Context undefined.');
     const { subInfo, user, survey, toasts, removeToast, anonymousMode, panelContext, canViewResults } = ctx;
 
+    // Get render date (calculate now closed or not)
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now();
+
     // Prevents default URL from changing on re-rendering
     const [defaultSnoo] = useState<string>(() => `https://www.redditstatic.com/avatars/defaults/v2/avatar_default_${Math.floor(Math.random() * 8)}.png`);
 
@@ -36,7 +40,6 @@ export const SurveyPostExpanded = () => {
             return (<HelpPanel />);
 
         // If the survey is now closed
-        const now = Date.now();
         if (survey.closeDate && survey.closeDate <= now)
             return panelContext.panel === PanelType.Result && canViewResults
                 ? (<ResultPanel />)
@@ -74,12 +77,12 @@ export const SurveyPostExpanded = () => {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="h-12 shrink-0 bg-neutral-background-weak">
-                <div className="max-w-175 h-full mx-auto flex justify-between items-center px-2 gap-4 text-sm">
+            <div className="h-10 shrink-0 bg-devvit-expanded-header border-b border-b-neutral-border dark:border-none">
+                <div className="max-w-175 h-full mx-auto flex justify-between items-center px-2 gap-4 text-xs">
                     <div className="flex items-center gap-1">
                         {subInfo && (
                             <>
-                                <div  className="w-8 h-8 shrink-0 object-contain overflow-hidden rounded-full">
+                                <div  className="w-5 h-5 shrink-0 object-contain overflow-hidden rounded-full">
                                     {subInfo.icon ? (<img width={32} height={32} alt={subInfo.name} src={subInfo.icon} />) : (<SubDefaultIcon />)}
                                 </div>
                                 r/{subInfo.name}

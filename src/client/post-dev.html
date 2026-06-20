@@ -10,15 +10,15 @@
     <title>Survey Post</title>
     <link rel="stylesheet" href="index.css" />
 </head>
-<body class="h-full text-neutral-content bg-[#0c1316] p-4 flex flex-col gap-10 items-center justify-center">
-<div id="expanded-view" class="fixed inset-0 z-10 flex flex-col" style="display: none">
-    <div class="flex shrink-0 justify-between border-b bg-black p-2">
+<body class="h-full text-neutral-content bg-devvit-expanded-header p-4 flex flex-col gap-10 items-center justify-center">
+<div id="expanded-view" class="fixed inset-0 z-10 flex flex-col w-full h-full" style="display: none">
+    <div class="flex shrink-0 justify-between bg-devvit-expanded-header p-2 text-neutral-content-strong">
         <span class="text-xl font-bold">Post Title</span>
         <button id="close-expand" class="cursor-pointer">Close</button>
     </div>
 
     <div class="flex min-h-0 flex-1">
-        <div id="expanded-area" class="flex h-full w-full">
+        <div id="expanded-area" class="flex h-full w-full bg-neutral-background">
         </div>
     </div>
 </div>
@@ -37,6 +37,7 @@
     <input id="width-control" type="number" value="340" class="px-4 py-0.5 border border-rl-border-weak dark:border-rd-border-weak rounded-sm" />
     <div>340-700</div>
 </div>
+<div id="error-view"></div>
 <script>
     const ctl = document.getElementById('width-control');
     ctl.addEventListener('change', () => {
@@ -51,35 +52,41 @@
         ctl.value = val;
     });
 
-
     const postFrame = document.getElementById('post-frame');
 
     document.getElementById('close-expand').addEventListener('click', () => {
         const post = document.getElementById('post-container');
         const expandedView = document.getElementById('expanded-view');
         const postArea = document.getElementById('post-area');
+        const expandedArea = document.getElementById('expanded-area');
 
         expandedView.style.display = 'none';
         post.style.display = 'block';
-        postArea.moveBefore(postFrame, null);
-        postFrame.focus();
+        if (postArea.moveBefore) {
+            postFrame.style.borderStyle = 'solid';
+            postArea.moveBefore(postFrame, null);
+        } else {
+            postFrame.contentWindow.location.reload();
+            expandedArea.innerHTML = '';
+        }
 
         postFrame.contentWindow.devvit = {
             webViewMode: 1,
             entrypoints: {
-                'default': 'http:/localhost:7474/post.html'
+                'default': window.location.origin + '/post.html'
             }
         };
     });
 
     postFrame.addEventListener('load', () => {
         postFrame.contentWindow.devvit = {
-            webViewMode: 1,
+            webViewMode: postFrame.contentWindow.location.search === '' ? 1 : 2,
             entrypoints: {
-                'default': 'http:/localhost:7474/post.html'
+                'default': window.location.origin + '/post.html'
             }
         };
         window.addEventListener('message', (data) => {
+            console.log(data);
             if (!data?.data?.immersiveMode) return;
 
             const post = document.getElementById('post-container');
@@ -90,21 +97,39 @@
             if (data.data.immersiveMode.immersiveMode === 2) {
                 expandedView.style.display = 'flex';
                 post.style.display = 'none';
-                expandedArea.moveBefore(postFrame, null);
+                if (expandedArea.moveBefore) {
+                    postFrame.style.borderStyle = 'none';
+                    postFrame.style.borderRadius = 'none';
+                    expandedArea.moveBefore(postFrame, null);
+                } else {
+                    const newFrame = postFrame.cloneNode();
+                    newFrame.src = data.data.immersiveMode.entryUrl + "&e=2";
+                    expandedArea.insertBefore(newFrame, null);
+                }
             } else {
                 expandedView.style.display = 'none';
                 post.style.display = 'block';
-                postArea.moveBefore(postFrame, null);
+                if (postArea.moveBefore) {
+                    postFrame.style.borderStyle = 'solid';
+                    postArea.moveBefore(postFrame, null);
+                } else {
+                    postFrame.contentWindow.location.reload();
+                    expandedArea.innerHTML = '';
+                }
             }
 
             postFrame.contentWindow.devvit = {
                 webViewMode: data.data.immersiveMode.immersiveMode,
                 entrypoints: {
-                    'default': 'http:/localhost:7474/post.html'
+                    'default': window.location.origin + '/post.html'
                 }
             };
             postFrame.focus();
         })
+    });
+
+    window.addEventListener('error', (event) => {
+        document.getElementById('error-view').innerHTML = event.message.toString();
     });
 </script>
 </body>

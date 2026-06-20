@@ -30,6 +30,8 @@
     --animate-bar3: bar3 1s ease-in-out infinite;
 
     --color-survey-primary-background: var(--survey-primary-background);
+    --color-survey-primary-border: var(--survey-primary-border);
+    --color-survey-primary-border-hovered: var(--survey-primary-border-hovered);
     --color-survey-button-primary-background: var(--survey-button-primary-background);
     --color-survey-button-primary-background-hovered: var(--survey-button-primary-background-hovered);
     --color-survey-button-primary-onbackground: var(--survey-button-primary-onbackground);
@@ -55,6 +57,8 @@
     --color-reddit-juniperblue-secondary: var(--reddit-juniperblue-secondary);
     --color-reddit-juniperblue-light: var(--reddit-juniperblue-light);
     --color-reddit-juniperblue-dark: var(--reddit-juniperblue-dark);
+
+    --color-devvit-expanded-header: var(--devvit-expanded-header);
     
     --color-coolgray-50: var(--coolgray-50);
     --color-coolgray-100: var(--coolgray-100);
@@ -736,6 +740,7 @@ html {
     --reddit-juniperblue: #00e2b7;
     --reddit-juniperblue-secondary: #92ffea;
     --reddit-juniperblue-light: #e6fffa;
+    --devvit-expanded-header: #ffffff;
     
     --reddit-orangered-dark: #3a1207;
     --reddit-guavapink-dark: #351126;
@@ -744,6 +749,8 @@ html {
     --reddit-juniperblue-dark: #06332b;
 
     --survey-primary-background: var(--reddit-lime-light);
+    --survey-primary-border: var(--reddit-lime);
+    --survey-primary-border-hovered: var(--reddit-lime-dark);
     --survey-button-primary-background: var(--reddit-lime);
     --survey-button-primary-background-hovered: var(--reddit-lime-secondary);
     --survey-button-primary-onbackground: var(--global-black);
@@ -751,6 +758,7 @@ html {
 
 @media (prefers-color-scheme: dark) {
     :root {
+        --survey-primary-border-hovered: var(--reddit-lime-secondary);
         --survey-primary-background: var(--reddit-lime-dark);
 
         --global-stars: var(--yellow-400);
@@ -824,5 +832,7 @@ html {
         --downvote-plain-disabled: color-mix(in srgb, var(--periwinkle-400) 30%, transparent);
         --downvote-background-disabled: color-mix(in srgb, var(--periwinkle-500) 30%, transparent);
         --downvote-onstrongscrim-disabled: color-mix(in srgb, var(--periwinkle-400) 30%, transparent);
+
+        --devvit-expanded-header: #0b1416;
     }
 }

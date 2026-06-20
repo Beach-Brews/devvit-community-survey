@@ -27,19 +27,34 @@ export const ScaleQuestion = (props: QuestionProps) => {
     // Create the items, based on the min-max
     const items = [];
     for (let i = question.min; i <= question.max; ++i) {
-        items.push(<li key={`so_${i}`} onClick={() => onSelect(i)} className="text-center cursor-pointer"><BulletIcon fill={selectedValue === i} />{i}</li>);
+        items.push(<li
+            key={`so_${i}`}
+            onClick={() => onSelect(i)}
+            className="text-center cursor-pointer group"
+        >
+            <div
+                className={`size-6 flex items-center 
+                ${selectedValue === i ? 'text-survey-primary-border' : 'group-hover:text-survey-primary-border-hovered'}
+                `}
+            >
+                <BulletIcon fill={selectedValue === i} />
+            </div>
+            {i}
+        </li>);
     }
 
     return (
-        <div className="flex flex-col gap-4 w-full max-w-[500px]">
-            <div className="text-sm md:text-base flex justify-between gap-4 w-full">
-                <div className="w-1/3">{question.minLabel}</div>
-                <div className="w-1/3 text-center">{question.midLabel}</div>
-                <div className="w-1/3 text-right">{question.maxLabel}</div>
+        <div className="flex justify-center">
+            <div className="flex flex-col gap-4 w-full max-w-125">
+                <div className="text-sm md:text-base flex justify-between gap-4 w-full">
+                    <div className="w-1/3">{question.minLabel}</div>
+                    <div className="w-1/3 text-center">{question.midLabel}</div>
+                    <div className="w-1/3 text-right">{question.maxLabel}</div>
+                </div>
+                <ul className="flex justify-between items-center gap-4 w-full">
+                    {items}
+                </ul>
             </div>
-            <ul className="flex justify-between items-center gap-4 w-full">
-                {items}
-            </ul>
         </div>
     );
 };

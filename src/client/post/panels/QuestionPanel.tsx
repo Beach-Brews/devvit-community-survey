@@ -11,8 +11,7 @@ import { ErrorPanel } from './ErrorPanel';
 import { MultiOrCheckboxQuestion } from './questions/MultiOrCheckboxQuestion';
 import { RankQuestion } from './questions/RankQuestion';
 import { ScaleQuestion } from './questions/ScaleQuestion';
-import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowRightIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { upsertResponse } from '../api/surveyApi';
 import { ToastType } from '../../shared/toast/toastTypes';
 import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
@@ -44,15 +43,6 @@ export const QuestionPanel = () => {
 
     // Helper to determine if response is valid
     const validResponse = !question.required || (!!response && response.length > 0);
-
-    // Show description panel if need be
-    const showDescriptionText = question.description.length < 200 && (
-        (question.type != 'multi' && question.type != 'checkbox' && question.type != 'rank') ||
-        (question.options.length < 7)
-    );
-    const showFullDescription = () => {
-        ctx.setPanelContext({ panel: PanelType.QuestionDescription, number: qNo, prev: PanelType.Question });
-    };
 
     // Move to next panel if not saving and response is valid
     const onNext = async () => {
@@ -107,43 +97,40 @@ export const QuestionPanel = () => {
     };
 
     return (
-        <div className="p-2 flex flex-col h-full">
-            <div className="grow h-[0%] flex flex-col gap-2">
-                <div className="text-base md:text-lg font-bold relative leading-none">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
-                {question.description && (
-                    <div className={`text-sm md:text-base ${showDescriptionText ? 'line-clamp-4' : 'underline cursor-pointer'}`} onClick={showDescriptionText ? undefined : showFullDescription}>
-                        {showDescriptionText ? renderMarkdown(question.description) : 'Show question prompt'}
-                    </div>
-                )}
-                <div className={`flex ${question.type === 'scale' ? ' justify-center' : 'justify-start'} items-center w-full`}>
-                    {renderQuestionInput()}
-                </div>
+        <div className="h-full flex flex-col gap-4">
+            <div className="text-xl font-bold text-neutral-content-strong">
+                {question.title}
+                {!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-content-weak">(optional)</span>) : ''}
             </div>
-            <div className="mt-2 w-full flex flex-col gap-2 justify-center items-center">
-                <div className="flex justify-between items-center w-full">
-                    <div className="flex justify-center w-1/5">
-                        {qNo > 0 && (
-                            <button onClick={onPrevious} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
-                                <ArrowUturnLeftIcon className="size-5" />
-                                <span className="hidden md:block">Previous</span>
-                            </button>
-                        )}
-                    </div>
-                    <div className="flex justify-center items-center w-3/5">
-                        <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className={`w-full max-w-75 font-bold text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal p-2 rounded-xl ${!validResponse ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
-                            {isLast ? 'Finish Survey' : 'Next Question'}
+            <div>{renderMarkdown(question.description)}</div>
+            <div className="flex flex-col gap-2 w-full">
+                {renderQuestionInput()}
+            </div>
+            <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
+                <div className="flex items-center gap-2 order-2 xs:order-1">
+                    <button onClick={onPrevious} disabled={qNo <= 0} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
+                        <ArrowLeftIcon className="size-5" />
+                        <span>Previous</span>
+                    </button>
+                    {ctx.canViewResults && (
+                        <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
+                            <PresentationChartBarIcon className="size-5" />
+                            <span>Results</span>
                         </button>
-                    </div>
-                    <div className="flex justify-center w-1/5">
-                        {ctx.canViewResults && (
-                            <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
-                                <PresentationChartBarIcon className="size-5" />
-                                <span className="hidden md:block">Results</span>
-                            </div>
-                        )}
+                    )}
+                </div>
+                <div className="flex-1 order-1 xs:order-2 basis-full xs:basis-0 flex flex-col gap-1 justify-center items-center text-sm">
+                    <div>Question {qNo+1} of {totalQs}</div>
+                    <div className="relative w-full max-w-50 h-1.5 rounded-full bg-neutral-border-weak">
+                        <div className="absolute inset-0 h-full rounded-full bg-survey-button-primary-background" style={{width: Math.floor(qNo/totalQs*100) + '%'}}></div>
                     </div>
                 </div>
-                <div className="text-neutral-700 dark:text-neutral-300">Question {qNo+1} of {totalQs}</div>
+                <div className="flex items-center gap-2 order-3">
+                    <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className="flex gap-1 items-center p-2 text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal rounded-xl cursor-pointer">
+                        {isLast ? 'Finish' : 'Next'}
+                        <ArrowRightIcon className="size-5" />
+                    </button>
+                </div>
             </div>
         </div>
     );

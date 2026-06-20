@@ -34,17 +34,21 @@ export const IntroPanel = (props: IntroPanelProps) => {
     // Handler for starting survey
     const responses = ctx.lastResponse ? Object.keys(ctx.lastResponse).length : 0;
     const onStartSurvey = useCallback((e: MouseEvent) => {
-        requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
-        ctx.setExpandedMode(true);
         const startIndex = responses > 0 && responses < ctx.survey.questions.length
             ? responses
             : 0;
+        if (!ctx.expandedMode) {
+            requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
+            ctx.setExpandedMode(true);
+        }
         ctx.setPanelContext({ panel: PanelType.Question, number: startIndex });
     }, [ctx, responses]);
 
     const showResults = useCallback((e: MouseEvent) => {
-        requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
-        ctx.setExpandedMode(true);
+        if (!ctx.expandedMode) {
+            requestExpandedMode(e.nativeEvent as PointerEvent, 'default');
+            ctx.setExpandedMode(true);
+        }
         ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true });
     }, [ctx]);
 

@@ -7,7 +7,6 @@
 
 import { QuestionProps } from './QuestionProps';
 import { BulletIcon, CheckboxIcon } from '../../../shared/components/CustomIcons';
-import { useState } from 'react';
 
 export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     // Check that the option type is valid
@@ -22,9 +21,6 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     const chosenValues: boolean[] = response
         ? options.map(o => response.findIndex(v => v === o.value) >= 0)
         : new Array(optionCount).fill(false);
-
-    // Save the last selected value (for mobile line-clamp)
-    const [lastOpt, setLastOpt] = useState<number | undefined>(undefined);
 
     // Handle saving response to Redis
     const setChosenValues = (s: boolean[]) => {
@@ -50,7 +46,6 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                 break;
             }
         }
-        setLastOpt(idx);
     };
 
     // Choose icon based on type
@@ -61,16 +56,25 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
             : (<CheckboxIcon fill={selected} />);
     };
 
-    // Helper variable for highlighting
-    const lastStyle = `bg-blue-100 dark:bg-blue-950 rounded-md`;
-
     return (
-        <ul className={`flex flex-col text-base ${optionCount > 7 ? 'gap-1' : 'gap-2'}`}>
+        <ul className={`flex flex-col text-base gap-2`}>
             {props.question.options.map((o, i) => {
                 return (
-                    <li key={`sqo_${o.value}`} className={`flex gap-2 items-center cursor-pointer ${chosenValues[i] ? lastStyle : ''}`} onClick={() => void onOptionClick(i)}>
-                        {optionIcon(i)}
-                        <div className={lastOpt === i ? '' : `line-clamp-1`}>{o.label}</div>
+                    <li
+                        key={`sqo_${o.value}`}
+                        className={`p-2 cursor-pointer flex items-center bg-neutral-background-strong group 
+                        ring rounded-lg ${chosenValues[i] ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
+                        `}
+                        onClick={() => void onOptionClick(i)}
+                    >
+                        <div
+                            className={`size-6 flex items-center 
+                            ${chosenValues[i] ? 'text-survey-primary-border' : 'group-hover:text-survey-primary-border-hovered'}
+                            `}
+                        >
+                            {optionIcon(i)}
+                        </div>
+                        <div>{o.label}</div>
                     </li>
                 );
             })}

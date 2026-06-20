@@ -11,6 +11,6 @@ export const getSurveyWebviewMode = () => {
     try {
         return getWebViewMode();
     } catch (_) {
-        return 'inline';
+        return window.location.search === '' ? 'inline' : 'expanded';
     }
 };
