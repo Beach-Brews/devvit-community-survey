@@ -23,11 +23,13 @@ And not a line break.
 
 Finally a test of [***link** text*](https://google.com)
 
+Test Image ![image](https://m.media-amazon.com/images/I/51w3tm2IwLL.jpg)
+
 Need to test exceeding the total lines for the line-clamp. It just needs to be line enough to be cut off.`;
 
 const options =  [1,2,3,4,5,6,7,8,9,10]
     .map(i => ({
-        label: smallCase ? `Option ${i}` : `This is the text for option ${i} which is long to see if we it work`,
+        label: smallCase ? `Option ${i}` : `This is the **text** for __option__ ${i} which is long to see if it work ![test](https://m.media-amazon.com/images/I/51w3tm2IwLL.jpg)`,
         value: genOptionId()
     }));
 
@@ -55,10 +57,10 @@ export const SampleQuestionList = [
         required: true,
         type: 'scale',
         kind: 'otf',
-        minLabel: 'Low end',
+        minLabel: '**Low** end',
         min: 1,
-        midLabel: 'Mid point',
-        maxLabel: 'High end',
+        midLabel: '*Mid* point',
+        maxLabel: '~~High~~ end',
         max: 5
     },
     {

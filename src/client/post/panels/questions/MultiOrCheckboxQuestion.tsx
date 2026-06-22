@@ -7,6 +7,7 @@
 
 import { QuestionProps } from './QuestionProps';
 import { BulletIcon, CheckboxIcon } from '../../../shared/components/CustomIcons';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
 
 export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
     // Check that the option type is valid
@@ -62,7 +63,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                 return (
                     <li
                         key={`sqo_${o.value}`}
-                        className={`p-2 cursor-pointer flex items-center bg-neutral-background-strong group 
+                        className={`p-2 cursor-pointer flex items-center gap-1 bg-neutral-background-strong group 
                         ring rounded-lg ${chosenValues[i] ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
                         `}
                         onClick={() => void onOptionClick(i)}
@@ -74,7 +75,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                         >
                             {optionIcon(i)}
                         </div>
-                        <div>{o.label}</div>
+                        <div>{renderMarkdown(o.label)}</div>
                     </li>
                 );
             })}

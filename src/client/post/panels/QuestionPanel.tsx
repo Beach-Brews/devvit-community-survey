@@ -108,7 +108,7 @@ export const QuestionPanel = () => {
             </div>
             <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
                 <div className="flex items-center gap-2 order-2 xs:order-1">
-                    <button onClick={onPrevious} disabled={qNo <= 0} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
+                    <button onClick={onPrevious} disabled={qNo <= 0} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered disabled:opacity-50 disabled:pointer-events-none">
                         <ArrowLeftIcon className="size-5" />
                         <span>Previous</span>
                     </button>
@@ -122,11 +122,11 @@ export const QuestionPanel = () => {
                 <div className="flex-1 order-1 xs:order-2 basis-full xs:basis-0 flex flex-col gap-1 justify-center items-center text-sm">
                     <div>Question {qNo+1} of {totalQs}</div>
                     <div className="relative w-full max-w-50 h-1.5 rounded-full bg-neutral-border-weak">
-                        <div className="absolute inset-0 h-full rounded-full bg-survey-button-primary-background" style={{width: Math.floor(qNo/totalQs*100) + '%'}}></div>
+                        <div className="absolute inset-0 h-full rounded-full bg-survey-button-primary-background" style={{width: Math.floor((qNo+1)/(totalQs+1)*100) + '%'}}></div>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 order-3">
-                    <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className="flex gap-1 items-center p-2 text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal rounded-xl cursor-pointer">
+                    <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className="flex gap-1 items-center p-2 rounded-xl cursor-pointer font-bold text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal disabled:pointer-events-none">
                         {isLast ? 'Finish' : 'Next'}
                         <ArrowRightIcon className="size-5" />
                     </button>

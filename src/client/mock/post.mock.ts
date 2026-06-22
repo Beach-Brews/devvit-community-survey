@@ -9,6 +9,9 @@ import { defineMock } from 'vite-plugin-mock-dev-server';
 import { SampleQuestionList, SampleSubInfo, SampleSurveyList, SampleUserInfo } from './mockData';
 import { ApiResponse } from '../../shared/types/api';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
+import { QuestionResponseDto, ResponseValuesDto } from '../../shared/redis/ResponseDto';
+
+const mockSurveyIdx = 0;
 
 // noinspection JSUnusedGlobalSymbols
 export default defineMock([
@@ -19,7 +22,7 @@ export default defineMock([
             code: 200,
             message: 'Ok',
             result: {
-                survey: SampleSurveyList[0]!,
+                survey: SampleSurveyList[mockSurveyIdx]!,
                 user: SampleUserInfo,
                 subInfo: SampleSubInfo,
                 lastResponse: { [SampleQuestionList[0]!.id]: [SampleQuestionList[0]!.options![0]!.value] }
@@ -34,5 +37,40 @@ export default defineMock([
             message: 'Ok',
             result: true
         } satisfies ApiResponse<boolean>
+    },
+    {
+        url: '/api/post/survey/results/:questionId',
+        method: 'GET',
+        delay: 2000,
+        body: (req) => {
+            const questionId = req.params.questionId as string;
+            const question = SampleQuestionList.find(q => q.id === questionId);
+            // Randomize results
+            let total = 0;
+            const responses: ResponseValuesDto = question?.options !== undefined
+                ? question.options.reduce((a, o) => {
+                    const val =  Math.floor(Math.random() * 100);
+                    total += val;
+                    a[o.value] = val;
+                    return a;
+                }, {} as ResponseValuesDto)
+                : question?.type === 'scale'
+                    ? Array.from({ length: question.max ?? 5 }, (_, i) => i + 1)
+                        .reduce((a, i) => {
+                            const val =  Math.floor(Math.random() * 100);
+                            total += val;
+                            a[i.toString()] = val;
+                            return a;
+                        }, {} as ResponseValuesDto)
+                    : {};
+            return {
+                message: "Success",
+                code: 200,
+                result: {
+                    responses: responses,
+                    total: total
+                }
+            } satisfies ApiResponse<QuestionResponseDto>;
+        }
     }
 ]);

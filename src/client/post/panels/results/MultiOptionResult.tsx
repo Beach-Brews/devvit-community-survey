@@ -7,6 +7,7 @@
 
 import { PostResultProps } from './PostResultProps';
 import { QuestionOptionDto } from '../../../../shared/redis/SurveyDto';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
 
 export const MultiOptionResult = (props: PostResultProps) => {
     const question = props.question;
@@ -32,7 +33,7 @@ export const MultiOptionResult = (props: PostResultProps) => {
                     const score = props.response.responses[o.value] ?? 0;
                     const percentage = total > 0 ? Math.floor(score/percentTotal*100) : 0;
                     const row = [
-                        (<div key={o.value + '_label'} className="max-w-[150px] text-right">{o.label}</div>)
+                        (<div key={o.value + '_label'} className="max-w-[150px] text-right">{renderMarkdown(o.label)}</div>)
                     ];
                     if (total == 0 && i == 0) {
                         row.push(
@@ -43,7 +44,7 @@ export const MultiOptionResult = (props: PostResultProps) => {
                     }
                     if (total > 0) {
                         row.push(<div key={o.value + '_result'} className="w-full p-2 flex justify-start items-center gap-2 font-bold">
-                            <div style={{ width: `${percentage}%` }} className="min-w-1 h-6 bg-blue-200 dark:bg-blue-800 border border-blue-400 dark:border-blue-600 rounded-md flex justify-end items-center whitespace-nowrap">
+                            <div style={{ width: `${percentage}%` }} className="min-w-1 h-6 bg-survey-primary-border rounded-md flex justify-end items-center whitespace-nowrap">
                                 {percentage >= resultTextThreshold && (
                                     <div className="px-2">
                                         {score.toLocaleString()} ({percentage}%)

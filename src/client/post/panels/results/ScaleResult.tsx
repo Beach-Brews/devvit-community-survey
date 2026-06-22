@@ -47,7 +47,7 @@ export const ScaleResult = (props: PostResultProps) => {
                                     {total > 0 && (
                                         <div className="h-full flex flex-col justify-end items-center gap-2">
                                             <div className="font-bold text-center">{score.toLocaleString()} ({percentage}%)</div>
-                                            <div style={{ height: `${percentage}%` }} className="min-h-1 w-6 bg-blue-200 dark:bg-blue-800 border border-blue-400 dark:border-blue-600 rounded-md flex justify-end items-center"></div>
+                                            <div style={{ height: `${percentage}%` }} className="min-h-1 w-6 bg-survey-primary-border  rounded-md flex justify-end items-center"></div>
                                         </div>
                                     )}
                                     <div>{o}</div>

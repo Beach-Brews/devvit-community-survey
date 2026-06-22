@@ -42,9 +42,12 @@ const TOKENS: MarkdownToken[] = [
     { regex: /(?<!\\)\*((?:[^*]|\*\*)+?)\*(?!\*)/, tag: 'em' },
     { regex: /(?<!\\)__([^_]+.*?)__/, tag: 'u' },
     { regex: /(?<!\\)~~([^~]+.*?)~~/, tag: 's' },
-    { regex: /(?<!\\)\[([^\]]+?)]\(([^)]+?)\)/, cb: (match: TokenMatch, key: string) => {
-            const [_, text, url] = match.groups;
+    { regex: /(?<!\\)(!?)\[([^\]]+?)]\(([^)]+?)\)/, cb: (match: TokenMatch, key: string) => {
+            const [_, media, text, url] = match.groups;
             if (!text || !url) return null;
+            if (media === '!') {
+                return (<img key={key} src={url} alt={text} />);
+            }
             return (<button style={{textDecoration: 'underline', cursor: 'pointer'}} key={key} onClick={() => navigateTo(url)}>{mapText(text)}</button>);
         }
     }
@@ -77,7 +80,7 @@ const findNextToken = (input: string): TokenMatch | null => {
     let best: TokenMatch | null = null;
     for (const t of TOKENS) {
         const match = input.match(t.regex);
-        if (!match || match.index === undefined || !match[1] || (best && (match.index > best.index || (match.index == best.index && match[0].length <= best.length)))) continue;
+        if (!match || match.index === undefined || match[1] === undefined || (best && (match.index > best.index || (match.index == best.index && match[0].length <= best.length)))) continue;
         best = { index: match.index, content: match[1], length: match[0].length, tag: t.tag, groups: [...match], cb: t.cb };
     }
     return best;

@@ -7,6 +7,7 @@
 
 import { QuestionProps } from './QuestionProps';
 import { BulletIcon } from '../../../shared/components/CustomIcons';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
 
 export const ScaleQuestion = (props: QuestionProps) => {
     // Check that the option type is valid
@@ -47,11 +48,11 @@ export const ScaleQuestion = (props: QuestionProps) => {
         <div className="flex justify-center">
             <div className="flex flex-col gap-4 w-full max-w-125">
                 <div className="text-sm md:text-base flex justify-between gap-4 w-full">
-                    <div className="w-1/3">{question.minLabel}</div>
-                    <div className="w-1/3 text-center">{question.midLabel}</div>
-                    <div className="w-1/3 text-right">{question.maxLabel}</div>
+                    <div className="w-1/3">{renderMarkdown(question.minLabel)}</div>
+                    <div className="w-1/3 text-center">{renderMarkdown(question.midLabel)}</div>
+                    <div className="w-1/3 text-right">{renderMarkdown(question.maxLabel)}</div>
                 </div>
-                <ul className="flex justify-between items-center gap-4 w-full">
+                <ul className="flex justify-between items-center w-full">
                     {items}
                 </ul>
             </div>

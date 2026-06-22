@@ -1,4 +1,17 @@
-﻿## Roadmap
+﻿## Current Bugs
+* iOS -> Continue survey loads Intro again
+  * Add local storage for expanded view intent?
+* iOS -> Expanded mode close - Stuck on intro screen
+  * See below as well
+  * May need a local storage value for current position (i.e. start vs continue vs change/outro)
+* Non-iOS -> Expanded mode close - Stuck on previous screen
+  * Discuss with admins. Focus event doesn't seem to trigger. No way for me to "detect" close button was pressed to update my state / refresh.
+* Going to next question does not scroll back to top
+
+* Image syntax in markdown.
+* Rank drag-and-drop (using dnd-kit, lazy loaded)
+
+## Roadmap
 * Develop design system
 * Mock designs
 * Requirements docks
