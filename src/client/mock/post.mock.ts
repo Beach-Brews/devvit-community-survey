@@ -49,7 +49,7 @@ export default defineMock([
             let total = 0;
             const responses: ResponseValuesDto = question?.options !== undefined
                 ? question.options.reduce((a, o) => {
-                    const val =  Math.floor(Math.random() * 100);
+                    const val =  total >= 100 ? Math.floor(Math.random()*2) : 100;
                     total += val;
                     a[o.value] = val;
                     return a;

@@ -108,12 +108,12 @@ export const QuestionPanel = () => {
             </div>
             <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
                 <div className="flex items-center gap-2 order-2 xs:order-1">
-                    <button onClick={onPrevious} disabled={qNo <= 0} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered disabled:opacity-50 disabled:pointer-events-none">
+                    <button onClick={onPrevious} disabled={qNo <= 0} className="svy-btn-secondary">
                         <ArrowLeftIcon className="size-5" />
                         <span>Previous</span>
                     </button>
                     {ctx.canViewResults && (
-                        <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
+                        <button onClick={showResults} className="svy-btn-secondary">
                             <PresentationChartBarIcon className="size-5" />
                             <span>Results</span>
                         </button>
@@ -126,7 +126,7 @@ export const QuestionPanel = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 order-3">
-                    <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className="flex gap-1 items-center p-2 rounded-xl cursor-pointer font-bold text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal disabled:pointer-events-none">
+                    <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className="svy-btn-primary">
                         {isLast ? 'Finish' : 'Next'}
                         <ArrowRightIcon className="size-5" />
                     </button>

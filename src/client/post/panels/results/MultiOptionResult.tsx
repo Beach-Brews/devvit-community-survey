@@ -24,10 +24,9 @@ export const MultiOptionResult = (props: PostResultProps) => {
 
     const total = props.response.total;
     const percentTotal = question.type == 'rank' ? total * sorted.length : total;
-    const resultTextThreshold = 75;
     
     return (
-        <div className="w-full grid grid-cols-[auto_1fr] items-center gap-1">
+        <div className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-2">
             {
                 sorted.map((o, i) => {
                     const score = props.response.responses[o.value] ?? 0;
@@ -37,31 +36,26 @@ export const MultiOptionResult = (props: PostResultProps) => {
                     ];
                     if (total == 0 && i == 0) {
                         row.push(
-                            <div key="no_result" className="text-center" style={{gridColumn: '2', gridRow: `1 / span ${sorted.length}`}}>
+                            <div key="no_result" className="text-center col-span-2" style={{gridColumn: '2', gridRow: `1 / span ${sorted.length}`}}>
                                 No Results
                             </div>
                         );
                     }
                     if (total > 0) {
-                        row.push(<div key={o.value + '_result'} className="w-full p-2 flex justify-start items-center gap-2 font-bold">
-                            <div style={{ width: `${percentage}%` }} className="min-w-1 h-6 bg-survey-primary-border rounded-md flex justify-end items-center whitespace-nowrap">
-                                {percentage >= resultTextThreshold && (
-                                    <div className="px-2">
-                                        {score.toLocaleString()} ({percentage}%)
-                                    </div>
-                                )}
+                        row.push(<div key={o.value + '_result'} className="flex-1 grow h-8 p-2 flex justify-start items-center gap-2 font-bold border border-neutral-border rounded-full">
+                            <div style={{ width: `${percentage}%`, minWidth: score === 0 ? '0' : '2px' }} className="h-4 bg-survey-primary-border rounded-full flex justify-end items-center whitespace-nowrap">
                             </div>
-                            {total > 0 && percentage < resultTextThreshold && (
-                                <div className="whitespace-nowrap">
-                                    {score.toLocaleString()} ({percentage}%)
-                                </div>
-                            )}
                         </div>);
+                        row.push(
+                            <div className="whitespace-nowrap">
+                                {score.toLocaleString()} ({percentage}%)
+                            </div>
+                        );
                     }
                     return row;
                 })
             }
-            <div className="max-w-[150px] text-right mt-4">
+            <div className="text-right mt-4">
                 Total
             </div>
             <div className="mt-4">

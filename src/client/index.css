@@ -7,6 +7,10 @@
 
 @import 'tailwindcss';
 
+html {
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol',sans-serif;
+}
+
 @keyframes bar1 {
     0%, 100% { height: 0.75rem; }
     50% { height: 1.5rem; }
@@ -20,6 +24,33 @@
 @keyframes bar3 {
     0%, 100% { height: 1rem; }
     50% { height: 1.75rem; }
+}
+
+@layer components {
+    .svy-btn {
+        @apply flex justify-center items-center gap-1 p-2 rounded-full cursor-pointer
+        disabled:bg-secondary-background disabled:text-secondary-onbackground disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    .svy-btn-primary {
+        @apply flex justify-center items-center gap-1 p-2 rounded-full cursor-pointer
+        disabled:bg-secondary-background disabled:text-secondary-onbackground disabled:pointer-events-none disabled:opacity-50
+        font-bold disabled:font-normal text-survey-button-primary-onbackground
+        bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered;
+    }
+
+    .svy-btn-secondary {
+        @apply flex justify-center items-center gap-1 p-2 rounded-full cursor-pointer
+        disabled:pointer-events-none disabled:opacity-50
+        text-secondary-onbackground bg-secondary-background hover:bg-secondary-background-hovered;
+    }
+
+    .svy-btn-danger {
+        @apply flex justify-center items-center gap-1 p-2 rounded-full cursor-pointer
+        disabled:bg-secondary-background disabled:text-secondary-onbackground disabled:pointer-events-none disabled:opacity-50
+        font-bold text-danger-onbackground
+        bg-danger-background hover:bg-danger-background-hovered;
+    }
 }
 
 @theme {
@@ -388,10 +419,6 @@
     --color-downvote-onstrongscrim: var(--downvote-onstrongscrim);
     --color-downvote-onstrongscrim-weaker: var(--downvote-onstrongscrim-weaker);
     --color-downvote-onstrongscrim-disabled: var(--downvote-onstrongscrim-disabled);
-}
-
-html {
-    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol',sans-serif;
 }
 
 :root {

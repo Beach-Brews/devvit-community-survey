@@ -34,20 +34,20 @@ export const OutroPanel = () => {
     return (
       <div className="p-2 flex flex-col gap-4 justify-center items-center h-full">
           <div className={`${outroText.length > 180 ? 'text-base line-clamp-8' : 'text-xl'} text-center`}>{outroText && outroText.length > 0 ? renderMarkdown(outroText) : 'Thank you for your response.'}</div>
-          <button onClick={restartSurvey} className={`w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered p-2 rounded-xl cursor-pointer`}>
+          <button onClick={restartSurvey} className="w-2/3 max-w-75 svy-btn-primary">
               <PencilSquareIcon className="size-4" />
               <div>Change Responses</div>
           </button>
           {ctx.canViewResults || ctx.survey.resultVisibility === ResultVisibility.Responders
               ? (
-                  <button onClick={showResults} className={`w-2/3 max-w-75 flex justify-center items-center gap-1 bg-primary-background text-primary-onbackground font-bold hover:bg-primary-background-hovered px-8 py-2 rounded-xl cursor-pointer`}>
+                  <button onClick={showResults} className="w-2/3 max-w-75 svy-btn-primary">
                       <PresentationChartBarIcon className="size-4" />
                       <div>View Results</div>
                   </button>
               )
               : (
-                  <button disabled={true} className={`w-2/3 max-w-75 bg-primary-background text-primary-onbackground font-bold hover:bg-primary-background-hovered disabled:bg-secondary-background disabled:text-secondary-onbackground px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
-                      <div className="flex justify-center items-center gap-1">
+                  <button disabled={true} className="w-2/3 max-w-75 svy-btn-primary">
+                  <div className="flex justify-center items-center gap-1">
                           <PresentationChartBarIcon className="size-4" />
                           <div>View Results</div>
                       </div>
@@ -58,7 +58,7 @@ export const OutroPanel = () => {
               )
           }
           <div className="w-full flex justify-center">
-              <button onClick={onDelete}  className="w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
+              <button onClick={onDelete}  className="w-2/3 max-w-75 svy-btn-danger">
                   <TrashIcon className="size-4" /> Delete Responses
               </button>
           </div>

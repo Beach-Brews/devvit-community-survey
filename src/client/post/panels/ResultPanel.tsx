@@ -5,35 +5,16 @@
 * License: BSD-3-Clause
 */
 
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
 import { ErrorPanel } from './ErrorPanel';
 import { SurveyQuestionDto } from '../../../shared/redis/SurveyDto';
 import { QuestionResponseDto } from '../../../shared/redis/ResponseDto';
 import { getResultsForQuestion } from '../api/surveyApi';
 import { MultiOptionResult } from './results/MultiOptionResult';
 import { ScaleResult } from './results/ScaleResult';
-import { ArrowDownCircleIcon, ArrowUpCircleIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-
-const ResultLoading = () => {
-    return (
-        <div className="w-full p-2 grid grid-cols-[auto_1fr] items-center gap-2">
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[110px] justify-self-end"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[25%]"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[85px] justify-self-end"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[65%]"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[65px] justify-self-end"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[33%]"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[85px] justify-self-end"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[10%]"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[110px] justify-self-end"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[60%]"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[50px] mt-4 justify-self-end"></div>
-            <div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-[25%] mt-4"></div>
-        </div>
-    );
-}
+import { XMarkIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { LoadingSpinner } from '../../shared/components/LoadingSpinner';
 
 export const ResultPanel = () => {
 
@@ -68,19 +49,6 @@ export const ResultPanel = () => {
         };
         void callApi();
     }, [questionId]);
-
-    // Create a ref for the results div. Needed to have page scrolling.
-    const resDiv = useRef<HTMLDivElement | null>(null);
-    const [resScroll, setResScroll] = useState<[boolean, boolean] | null>(null);
-
-    // Effect to show/hide scroll buttons based on rendered result size
-    useEffect(() => {
-        const div = resDiv?.current;
-        setResScroll(!div || div.scrollHeight == div.clientHeight ? null : [
-            div.scrollTop > 0,
-            div.scrollTop < div.scrollHeight - div.clientHeight
-        ]);
-    }, [result]);
 
     // Close results and go to previous screen
     const onClose = () => {
@@ -118,57 +86,31 @@ export const ResultPanel = () => {
         }
     };
 
-    const resultScroll = (factor: number) => {
-        const div = resDiv?.current;
-        if (!div) return;
-        // eslint-disable-next-line react-hooks/immutability
-        div.scrollTop = div.scrollTop + div.clientHeight * factor;
-        setResScroll([
-            div.scrollTop > 0,
-            div.scrollTop < div.scrollHeight - div.clientHeight
-        ]);
-    };
-
     return (
-        <div className="p-2 flex flex-col gap-2 h-full">
-            <div className="flex gap-2 justify-between items-center">
-                <button onClick={onClose} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                    <ArrowUturnLeftIcon className="size-5" />
+        <div className="flex flex-col gap-2 h-full">
+            <div className="mb-4 flex gap-2 justify-between items-center">
+                <button onClick={onClose} className="svy-btn-secondary">
+                    <XMarkIcon className="size-5" />
                     <span>Close</span>
                 </button>
             </div>
-            {question?.title
-                ? (<div className="font-bold">{question.title}</div>)
-                : (<div className="h-6 bg-neutral-300 rounded-full dark:bg-neutral-700 w-2/3"></div>)
+            {question?.title &&
+                (<div className="text-xl font-bold text-neutral-content-strong">{question.title}</div>)
             }
-            <div className="relative grow h-[0%] w-full p-2 border border-neutral-500 rounded-md">
-                <div ref={resDiv} className="h-full overflow-hidden">
+            <div className="relative grow h-[0%] w-full p-2 border border-neutral-border rounded-xl">
+                <div className="h-full overflow-hidden">
                     {question && result
                         ? renderResults(question, result)
                         : loading
-                            ? (<ResultLoading />)
+                            ? (<div className="p-4 flex flex-col justify-center items-center gap-2"><LoadingSpinner className="bg-neutral-content-weak" /> <span>Loading results...</span></div>)
                             : (<ErrorPanel />)
                     }
                 </div>
-                {resScroll && (
-                    <div className="absolute top-0 right-0 h-full flex flex-col justify-between items-center">
-                        <button onClick={() => resultScroll(-0.5)} disabled={!resScroll?.[0]} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200 disabled:pointer-events-none disabled:opacity-25">
-                            <ArrowUpCircleIcon className="size-5" />
-                        </button>
-                        <button onClick={() => resultScroll(0.5)} disabled={!resScroll?.[1]} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200 disabled:pointer-events-none disabled:opacity-25">
-                            <ArrowDownCircleIcon className="size-5" />
-                        </button>
-                    </div>
-                )}
             </div>
             {ctx.panelContext.showResultNav === true && (
                 <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
                     <div className="flex items-center gap-2 order-2 xs:order-1">
-                        <button
-                            onClick={loading || qNo == 0 ? undefined : onPrevNav}
-                            disabled={loading || qNo == 0}
-                            className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered disabled:opacity-50 disabled:pointer-events-none"
-                        >
+                        <button onClick={loading || qNo == 0 ? undefined : onPrevNav} disabled={loading || qNo == 0} className="svy-btn-secondary">
                             <ArrowLeftIcon className="size-5" />
                             <span>Previous</span>
                         </button>
@@ -180,17 +122,19 @@ export const ResultPanel = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 order-3">
-                        <button
-                            onClick={loading || isLast ? undefined : onNextNav}
-                            disabled={loading || isLast}
-                            className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered disabled:opacity-50 disabled:pointer-events-none"
-                        >
+                        <button onClick={loading || isLast ? undefined : onNextNav} disabled={loading || isLast} className="svy-btn-secondary">
                             <span>Next</span>
                             <ArrowRightIcon className="size-5" />
                         </button>
                     </div>
                 </div>
             )}
+            <div className="mt-4 flex gap-2 justify-between items-center">
+                <button onClick={onClose} className="svy-btn-secondary">
+                    <XMarkIcon className="size-5" />
+                    <span>Close</span>
+                </button>
+            </div>
       </div>
     );
 };

@@ -37,13 +37,13 @@ export const ClosedPanel = () => {
           </div>
           {ctx.canViewResults
               ? (
-                  <button onClick={showResults}  className={`w-2/3 max-w-75 flex justify-center items-center gap-1 bg-primary-background text-primary-onbackground font-bold hover:bg-primary-background-hovered px-8 py-2 rounded-xl cursor-pointer`}>
+                  <button onClick={showResults} className="w-2/3 max-w-75 svy-btn-primary">
                       <PresentationChartBarIcon className="size-4" />
                       <div>View Results</div>
                   </button>
               )
               : (
-                  <button disabled={true} className={`w-2/3 max-w-75 bg-primary-background text-primary-onbackground font-bold hover:bg-primary-background-hovered disabled:bg-secondary-background disabled:text-secondary-onbackground px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed`}>
+                  <button disabled={true} className="w-2/3 max-w-75 svy-btn-primary">
                       <div className="flex justify-center items-center gap-1">
                           <PresentationChartBarIcon className="size-4" />
                           <div>View Results</div>
@@ -56,7 +56,7 @@ export const ClosedPanel = () => {
           }
           {responses > 0 && (
               <div className="mt-8 w-full flex justify-center">
-                  <button onClick={onDelete} className="w-2/3 max-w-75 flex justify-center items-center gap-1 font-bold bg-danger-background text-danger-onbackground hover:bg-danger-background-hovered p-2 rounded-xl cursor-pointer">
+                  <button onClick={onDelete} className="w-2/3 max-w-75 svy-btn-danger">
                       <TrashIcon className="size-4" /> Delete Responses
                   </button>
               </div>

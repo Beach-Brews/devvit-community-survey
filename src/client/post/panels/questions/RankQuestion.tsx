@@ -51,7 +51,7 @@ export const RankQuestion = (props: QuestionProps) => {
                     <li
                         key={`sqo_${o.value}`}
                         className={`text-base p-2 flex gap-2 items-center bg-neutral-background-strong group
-                        ring rounded-lg ${lastOpt?.[0] === i ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
+                        ring rounded-xl ${lastOpt?.[0] === i ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
                         `}
                     >
                         <div className="flex gap-2">

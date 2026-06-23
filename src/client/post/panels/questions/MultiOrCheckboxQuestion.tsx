@@ -64,7 +64,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                     <li
                         key={`sqo_${o.value}`}
                         className={`p-2 cursor-pointer flex items-center gap-1 bg-neutral-background-strong group 
-                        ring rounded-lg ${chosenValues[i] ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
+                        ring rounded-xl ${chosenValues[i] ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
                         `}
                         onClick={() => void onOptionClick(i)}
                     >

@@ -111,7 +111,7 @@ export const SurveyPostExpanded = () => {
             </div>
             <div className="flex-1 min-h-0 overflow-auto">
                 <div className="max-w-175 mx-auto p-2 pt-4">
-                    <div className="w-full px-2 py-4 flex flex-col gap-4 bg-neutral-background border border-neutral-border rounded-lg">
+                    <div className="w-full px-2 py-4 flex flex-col gap-4 bg-neutral-background border border-neutral-border rounded-xl">
                         {getPanel()}
                     </div>
                 </div>
@@ -120,44 +120,3 @@ export const SurveyPostExpanded = () => {
         </div>
     );
 };
-
-/*
-                        <div className="text-xl font-bold text-neutral-content-strong">This is for the question title text.</div>
-                        <div>Optional question description <img width="250px" src="snoo-facepalm.png" /></div>
-                        <div className="flex flex-col gap-2">
-                            {rows.map((r, i) =>
-                                <div key={i} className={`p-2 cursor-pointer flex items-center bg-neutral-background-strong group ring rounded-lg ${i === 4 ? 'ring-reddit-lime' : 'ring-neutral-border hover:ring-reddit-lime-secondary'}`}>
-                                    <div className={`size-6 flex items-center ${i === 4 ? 'text-reddit-lime' : 'group-hover:text-reddit-lime-secondary'}`}><BulletIcon fill={i === 4} /></div>
-                                    <div>This is a row {r}.{i === 8 ? (<img width="250px" src="snoo-facepalm.png" />) : null}</div>
-                                </div>)
-                            }
-                        </div>
-                        <div className="text-xs">
-                            <button className="cursor-pointer hover:underline">Clear Selection</button>
-                        </div>
-                        <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
-                            <div className="flex items-center gap-2 order-2 xs:order-1">
-                                <button className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
-                                    <ArrowLeftIcon className="size-5" />
-                                    <span>Previous</span>
-                                </button>
-                                <button className="flex gap-1 items-center cursor-pointer rounded-lg p-2 border border-neutral-border text-secondary-plain hover:text-secondary-onbackground hover:bg-secondary-background-hovered">
-                                    <PresentationChartBarIcon className="size-5" />
-                                    <span>Results</span>
-                                </button>
-                            </div>
-                            <div className="flex-1 order-1 xs:order-2 basis-full xs:basis-0 flex flex-col gap-1 justify-center items-center text-sm">
-                                <div>Question 1 of 3</div>
-                                <div className="relative w-full max-w-50 h-1.5 rounded-full bg-neutral-border-weak">
-                                    <div className="absolute inset-0 w-[33%] h-full rounded-full bg-survey-button-primary-background"></div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 order-3">
-                                <button className={`flex gap-1 items-center p-2 text-survey-button-primary-onbackground bg-survey-button-primary-background hover:bg-survey-button-primary-background-hovered disabled:text-secondary-onbackground disabled:bg-secondary-background disabled:font-normal rounded-xl cursor-pointer`}>
-                                    <span>Next</span>
-                                    <ArrowRightIcon className="size-5" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
- */
