@@ -41,7 +41,6 @@ export default defineMock([
     {
         url: '/api/post/survey/results/:questionId',
         method: 'GET',
-        delay: 2000,
         body: (req) => {
             const questionId = req.params.questionId as string;
             const question = SampleQuestionList.find(q => q.id === questionId);
@@ -49,7 +48,7 @@ export default defineMock([
             let total = 0;
             const responses: ResponseValuesDto = question?.options !== undefined
                 ? question.options.reduce((a, o) => {
-                    const val =  total >= 100 ? Math.floor(Math.random()*2) : 100;
+                    const val = total >= 100 ? Math.floor(Math.random()*2) : 100;
                     total += val;
                     a[o.value] = val;
                     return a;
@@ -57,7 +56,7 @@ export default defineMock([
                 : question?.type === 'scale'
                     ? Array.from({ length: question.max ?? 5 }, (_, i) => i + 1)
                         .reduce((a, i) => {
-                            const val =  Math.floor(Math.random() * 100);
+                            const val = total >= 100 ? Math.floor(Math.random()*2) : 100;
                             total += val;
                             a[i.toString()] = val;
                             return a;

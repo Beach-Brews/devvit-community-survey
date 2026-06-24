@@ -36,6 +36,9 @@ export const QuestionPanel = () => {
             ?? (question?.type === 'rank' ? question.options.map(o => o.value) : undefined)
         : undefined);
 
+    // State for saving response to backend
+    const [saving, setSaving] = useState<boolean>(false);
+
     // If question is undefined, return error screen
     if (qNo === undefined || !question) {
         return (<ErrorPanel />);
@@ -51,16 +54,38 @@ export const QuestionPanel = () => {
 
             // Only save response if a response was provided
             if (response) {
-                await upsertResponse(question.id, response);
 
-                // Update context response
-                ctx.setLastResponse({
-                    ...(ctx.lastResponse ?? {}),
-                    [question.id]: response,
-                });
+                // Signal saving started (but wait 500ms to prevent "flash" if quickly saved)
+                setSaving(true);
+
+                try {
+                    // Trigger update
+                    await upsertResponse(question.id, response);
+
+                    // Update context response
+                    ctx.setLastResponse({
+                        ...(ctx.lastResponse ?? {}),
+                        [question.id]: response,
+                    });
+
+                    // Move to the next screen.
+                    ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
+
+                } catch (e) {
+                    ctx.addToast({
+                        message: 'Failed to save response',
+                        type: ToastType.Error
+                    });
+                }
+
+                // Reset the saving state
+                setSaving(false);
+
+            } else {
+                // If no response, no save required, move to the next screen
+                ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
             }
 
-            ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
         } catch (e) {
             ctx.addToast({
                 message: 'Error saving response.',
@@ -97,7 +122,11 @@ export const QuestionPanel = () => {
     };
 
     return (
-        <div className="h-full flex flex-col gap-4">
+        <div className="h-full flex flex-col gap-4 relative">
+            {saving && (
+                <div className="z-10 fixed inset-0 w-full h-full flex justify-center items-center bg-black/30">
+                </div>
+            )}
             <div className="text-xl font-bold text-neutral-content-strong">
                 {question.title}
                 {!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-content-weak">(optional)</span>) : ''}
@@ -108,12 +137,12 @@ export const QuestionPanel = () => {
             </div>
             <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
                 <div className="flex items-center gap-2 order-2 xs:order-1">
-                    <button onClick={onPrevious} disabled={qNo <= 0} className="svy-btn-secondary">
+                    <button onClick={onPrevious} disabled={qNo <= 0 || saving} className="svy-btn-secondary">
                         <ArrowLeftIcon className="size-5" />
                         <span>Previous</span>
                     </button>
                     {ctx.canViewResults && (
-                        <button onClick={showResults} className="svy-btn-secondary">
+                        <button disabled={saving} onClick={showResults} className="svy-btn-secondary">
                             <PresentationChartBarIcon className="size-5" />
                             <span>Results</span>
                         </button>
@@ -126,8 +155,8 @@ export const QuestionPanel = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 order-3">
-                    <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className="svy-btn-primary">
-                        {isLast ? 'Finish' : 'Next'}
+                    <button disabled={!validResponse || saving} onClick={validResponse ? onNext : undefined} className="svy-btn-primary">
+                        {saving ? 'Saving' : (isLast ? 'Finish' : 'Next')}
                         <ArrowRightIcon className="size-5" />
                     </button>
                 </div>

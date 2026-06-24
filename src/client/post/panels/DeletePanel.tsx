@@ -18,15 +18,15 @@ export const DeletePanel = () => {
     const ctx = useContext(SurveyContext);
     if (!ctx) throw Error('Context undefined.');
 
-    const returnToSurvey = () => {
-        ctx.setPanelContext(c => ({ ...c, panel: c.prev === PanelType.Outro ? PanelType.Outro : PanelType.Intro }));
+    const returnToSurvey = (deleted: boolean) => {
+        ctx.setPanelContext(c => ({ ...c, panel: !deleted && c.prev === PanelType.Outro ? PanelType.Outro : PanelType.Intro }));
     };
 
     const onDelete = async () => {
         try {
             await deleteResponses();
             ctx.setLastResponse(null);
-            returnToSurvey();
+            returnToSurvey(true);
         } catch(e) {
             ctx.addToast({
                 message: 'Failed to delete responses',
@@ -40,7 +40,7 @@ export const DeletePanel = () => {
           <div className="text-center font-bold text-lg">Delete Responses</div>
           <div className="text-center">Are you sure you wish to delete all of your responses to this survey?</div>
           <div className="flex gap-4 justify-center items-center w-full">
-              <button onClick={returnToSurvey} className="w-1/3 svy-btn-secondary">
+              <button onClick={() => returnToSurvey(false)} className="w-1/3 svy-btn-secondary">
                   <XMarkIcon className="size-4" />
                   <span>Cancel</span>
               </button>

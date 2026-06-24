@@ -17,7 +17,7 @@ export const ScaleResult = (props: PostResultProps) => {
 
     const options = question.max - question.min + 1;
     return (
-        <div className="h-100 flex flex-col justify-between items-center">
+        <div className="h-80 flex flex-col justify-between items-center">
             {total == 0 && (
                 <div className="w-full grow h-[0%] flex flex-col items-center gap-2">
                     <div className="grow h-[0%] flex justify-center items-center" style={{gridRow: '1', gridColumn: `1 / span ${options}`}}>

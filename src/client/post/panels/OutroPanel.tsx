@@ -5,11 +5,12 @@
 * License: BSD-3-Clause
 */
 
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
 import { PencilSquareIcon, PresentationChartBarIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useOpenExpandedMode } from '../../shared/expandedStateManager';
 
 export const OutroPanel = () => {
 
@@ -17,13 +18,13 @@ export const OutroPanel = () => {
     const ctx = useContext(SurveyContext);
     if (!ctx) throw Error('Context undefined.');
 
-    const showResults = () => {
-        ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Outro, showResultNav: true });
-    };
+    const showResults = useOpenExpandedMode(useCallback(() => ({
+        panel: PanelType.Result, number: 0, prev: PanelType.Outro, showResultNav: true
+    }), []));
 
-    const restartSurvey = () => {
-        ctx.setPanelContext({ panel: PanelType.Question, number: 0 });
-    };
+    const restartSurvey = useOpenExpandedMode(useCallback(() => ({
+        panel: PanelType.Question, number: 0
+    }), []));
 
     const onDelete = () => {
         ctx.setPanelContext({ panel: PanelType.Delete, prev: PanelType.Outro });

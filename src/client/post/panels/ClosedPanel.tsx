@@ -5,10 +5,11 @@
 * License: BSD-3-Clause
 */
 
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 import { PresentationChartBarIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useOpenExpandedMode } from '../../shared/expandedStateManager';
 
 export const ClosedPanel = () => {
 
@@ -19,9 +20,9 @@ export const ClosedPanel = () => {
     // Get number of responses from user
     const responses = ctx.lastResponse ? Object.keys(ctx.lastResponse).length : 0;
 
-    const showResults = () => {
-        ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true });
-    };
+    const showResults = useOpenExpandedMode(useCallback(() => ({
+        panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true
+    }), []));
 
     const onDelete = () => {
         ctx.setPanelContext({ panel: PanelType.Delete, prev: PanelType.Intro });

@@ -8,12 +8,12 @@
 import { useEffect, useState } from 'react';
 import { initializeSurvey } from './api/surveyApi';
 import { PanelType, SurveyContext, SurveyContextProps, SurveyPanelContext } from './SurveyContext';
-import { context } from '@devvit/web/client';
+import { context, addWebViewModeListener, removeWebViewModeListener } from '@devvit/web/client';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
 import { InitializeSurveyResponse } from '../../shared/types/postApi';
 import { useToaster } from '../shared/toast/useToaster';
 import { ResultVisibility } from '../../shared/redis/SurveyDto';
-import { getSurveyWebviewMode } from '../shared/getSurveyWebviewMode';
+import { getPostPanelState, getSurveyWebviewMode } from '../shared/expandedStateManager';
 import { SurveyPostInline } from './SurveyPostInline';
 import { SurveyPostExpanded } from './SurveyPostExpanded';
 import { LoadingPanel } from './panels/LoadingPanel';
@@ -46,9 +46,9 @@ export const SurveyPost = () => {
         const listener = () => {
             setExpandedMode(getSurveyWebviewMode() == 'expanded');
         };
-        window.addEventListener('focus', listener);
+        addWebViewModeListener(listener);
         return () => {
-            window.removeEventListener('focus', listener);
+            removeWebViewModeListener(listener);
         };
     }, [setExpandedMode]);
 
@@ -58,6 +58,12 @@ export const SurveyPost = () => {
         const callApi = async () => {
             try {
                 const postInit = await initializeSurvey();
+
+                const panelCtx = getPostPanelState(postInit?.survey.id);
+                if (panelCtx) {
+                    setPanelContext(panelCtx);
+                }
+
                 setPostInit(postInit);
                 setLastResponse(postInit?.lastResponse);
             } catch (error) {
