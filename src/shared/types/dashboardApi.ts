@@ -24,5 +24,5 @@ export type UserFlairTemplate = {
 };
 
 export type SubredditUserFlairsResult = {
-    flairs: [UserFlairTemplate];
+    flairs: UserFlairTemplate[];
 };

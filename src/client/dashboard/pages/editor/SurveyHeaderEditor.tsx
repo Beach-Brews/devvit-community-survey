@@ -376,6 +376,15 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                         }
 
                         case "settings": {
+                            const changeTheme = (theme: string) => {
+                                setSurvey(s => {
+                                    return {
+                                        ...s,
+                                        theme: { primaryColor: theme }
+                                    };
+                                });
+                            };
+
                             return (
                                 <div className="mb-6 px-4 grid grid-cols-[3fr_1fr_16fr] gap-4">
 
@@ -402,6 +411,39 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                         </div>
                                         <div className="col-span-2 flex items-center">
                                             <div><strong>Result Visibility</strong> - Choose whether results are always visible, only when survey has closed, once a user has completed the survey, or only mods can see results.</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Survey Theme */}
+                                    <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
+                                        <div className="col-start-2 col-span-2 flex items-center">
+                                            <div><strong>Theme Color</strong> - Choose the survey's primary color.</div>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-3 flex flex-col-reverse gap-2 md:contents">
+                                        <div className="col-span-3 flex justify-center items-center gap-4 flex-wrap">
+                                            {['OrangeRed', 'GuavaPink', 'BananaYellow', 'LimeGreen', 'JuniperBlue'].map(c => {
+                                                const border = {
+                                                    'OrangeRed': 'border-reddit-orangered',
+                                                    'GuavaPink': 'border-reddit-guavapink',
+                                                    'BananaYellow': 'border-reddit-bananayellow',
+                                                    'LimeGreen': 'border-reddit-limegreen',
+                                                    'JuniperBlue': 'border-reddit-juniperblue'
+                                                }[c];
+                                                const background = {
+                                                    'OrangeRed': 'bg-reddit-orangered',
+                                                    'GuavaPink': 'bg-reddit-guavapink',
+                                                    'BananaYellow': 'bg-reddit-bananayellow',
+                                                    'LimeGreen': 'bg-reddit-limegreen',
+                                                    'JuniperBlue': 'bg-reddit-juniperblue'
+                                                }[c];
+                                                return (
+                                                    <button key={c} onClick={() => changeTheme(c.toLowerCase())} className={`border cursor-pointer ${c.toLowerCase() === (survey.theme?.primaryColor ?? 'limegreen') ? border : 'border-neutral-border'} rounded-xl flex flex-col justify-center items-center gap-2 p-4`}>
+                                                        <div className={`size-10 ${background} rounded-xl`}></div>
+                                                        <div>{c}</div>
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </div>
 

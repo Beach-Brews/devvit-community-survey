@@ -1,8 +1,5 @@
 ﻿## Current Bugs
 * Going to next question does not scroll back to top
-* Closing modal when survey started does not update continue state on iOS (may need a new /init request when close triggered)
-* Do not update the panel state on iOS so the state change doesn't appear in the inline view while launching / closing the expanded view?
-
 
 * Rank drag-and-drop (using dnd-kit, lazy loaded)
 

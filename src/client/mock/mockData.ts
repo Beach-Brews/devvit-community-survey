@@ -106,7 +106,8 @@ export const SampleSurveyList = [
             userFlairs: [ { type: 'TxtEq', value: 'World' } ]
         },
         resultVisibility: 'Always',
-        questions: SampleQuestionList
+        questions: SampleQuestionList,
+        theme: { primaryColor: 'juniperblue' }
     },
     {
         id: genSurveyId(),
@@ -188,7 +189,7 @@ export const SampleSurveyList = [
 ] satisfies SurveyWithQuestionsDto[];
 
 export const SampleUserInfo = {
-    isMod: false,
+    isMod: true,
     responseBlocked: 0,
     allowDev: false,
     username: 'Beach-Brews',

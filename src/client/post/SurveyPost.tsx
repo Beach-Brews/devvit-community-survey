@@ -5,7 +5,7 @@
 * License: BSD-3-Clause
 */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { initializeSurvey } from './api/surveyApi';
 import { PanelType, SurveyContext, SurveyContextProps, SurveyPanelContext } from './SurveyContext';
 import { context, addWebViewModeListener, removeWebViewModeListener } from '@devvit/web/client';
@@ -41,16 +41,22 @@ export const SurveyPost = () => {
     const user = postInit?.user;
     const subInfo = postInit?.subInfo;
 
+    // Ref for overriding theme variables
+    const surveyPostContainer = useRef<HTMLDivElement>(null);
+
     // Attach listener for window expanded state
     useEffect(() => {
-        const listener = () => {
-            setExpandedMode(getSurveyWebviewMode() == 'expanded');
+        if (getSurveyWebviewMode() === 'expanded') return;
+
+        const listener = (newMode: 'expanded' | 'inline') => {
+            if (newMode === 'inline')
+                window.location.reload();
         };
         addWebViewModeListener(listener);
         return () => {
             removeWebViewModeListener(listener);
         };
-    }, [setExpandedMode]);
+    }, []);
 
     // Load survey from backend
     useEffect(() => {
@@ -66,6 +72,21 @@ export const SurveyPost = () => {
 
                 setPostInit(postInit);
                 setLastResponse(postInit?.lastResponse);
+
+                // Override theme variables
+                const container = surveyPostContainer.current;
+                const theme = postInit?.survey.theme?.primaryColor;
+                if (!container || !theme) return;
+                const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                container.style.setProperty('--survey-primary-border', `var(--reddit-${theme})`);
+                container.style.setProperty('--survey-primary-border-hovered', `var(--reddit-${theme}-${isDarkMode ? 'secondary' : 'dark'})`);
+                container.style.setProperty('--survey-button-primary-background', `var(--reddit-${theme})`);
+                container.style.setProperty('--survey-button-primary-background-hovered', `var(--reddit-${theme}-secondary)`);
+                container.style.setProperty('--color-survey-primary-border', `var(--reddit-${theme})`);
+                container.style.setProperty('--color-survey-primary-border-hovered', `var(--reddit-${theme}-${isDarkMode ? 'secondary' : 'dark'})`);
+                container.style.setProperty('--color-survey-button-primary-background', `var(--reddit-${theme})`);
+                container.style.setProperty('--color-survey-button-primary-background-hovered', `var(--reddit-${theme}-secondary)`);
+
             } catch (error) {
                 console.error('[Survey Post] Failed to load survey: ', error);
                 setPostInit(null);
@@ -97,10 +118,12 @@ export const SurveyPost = () => {
 
     return (
         <SurveyContext.Provider value={surveyContext}>
-            {postInit
-                ? (expandedMode ? <SurveyPostExpanded /> : <SurveyPostInline />)
-                : <LoadingPanel />
-            }
+            <div className="h-full" ref={surveyPostContainer}>
+                {postInit
+                    ? (expandedMode ? <SurveyPostExpanded /> : <SurveyPostInline />)
+                    : <LoadingPanel />
+                }
+            </div>
         </SurveyContext.Provider>
     );
 };
