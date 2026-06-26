@@ -1,5 +1,6 @@
 ﻿## Current Bugs
 * Going to next question does not scroll back to top
+* Results progress bar is wrong (last question shows space?)
 
 * Rank drag-and-drop (using dnd-kit, lazy loaded)
 

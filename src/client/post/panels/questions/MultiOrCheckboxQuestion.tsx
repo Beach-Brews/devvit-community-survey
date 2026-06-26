@@ -63,7 +63,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                 return (
                     <li
                         key={`sqo_${o.value}`}
-                        className={`p-2 cursor-pointer flex items-center gap-1 bg-neutral-background-strong group 
+                        className={`p-2 cursor-pointer flex items-center gap-1 bg-neutral-background-strong group
                         ring rounded-xl ${chosenValues[i] ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
                         `}
                         onClick={() => void onOptionClick(i)}
@@ -75,7 +75,7 @@ export const MultiOrCheckboxQuestion = (props: QuestionProps) => {
                         >
                             {optionIcon(i)}
                         </div>
-                        <div>{renderMarkdown(o.label)}</div>
+                        <div className="wrap-anywhere">{renderMarkdown(o.label)}</div>
                     </li>
                 );
             })}

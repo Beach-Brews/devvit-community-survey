@@ -424,11 +424,11 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                         <div className="col-span-3 flex justify-center items-center gap-4 flex-wrap">
                                             {['OrangeRed', 'GuavaPink', 'BananaYellow', 'LimeGreen', 'JuniperBlue'].map(c => {
                                                 const border = {
-                                                    'OrangeRed': 'border-reddit-orangered',
-                                                    'GuavaPink': 'border-reddit-guavapink',
-                                                    'BananaYellow': 'border-reddit-bananayellow',
-                                                    'LimeGreen': 'border-reddit-limegreen',
-                                                    'JuniperBlue': 'border-reddit-juniperblue'
+                                                    'OrangeRed': 'ring-2 ring-reddit-orangered',
+                                                    'GuavaPink': 'ring-2 ring-reddit-guavapink',
+                                                    'BananaYellow': 'ring-2 ring-reddit-bananayellow',
+                                                    'LimeGreen': 'ring-2 ring-reddit-limegreen',
+                                                    'JuniperBlue': 'ring-2 ring-reddit-juniperblue'
                                                 }[c];
                                                 const background = {
                                                     'OrangeRed': 'bg-reddit-orangered',
@@ -438,7 +438,7 @@ export const SurveyHeaderEditor = (props: SurveyConfigEditorProps) => {
                                                     'JuniperBlue': 'bg-reddit-juniperblue'
                                                 }[c];
                                                 return (
-                                                    <button key={c} onClick={() => changeTheme(c.toLowerCase())} className={`border cursor-pointer ${c.toLowerCase() === (survey.theme?.primaryColor ?? 'limegreen') ? border : 'border-neutral-border'} rounded-xl flex flex-col justify-center items-center gap-2 p-4`}>
+                                                    <button key={c} onClick={() => changeTheme(c.toLowerCase())} className={`min-w-25 min-h-25 cursor-pointer ${c.toLowerCase() === (survey.theme?.primaryColor ?? 'limegreen') ? border : 'ring ring-neutral-border'} rounded-xl flex flex-col justify-center items-center gap-2 p-2`}>
                                                         <div className={`size-10 ${background} rounded-xl`}></div>
                                                         <div>{c}</div>
                                                     </button>

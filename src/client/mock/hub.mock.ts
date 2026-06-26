@@ -20,9 +20,9 @@ export default defineMock([
             message: 'OK',
             result: {
                 surveys: SampleSurveyList
-                    .filter(s => s.publishDate)
+                    .filter(s => s.publishDate && s.publishDate < Date.now())
                     .sort((a, b) =>
-                        a.publishDate! - b.publishDate!),
+                        b.publishDate! - a.publishDate!),
                 user: SampleUserInfo,
                 subInfo: SampleSubInfo
             }

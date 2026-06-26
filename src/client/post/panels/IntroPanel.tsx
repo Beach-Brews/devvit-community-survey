@@ -120,11 +120,12 @@ export const IntroPanel = (props: IntroPanelProps) => {
                 </div>
             </div>
             <div className="w-full p-2 pt-0 flex flex-col gap-2 justify-evenly items-center grow h-[0%]">
-                <div className="flex flex-col gap-2 items-center">
+                <div className="flex flex-col gap-2 items-center grow h-[0%]">
                     <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong">{ctx.survey.title}</div>
                     {ctx.survey.intro && (
-                        <div className={`text-center ${ctx.survey.intro.length > 300 || (ctx.survey.intro.match(/\n|\r\r/) || []).length > 6 ? 'text-sm line-clamp-8' : 'text-base line-clamp-6'}`}>
-                            {renderMarkdown(ctx.survey.intro)}</div>
+                        <div className={`text-center flex-1 overflow-hidden`}>
+                            {renderMarkdown(ctx.survey.intro)}
+                        </div>
                     )}
                 </div>
                 <div className="w-full flex flex-col items-center gap-1">

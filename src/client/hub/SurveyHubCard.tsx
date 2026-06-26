@@ -66,7 +66,7 @@ export const SurveyHubCard = (props: SurveyHubCardProps) => {
                 <div>{closeDate ? formatRelativeDateTime(closeDate) : 'No close date'}</div>
             </div>
             <div className={`text-base font-semibold text-neutral-content-strong ${live ? "" : "line-clamp-1"}`}>{title}</div>
-            <div className={live ? "line-clamp-2" : "line-clamp-1"}>{renderMarkdown(intro)}</div>
+            <div className={live ? "line-clamp-2" : "line-clamp-1"}>{renderMarkdown(intro, true)}</div>
         </div>
     );
 };

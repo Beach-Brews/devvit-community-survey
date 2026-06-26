@@ -8,11 +8,11 @@
 import { genOptionId, genQuestionId, genSurveyId } from '../../shared/redis/uuidGenerator';
 import { SurveyQuestionList, SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
 
-const smallCase = false;
+const smallCase = true;
 
 const title = smallCase ? 'This is the question? ' : 'This is the question title and is longer for test!';
 const description = smallCase
-    ? 'This is just a shorter test case description.'
+    ? 'Test Image ![test image](https://dev.thadidon.com/storms/04L_intensity_latest.png)'
     : `**Testing** *markdown* __parser__ ~~breaks~~  
 in same paragraph.
 And not a line break.
@@ -27,7 +27,7 @@ Need to test exceeding the total lines for the line-clamp. It just needs to be l
 
 const options =  [1,2,3,4,5,6,7,8,9,10]
     .map(i => ({
-        label: smallCase ? `Option ${i}` : `This is the **text** for __option__ ${i} which is long to see if it work`,
+        label: smallCase ? `AAAAAAAAAAAAAAAAAAaaaaaaaawaaaaadjsiahudpdjwheidoahwhdowiahdhwishdjwoahdheiahdhsiahdhdiwhdhfowpfhcbdbauskfjwjwb` : `This is the **text** for __option__ ${i} which is long to see if it work`,
         value: genOptionId()
     }));
 
@@ -126,7 +126,7 @@ export const SampleSurveyList = [
     },
     {
         id: genSurveyId(),
-        title: "Live Survey - Has Close Date",
+        title: "Live Survey 9/17/25 - Has Close Date",
         intro: description,
         outro: description,
         allowMultiple: false,
@@ -149,12 +149,12 @@ export const SampleSurveyList = [
     },
     {
         id: genSurveyId(),
-        title: "Live Survey - No Close Date",
+        title: "Live Survey 11/5/25 - No Close Date",
         intro: "Hello",
         outro: "Thank you for your response.",
         allowMultiple: false,
         createDate: Date.now(),
-        publishDate: new Date('2025-09-17T00:00:00.0000').getTime(),
+        publishDate: new Date('2025-11-05T00:00:00.0000').getTime(),
         closeDate: null,
         owner: 't2_1234',
         responseCount: 1432,

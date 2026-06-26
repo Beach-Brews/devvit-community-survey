@@ -70,7 +70,7 @@ export const RankQuestion = (props: QuestionProps) => {
                                 <ArrowDownCircleIcon className="size-6" />
                             </button>
                         </div>
-                        <div>{renderMarkdown(o.label)}</div>
+                        <div className="wrap-anywhere">{renderMarkdown(o.label)}</div>
                     </li>
                 )
             )}
