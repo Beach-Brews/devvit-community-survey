@@ -8,6 +8,7 @@
 * 🕒 **Schedule:** Choose survey start and end dates
 * 👁️‍🗨️ **Visibility:** Users can respond directly in Reddit
 * 📊 **Results:** Choose when and who can see results
+* 🎨 **Redesign:** Recently updated to match Reddit's styling
 
 ## Responder Criteria
 * 🏠 **Community Karma** (Post, Comment, or Total)
@@ -19,6 +20,7 @@
 
 ## Survey Settings
 * 📊 **Result Visibility** (Always, Closed, Responders, Mods)
+* 🎨 **Primary Color** Choose from Reddit's five brand colors
 * _More Coming Soon!_
 
 ## Question Types

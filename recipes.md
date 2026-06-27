@@ -1,37 +1,24 @@
-﻿## Current Bugs
-* Going to next question does not scroll back to top
-* Results progress bar is wrong (last question shows space?)
-
-* Rank drag-and-drop (using dnd-kit, lazy loaded)
-
-## Roadmap
+﻿## Roadmap
 * Develop design system
 * Mock designs
-* Requirements docks
-* Mock api with vite
+* Requirements docs
 
 * Update documentation
-* Create demo video for ModEvents
-* Setup GitHub Project
+* Create demo video
+* Setup GitHub Project for project tracking (features + bugs)
 
-* 0.1.1
-  * High - Fix welcome wiki link...
+* Ideas
   * High - Export Results to CSV
-  * Medium - Text fallback changes (update fallback text on delete)
-  * Low - Fix hub "there are no closed/live surveys" copy styling
-  * Low - ??Add "shareImageUrl" - Generate an image with survey text, upload??
-
-* 0.2.0
-    * High - Survey Post Expanded View
-    * High - Survey Post Redesign (more Reddit Like)
-      * Include subreddit theme coloring?
-
-* 0.3.0
   * High - ??Text Responses??
-
-* 0.4.0
   * High - Dashboard redesign
   * High - Results charts revamp
+  * Medium - Rank drag-and-drop (using dnd-kit, lazy loaded?)
+  * Medium - Results page sorting: allow "option order", "lowest to highest", or "highest to lowest"
+  * Low - Text fallback changes (update fallback text if post is deleted/removed directly?)
+  * Low - Fix hub "there are no closed/live surveys" copy styling
+  * Low - ??Add "shareImageUrl" - Generate an image with survey text, upload??
+  * Low - Going to next question does not scroll back to top
+  * Low - Results progress bar is wrong (last question shows space?)
 
 ## General
 * Update text fallback for old reddit to include link to new reddit (try markdown)
@@ -47,14 +34,6 @@
     * Will need expanded view for these
 
 ## Dashboard
-* ~~Auth-Token Timeout Modal/Message~~ (resolved by Reddit?)
-* ~~Link to survey post for published surveys~~
-* ~~View live survey config (settings, questions, etc.)~~
-* ~~Intro and descriptions do not allow paragraphs/markdown~~
-* ~~Import/Export Survey Config~~
-* ~~Send Welcome Modmail on Install (link to Wiki for Tutorials/Setup)~~
-* ~~Update notice + release notes within dashboard~~
-* ~~Modify dashboard post for non-mods to a list of live/closed surveys~~
 * Export Survey Responses to CSV/Xlsx
 * When surveys are published, add new "shareImageUrl" => https://developers.reddit.com/docs/capabilities/creating_custom_post#custom-post-styles
 * Provide feedback within dashboard (and post help)
@@ -109,7 +88,3 @@
 * Bug: If survey list is scrolled, the editor also starts already scrolled, which cuts off the setting tabs.
 * Bug: Editing a "scheduled" survey, the publish dialog does not show the previously selected publish or close date.
 * Bug: Visual - Flair criteria shows "code" (TxtEq)
-
-**Survey Posts**
-
-* Bug: Text fallback confusion - Update text on delete to show deleted. Add link to new reddit.
