@@ -61,20 +61,7 @@ export const SurveyPostExpanded = () => {
                 return (<ErrorPanel />);
         }
     };
-
-    /*
-    const openHelp = () => {
-        setPanelContext(cc => {
-            return {
-                panel: cc.prev !== undefined && cc.panel === PanelType.Help ? cc.prev : PanelType.Help,
-                number: cc.number ?? -1,
-                prev: cc.panel
-            };
-        });
-    };
-    */
-
-
+    
     return (
         <div className="h-full flex flex-col">
             <div className="h-10 shrink-0 bg-devvit-expanded-header border-b border-b-neutral-border dark:border-none">
