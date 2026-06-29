@@ -101,6 +101,10 @@ export const DefaultResponderCriteria: ResponderCriteriaDto = {
     userFlairs: null
 };
 
+export type SurveyThemeDto = {
+    primaryColor: string;
+};
+
 export type SurveyDto = {
     id: string;
     owner: string;
@@ -117,6 +121,7 @@ export type SurveyDto = {
     responseCount?: number;
     postId?: string | null | undefined,
     questions?: SurveyQuestionList;
+    theme?: SurveyThemeDto | null | undefined;
 };
 
 export type SurveyWithQuestionsDto = SurveyDto & {

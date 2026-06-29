@@ -8,7 +8,8 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { SurveyWithQuestionsDto } from '../../shared/redis/SurveyDto';
 import { UserResponsesDto } from '../../shared/redis/ResponseDto';
-import { AddToast } from '../shared/toast/toastTypes';
+import { AddToast, RemoveToast, Toast } from '../shared/toast/toastTypes';
+import { SubredditInfoDto, UserInfoDto } from '../../shared/types/postApi';
 
 export enum PanelType {
     Intro,
@@ -31,12 +32,18 @@ export interface SurveyContextProps {
     panelContext: SurveyPanelContext;
     setPanelContext: Dispatch<SetStateAction<SurveyPanelContext>>;
     survey: SurveyWithQuestionsDto;
+    user: UserInfoDto | null | undefined;
+    subInfo: SubredditInfoDto | null | undefined;
     lastResponse: UserResponsesDto | null | undefined;
     setLastResponse: Dispatch<SetStateAction<UserResponsesDto | null | undefined>>;
+    toasts: Toast[];
     addToast: AddToast;
+    removeToast: RemoveToast;
     canViewResults: boolean;
     anonymousMode: boolean;
     setAnonymousMode: Dispatch<SetStateAction<boolean>>;
+    expandedMode: boolean;
+    setExpandedMode: Dispatch<SetStateAction<boolean>>;
 }
 
 export const SurveyContext = createContext<SurveyContextProps | undefined>(undefined);

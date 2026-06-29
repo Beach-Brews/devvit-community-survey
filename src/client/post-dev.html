@@ -1,0 +1,137 @@
+
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Survey Post</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+<body class="h-full text-neutral-content bg-devvit-expanded-header p-4 flex flex-col gap-10 items-center justify-center">
+<div id="expanded-view" class="fixed inset-0 z-10 flex flex-col w-full h-full" style="display: none">
+    <div class="flex shrink-0 justify-between bg-devvit-expanded-header p-2 text-neutral-content-strong">
+        <span class="text-xl font-bold">Post Title</span>
+        <button id="close-expand" class="cursor-pointer">Close</button>
+    </div>
+
+    <div class="flex min-h-0 flex-1">
+        <div id="expanded-area" class="flex h-full w-full bg-neutral-background">
+        </div>
+    </div>
+</div>
+<div class="w-full relative overflow-hidden pointer-cursor isolate mt-xs xs:rounded-4 flex items-center justify-center">
+    <div id="post-container" style="width: 340px; max-width: 340px; height: 512px; min-height: 512px; max-height: 512px; overflow: hidden" class=" box-border overflow-hidden relative shrink-0 flex flex-col p-0 items-stretch border-0 rounded-dx-sm pointer-events-none [&>:not(.pointer-events-none)]:pointer-events-auto ">
+        <div id="post-area" class="w-full h-full flex box-border relative">
+            <iframe id="post-frame"
+                    class="border border-neutral-border-weak rounded-2xl flex-1 w-full min-h-0"
+                    src="post.html"
+            ></iframe>
+        </div>
+    </div>
+</div>
+<div class="flex gap-2 items-center">
+    <label for="width-control">Width:</label>
+    <input id="width-control" type="number" value="340" class="px-4 py-0.5 border border-rl-border-weak dark:border-rd-border-weak rounded-sm" />
+    <div>340-700</div>
+</div>
+<div id="error-view"></div>
+<script>
+    const ctl = document.getElementById('width-control');
+    ctl.addEventListener('change', () => {
+        let val = parseInt(ctl.value);
+        if (isNaN(val) || val < 340)
+            val = 340;
+        if (val > 700)
+            val = 700;
+        const post = document.getElementById('post-container');
+        post.style.width = `${val}px`;
+        post.style.maxWidth = `${val}px`;
+        ctl.value = val;
+    });
+
+    const postFrame = document.getElementById('post-frame');
+
+    document.getElementById('close-expand').addEventListener('click', () => {
+        const post = document.getElementById('post-container');
+        const expandedView = document.getElementById('expanded-view');
+        const postArea = document.getElementById('post-area');
+        const expandedArea = document.getElementById('expanded-area');
+
+        expandedView.style.display = 'none';
+        post.style.display = 'block';
+        if (postArea.moveBefore) {
+            postFrame.style.borderStyle = 'solid';
+            postArea.moveBefore(postFrame, null);
+        } else {
+            expandedArea.innerHTML = '';
+        }
+
+        postFrame.contentWindow.devvit = {
+            webViewMode: 1,
+            entrypoints: {
+                'default': window.location.origin + '/post.html'
+            }
+        };
+
+        postFrame.contentWindow.postMessage({ type: 'devvit-message', data: { immersiveModeEvent: { immersiveMode: 1 } } });
+    });
+
+    postFrame.addEventListener('load', () => {
+        postFrame.contentWindow.devvit = {
+            webViewMode: postFrame.contentWindow.location.search === '' ? 1 : 2,
+            entrypoints: {
+                'default': window.location.origin + '/post.html'
+            }
+        };
+        window.addEventListener('message', (data) => {
+            console.log(data);
+            if (!data?.data?.immersiveMode) return;
+
+            const post = document.getElementById('post-container');
+            const expandedView = document.getElementById('expanded-view');
+            const postArea = document.getElementById('post-area');
+            const expandedArea = document.getElementById('expanded-area');
+
+            if (data.data.immersiveMode.immersiveMode === 2) {
+                expandedView.style.display = 'flex';
+                post.style.display = 'none';
+                if (expandedArea.moveBefore) {
+                    postFrame.style.borderStyle = 'none';
+                    postFrame.style.borderRadius = 'none';
+                    expandedArea.moveBefore(postFrame, null);
+                } else {
+                    const newFrame = postFrame.cloneNode();
+                    newFrame.src = data.data.immersiveMode.entryUrl + "&e=2";
+                    expandedArea.insertBefore(newFrame, null);
+                }
+            } else {
+                expandedView.style.display = 'none';
+                post.style.display = 'block';
+                if (postArea.moveBefore) {
+                    postFrame.style.borderStyle = 'solid';
+                    postArea.moveBefore(postFrame, null);
+                } else {
+                    postFrame.contentWindow.location.reload();
+                    expandedArea.innerHTML = '';
+                }
+            }
+
+            postFrame.contentWindow.devvit = {
+                webViewMode: data.data.immersiveMode.immersiveMode,
+                entrypoints: {
+                    'default': window.location.origin + '/post.html'
+                }
+            };
+            postFrame.focus();
+        })
+    });
+
+    window.addEventListener('error', (event) => {
+        document.getElementById('error-view').innerHTML = event.message.toString();
+    });
+</script>
+</body>
+</html>

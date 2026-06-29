@@ -1,4 +1,4 @@
-![Community Survey App](https://i.redd.it/jk61ar3tkfhg1.png)
+![Community Survey App](https://i.redd.it/vsxfe4jpe8ah1.png)
 
 # Community Survey
 
@@ -8,6 +8,7 @@
 * 🕒 **Schedule:** Choose survey start and end dates
 * 👁️‍🗨️ **Visibility:** Users can respond directly in Reddit
 * 📊 **Results:** Choose when and who can see results
+* 🎨 **Redesign:** Recently updated to match Reddit's styling
 
 ## Responder Criteria
 * 🏠 **Community Karma** (Post, Comment, or Total)
@@ -19,6 +20,7 @@
 
 ## Survey Settings
 * 📊 **Result Visibility** (Always, Closed, Responders, Mods)
+* 🎨 **Primary Color** Choose from Reddit's five brand colors
 * _More Coming Soon!_
 
 ## Question Types
@@ -40,7 +42,7 @@ To view tutorials, receive support, report bugs, or request new features, please
 
 ## Ongoing Development
 
-Community Survey is still in development and some features are still being developed. There are also a large number of additional features planned for future releases.  Please visit [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) to report any bugs or make feature requests.
+Community Survey is still in development and some features are still being developed. There are also a large number of additional features planned for future releases. Please visit [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) to report any bugs or make feature requests.
 
 ## Terms of Use + Privacy Policy
 
@@ -64,6 +66,7 @@ Want some reading material to help you fall asleep? Check out the [Community Sur
 
 ## Acknowledgements
 
-* u/PitchforkAssistant - Thank you for helping brainstorm ideas, providing some sweet proto finds, and generally being amazing
 * u/SampleOfNone - Thank you for poking holes, extensively testing, and offering up suggestions for features to make this app successful
+* u/PitchforkAssistant - Thank you for helping brainstorm ideas, providing some sweet proto finds, and generally being amazing
+* u/fsv - Thanks for the help with user account delete detection bugs.
 * u/hammertimestudio, u/Xenc, u/Pl00h - Thank you for helping with some light testing and providing feedback

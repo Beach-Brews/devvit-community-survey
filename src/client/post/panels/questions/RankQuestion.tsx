@@ -9,6 +9,7 @@ import { QuestionProps } from './QuestionProps';
 import { QuestionOptionDto } from '../../../../shared/redis/SurveyDto';
 import { ArrowDownCircleIcon, ArrowUpCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
 
 export const RankQuestion = (props: QuestionProps) => {
     // Check that the option type is valid
@@ -42,23 +43,37 @@ export const RankQuestion = (props: QuestionProps) => {
         setLastOpt([newIndex, isUp]);
     };
 
-    const buttonStyle = 'p-0.5 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-700 hover:dark:text-blue-200 disabled:pointer-events-none disabled:opacity-50';
-    const lastStyle = `bg-blue-100 dark:bg-blue-950 rounded-md`;
+    const buttonStyle = 'p-0.5 rounded-lg cursor-pointer hover:text-survey-primary-border disabled:pointer-events-none disabled:opacity-50';
 
     return (
-        <ul className={`flex flex-col w-full ${optionCount > 6 ? 'gap-1' : 'gap-2'}`}>
-            {valueOrder.map((o, i) => {
-                const lineStyle = lastOpt?.[0] === i ? lastStyle : '';
-                return (
-                    <li key={`sqo_${o.value}`} className={`text-base flex gap-2 items-center ${lineStyle}`}>
+        <ul className={`flex flex-col w-full gap-2`}>
+            {valueOrder.map((o, i) => (
+                    <li
+                        key={`sqo_${o.value}`}
+                        className={`text-base p-2 flex gap-2 items-center bg-neutral-background-strong group
+                        ring rounded-xl ${lastOpt?.[0] === i ? 'ring-survey-primary-border' : 'ring-neutral-border hover:ring-survey-primary-border-hovered'}
+                        `}
+                    >
                         <div className="flex gap-2">
-                            <button disabled={i === 0} onClick={() => onOptionChange(i, true)} className={buttonStyle}><ArrowUpCircleIcon className="size-6" /></button>
-                            <button disabled={i === optionCount-1} onClick={() => onOptionChange(i, false)} className={buttonStyle}><ArrowDownCircleIcon className="size-6" /></button>
+                            <button
+                                disabled={i === 0}
+                                onClick={() => onOptionChange(i, true)}
+                                className={buttonStyle}
+                            >
+                                <ArrowUpCircleIcon className="size-6" />
+                            </button>
+                            <button
+                                disabled={i === optionCount-1}
+                                onClick={() => onOptionChange(i, false)}
+                                className={buttonStyle}
+                            >
+                                <ArrowDownCircleIcon className="size-6" />
+                            </button>
                         </div>
-                        <div className={`flex-grow ${lastOpt?.[0] === i ? '' : 'line-clamp-1'}`}>{o.label}</div>
+                        <div className="wrap-anywhere">{renderMarkdown(o.label)}</div>
                     </li>
-                );
-            })}
+                )
+            )}
         </ul>
     );
 };

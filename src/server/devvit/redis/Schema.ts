@@ -114,6 +114,11 @@ export class Schema {
             userFlairs: z.array(Schema.flairCriteria).nullable().default(null)
         });
 
+    static SurveyTheme = z
+        .looseObject({
+            primaryColor: z.string()
+        });
+
     static surveyConfig = z
         .looseObject({
             id: z.string()
@@ -135,7 +140,8 @@ export class Schema {
             resultVisibility: Schema.resultVisibility.default(ResultVisibility.Always),
             createDate: z.number().default(() => Date.now()),
             publishDate: z.number().nullable(),
-            closeDate: z.number().nullable()
+            closeDate: z.number().nullable(),
+            theme: Schema.SurveyTheme.nullish().default(null),
         });
 
     static surveyConfigWithQuestions = z

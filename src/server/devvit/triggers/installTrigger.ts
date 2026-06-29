@@ -29,7 +29,7 @@ export const registerAppInstallTrigger: PathFactory = (router: Router) => {
 Thank you for installing CommunitySurvey!
 
 Below is a quick guide on creating your first survey. Additional help and support can be found in the r/CommunitySurvey
-[Getting Started Wiki Page](https://www.reddit.com/r/CommunitySurvey/wiki/app/gerring-started/).
+[Getting Started Wiki Page](https://www.reddit.com/r/CommunitySurvey/wiki/app/getting-started/).
 
 **Getting Started**
 

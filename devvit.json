@@ -12,7 +12,7 @@
     "dir": "dist/client",
     "entrypoints": {
       "default": {
-        "entry": "survey.html",
+        "entry": "post.html",
         "height": "tall",
         "inline": true
       },

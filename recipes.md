@@ -1,4 +1,32 @@
-﻿## General
+﻿## Roadmap
+* Develop design system
+* Mock designs
+* Requirements docs
+
+* Update documentation
+* Create demo video
+* Setup GitHub Project for project tracking (features + bugs)
+
+* Ideas
+  * High - Dashboard redesigns
+  * High - Fix spaces/whitespace questions, descriptions and lables
+  * High - Export Results to CSV
+  * High - ??Text Responses??
+  * High - Dashboard redesign
+  * High - Results charts revamp
+  * Medium - Rank drag-and-drop (using dnd-kit, lazy loaded?)
+  * Medium - Results page sorting: allow "option order", "lowest to highest", or "highest to lowest"
+  * Medium - Sub-Ban vs Site-Ban vs Shadowban etc.
+  * Low - Per-question user criteria (such as general lurker questions vs poster questions)
+  * Low - Text fallback changes (update fallback text if post is deleted/removed directly?)
+  * Low - Fix hub "there are no closed/live surveys" copy styling
+  * Low - ??Add "shareImageUrl" - Generate an image with survey text, upload??
+  * Low - Going to next question does not scroll back to top
+  * Low - Results progress bar is wrong (last question shows space?)
+
+## General
+* Update text fallback for old reddit to include link to new reddit (try markdown)
+  * Update fallback text when survey is deleted. Would need trigger to update as well if mod deletes the post itself? Could fallback set it if config fetched and not exists.
 * Migration Framework
   * Migrate postIds + hub API
 * Discuss if there is a way to build in bot-bouncer checks (i.e. read wiki?)
@@ -10,15 +38,8 @@
     * Will need expanded view for these
 
 ## Dashboard
-* ~~Auth-Token Timeout Modal/Message~~ (resolved by Reddit?)
-* ~~Link to survey post for published surveys~~
-* ~~View live survey config (settings, questions, etc.)~~
-* ~~Intro and descriptions do not allow paragraphs/markdown~~
-* ~~Import/Export Survey Config~~
-* ~~Send Welcome Modmail on Install (link to Wiki for Tutorials/Setup)~~
-* ~~Update notice + release notes within dashboard~~
-* ~~Modify dashboard post for non-mods to a list of live/closed surveys~~
 * Export Survey Responses to CSV/Xlsx
+* When surveys are published, add new "shareImageUrl" => https://developers.reddit.com/docs/capabilities/creating_custom_post#custom-post-styles
 * Provide feedback within dashboard (and post help)
 * Handle cross-device/multi-tab editing. Channels? Lock?
     * Allow all mods to see all surveys?
@@ -71,7 +92,3 @@
 * Bug: If survey list is scrolled, the editor also starts already scrolled, which cuts off the setting tabs.
 * Bug: Editing a "scheduled" survey, the publish dialog does not show the previously selected publish or close date.
 * Bug: Visual - Flair criteria shows "code" (TxtEq)
-
-**Survey Posts**
-
-* No know issues

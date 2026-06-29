@@ -19,38 +19,41 @@ import { navigateTo } from '@devvit/web/client';
 export type ElementOrString = JSX.Element | string;
 export type MarkdownList = ElementOrString[];
 
-export const renderMarkdown = (text: string): MarkdownList => {
+export const renderMarkdown = (text: string, stripImg: boolean = false): MarkdownList => {
     return  text.split(/\r\r|\n\n|\r\n\r\n/)
         .map(p => p.trim())
         .filter(Boolean)
-        .map(mapParagraph);
+        .map((p, i) => mapParagraph(p, i, stripImg));
 }
 
-const mapParagraph = (text: string, idx: number): JSX.Element => {
+const mapParagraph = (text: string, idx: number, stripImg: boolean): JSX.Element => {
     return (
         <p className="py-1" key={idx}>
-            {joinHtml(text.split(/ {2}(?:\r\n|\r|\n)/).map(mapText), 'br')}
+            {joinHtml(text.split(/ {2}(?:\r\n|\r|\n)/).map(t => mapText(t, stripImg)), 'br')}
         </p>
     );
 };
 
 type TokenMatch = { index: number, content: string, length: number, tag: string | undefined, groups: string[], cb: TokenMatchCallback | undefined };
-type TokenMatchCallback = (match: TokenMatch, key: string) => ElementOrString | null;
+type TokenMatchCallback = (match: TokenMatch, key: string, stripImg: boolean) => ElementOrString | null;
 type MarkdownToken = { regex: RegExp, tag?: string, cb?: TokenMatchCallback };
 const TOKENS: MarkdownToken[] = [
     { regex: /(?<!\\)\*\*(.*?\*?)\*\*/, tag: 'strong' },
     { regex: /(?<!\\)\*((?:[^*]|\*\*)+?)\*(?!\*)/, tag: 'em' },
     { regex: /(?<!\\)__([^_]+.*?)__/, tag: 'u' },
     { regex: /(?<!\\)~~([^~]+.*?)~~/, tag: 's' },
-    { regex: /(?<!\\)\[([^\]]+?)]\(([^)]+?)\)/, cb: (match: TokenMatch, key: string) => {
-            const [_, text, url] = match.groups;
+    { regex: /(?<!\\)(!?)\[([^\]]+?)]\(([^)]+?)\)/, cb: (match: TokenMatch, key: string, stripImg: boolean) => {
+            const [_, media, text, url] = match.groups;
             if (!text || !url) return null;
-            return (<button style={{textDecoration: 'underline', cursor: 'pointer'}} key={key} onClick={() => navigateTo(url)}>{mapText(text)}</button>);
+            if (media === '!') {
+                return stripImg ? (<span>[Image: {text}]</span>) : (<img key={key} src={url} alt={text} />);
+            }
+            return (<button style={{textDecoration: 'underline', cursor: 'pointer'}} key={key} onClick={() => navigateTo(url)}>{mapText(text, stripImg)}</button>);
         }
     }
 ];
 
-const mapText = (input: string): MarkdownList => {
+const mapText = (input: string, stripImg: boolean): MarkdownList => {
     const ret: MarkdownList = [];
     let remainingText = input;
     while (remainingText.length > 0) {
@@ -62,9 +65,9 @@ const mapText = (input: string): MarkdownList => {
         if (nextToken.index > 0)
             ret.push(remainingText.substring(0, nextToken.index).replace(/\\([*_~])/g, '$1'));
         if (nextToken.tag)
-            ret.push(React.createElement(nextToken.tag, { key: ret.length }, mapText(nextToken.content)));
+            ret.push(React.createElement(nextToken.tag, { key: ret.length }, mapText(nextToken.content, stripImg)));
         if (nextToken.cb) {
-            const val = nextToken.cb(nextToken, ret.length.toString());
+            const val = nextToken.cb(nextToken, ret.length.toString(), stripImg);
             if (val)
                 ret.push(val);
         }
@@ -77,7 +80,7 @@ const findNextToken = (input: string): TokenMatch | null => {
     let best: TokenMatch | null = null;
     for (const t of TOKENS) {
         const match = input.match(t.regex);
-        if (!match || match.index === undefined || !match[1] || (best && (match.index > best.index || (match.index == best.index && match[0].length <= best.length)))) continue;
+        if (!match || match.index === undefined || match[1] === undefined || (best && (match.index > best.index || (match.index == best.index && match[0].length <= best.length)))) continue;
         best = { index: match.index, content: match[1], length: match[0].length, tag: t.tag, groups: [...match], cb: t.cb };
     }
     return best;

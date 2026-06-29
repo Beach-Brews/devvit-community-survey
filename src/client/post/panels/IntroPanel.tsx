@@ -6,13 +6,19 @@
 * License: BSD-3-Clause
 */
 
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { formatRelativeDateTime } from '../../shared/dateFormat';
-import { DocumentArrowDownIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
+import {
+    DocumentArrowDownIcon,
+    PencilSquareIcon,
+    PresentationChartBarIcon,
+    TrashIcon,
+} from '@heroicons/react/24/outline';
 import { ResponseBlockedReason } from '../../../shared/types/postApi';
 import { ResultVisibility } from '../../../shared/redis/SurveyDto';
 import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
+import { useOpenExpandedMode } from '../../shared/expandedStateManager';
 
 export interface IntroPanelProps {
     isAnonymous: boolean,
@@ -27,16 +33,16 @@ export const IntroPanel = (props: IntroPanelProps) => {
 
     // Handler for starting survey
     const responses = ctx.lastResponse ? Object.keys(ctx.lastResponse).length : 0;
-    const onStartSurvey = () => {
-        const startIndex = responses > 0 && responses < ctx.survey.questions.length
-            ? responses
-            : 0;
-        ctx.setPanelContext({ panel: PanelType.Question, number: startIndex });
-    };
+    const startIndex = responses > 0 && responses < ctx.survey.questions.length
+        ? responses
+        : 0;
+    const onStartSurvey = useOpenExpandedMode(useCallback(() => ({
+        panel: PanelType.Question, number: startIndex
+    }), [startIndex]));
 
-    const showResults = () => {
-        ctx.setPanelContext({ panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true });
-    };
+    const showResults = useOpenExpandedMode(useCallback(() => ({
+        panel: PanelType.Result, number: 0, prev: PanelType.Intro, showResultNav: true
+    }), []));
 
     const onDelete = () => {
         ctx.setPanelContext({ panel: PanelType.Delete, prev: PanelType.Intro });
@@ -78,13 +84,15 @@ export const IntroPanel = (props: IntroPanelProps) => {
 
     return (
         <div className="flex flex-col gap-2 justify-between items-center h-full">
-            <div className="w-full flex justify-between">
-                <div className="text-neutral-700 dark:text-neutral-300">
+            <div className="w-full px-2 flex justify-between items-center text-neutral-content-weak border-b border-b-neutral-border">
+                <div>
                     {ctx.canViewResults
                         ? (
-                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                                <PresentationChartBarIcon className="size-5" />
-                                <span>{ctx.survey.responseCount?.toLocaleString() ?? 0}</span>
+                            <button onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 group">
+                                <div className="size-7 rounded-full flex justify-center items-center bg-upvote-background group-hover:bg-upvote-background-hovered">
+                                    <PresentationChartBarIcon className="size-5 text-upvote-onbackground" />
+                                </div>
+                                <div><span className="text-upvote-plain">{ctx.survey.responseCount?.toLocaleString() ?? 0}</span> responses</div>
                             </button>
                         )
                         : (
@@ -100,39 +108,66 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         )
                     }
                 </div>
-                <div className="p-2 text-neutral-700 dark:text-neutral-300">
+                <div className="p-2">
                     {ctx.survey.closeDate
-                        ? (<div className="flex gap-1 items-center"><DocumentArrowDownIcon className="size-5" /><span>{formatRelativeDateTime(ctx.survey.closeDate)}</span></div>)
+                        ? (
+                            <div className="flex gap-1 items-center">
+                                <DocumentArrowDownIcon className="size-5" />
+                                <span>{formatRelativeDateTime(ctx.survey.closeDate)}</span>
+                            </div>
+                        )
                         : 'No close date'}
                 </div>
             </div>
-            <div className="w-full flex flex-col gap-4 justify-center items-center flex-grow h-[0%]">
-                <div className="text-2xl font-bold text-center leading-tight">{ctx.survey.title}</div>
-                {ctx.survey.intro && (<div className={`text-center ${ctx.survey.intro.length > 300 ? 'text-sm line-clamp-9' : 'text-base line-clamp-6'}`}>{renderMarkdown(ctx.survey.intro)}</div>)}
-                <div className="w-full flex justify-center">
-                    <button disabled={disableResponses} onClick={!disableResponses ? onStartSurvey : undefined} className={`w-2/3 max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${disableResponses ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
-                        {props.isAnonymous
-                            ? 'Login to Start Survey'
-                            : blockedReason?.[0] !== undefined
-                                ? blockedReason[0]
-                                : responses <= 0
-                                    ? 'Start Survey'
-                                    : responses < ctx.survey.questions.length
-                                        ? 'Continue Survey'
-                                        : 'Change Responses'
-                        }
-                    </button>
+            <div className="w-full flex-1 min-h-0 p-2 pt-0 grid grid-rows-[1fr_auto_1fr_auto_1fr] gap-2">
+                <div></div>
+                <div className="flex flex-col gap-2 items-center min-h-0 overflow-hidden">
+                    <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong shrink-0">{ctx.survey.title}</div>
+                    {ctx.survey.intro && (
+                        <div className="text-center overflow-hidden">
+                            {renderMarkdown(ctx.survey.intro)}
+                        </div>
+                    )}
                 </div>
-                {blockedReason?.[1] !== undefined
-                    ? (<div className="text-neutral-700 dark:text-neutral-300 text-center">{blockedReason[1]}</div>)
-                    : (<div className="text-neutral-700 dark:text-neutral-300 text-center">{ctx.survey.questions.length} total questions</div>)}
-                {responses > 0 && (
-                    <div className="w-full flex justify-center">
-                        <button onClick={onDelete} className="w-2/3 max-w-[300px] text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
-                            Delete Responses
-                        </button>
+                <div></div>
+                <div className="w-full flex flex-col items-center gap-1">
+                    <button
+                        disabled={disableResponses}
+                        onClick={!disableResponses ? onStartSurvey : undefined}
+                        className="w-2/3 max-w-75 svy-btn-primary"
+                    >
+                        <PencilSquareIcon className="size-4" />
+                        <div>
+                            {props.isAnonymous
+                                ? 'Login to Start Survey'
+                                : blockedReason?.[0] !== undefined
+                                    ? blockedReason[0]
+                                    : responses <= 0
+                                        ? 'Start Survey'
+                                        : responses < ctx.survey.questions.length
+                                            ? 'Continue Survey'
+                                            : 'Change Responses'
+                            }
+                        </div>
+                    </button>
+                    <div className="text-center text-sm text-neutral-content-weak">
+                        {blockedReason?.[1] !== undefined
+                            ? blockedReason[1]
+                            : `${ctx.survey.questions.length} total questions`
+                        }
                     </div>
-                )}
+                    {responses > 0 && (
+                        <div className="mt-4 w-full flex justify-center">
+                            <button
+                                onClick={onDelete}
+                                className="w-2/3 max-w-75 svy-btn-danger"
+                            >
+                                <TrashIcon className="size-4" /> Delete Responses
+                            </button>
+                        </div>
+                    )}
+                </div>
+                <div></div>
             </div>
         </div>
     );

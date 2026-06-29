@@ -11,10 +11,10 @@ import { ErrorPanel } from './ErrorPanel';
 import { MultiOrCheckboxQuestion } from './questions/MultiOrCheckboxQuestion';
 import { RankQuestion } from './questions/RankQuestion';
 import { ScaleQuestion } from './questions/ScaleQuestion';
-import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowRightIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline';
 import { upsertResponse } from '../api/surveyApi';
 import { ToastType } from '../../shared/toast/toastTypes';
+import { renderMarkdown } from '../../shared/markdown/markdownFlavor';
 
 export const QuestionPanel = () => {
 
@@ -36,6 +36,9 @@ export const QuestionPanel = () => {
             ?? (question?.type === 'rank' ? question.options.map(o => o.value) : undefined)
         : undefined);
 
+    // State for saving response to backend
+    const [saving, setSaving] = useState<boolean>(false);
+
     // If question is undefined, return error screen
     if (qNo === undefined || !question) {
         return (<ErrorPanel />);
@@ -44,15 +47,6 @@ export const QuestionPanel = () => {
     // Helper to determine if response is valid
     const validResponse = !question.required || (!!response && response.length > 0);
 
-    // Show description panel if need be
-    const showDescriptionText = question.description.length < 200 && (
-        (question.type != 'multi' && question.type != 'checkbox' && question.type != 'rank') ||
-        (question.options.length < 7)
-    );
-    const showFullDescription = () => {
-        ctx.setPanelContext({ panel: PanelType.QuestionDescription, number: qNo, prev: PanelType.Question });
-    };
-
     // Move to next panel if not saving and response is valid
     const onNext = async () => {
         try {
@@ -60,16 +54,38 @@ export const QuestionPanel = () => {
 
             // Only save response if a response was provided
             if (response) {
-                await upsertResponse(question.id, response);
 
-                // Update context response
-                ctx.setLastResponse({
-                    ...(ctx.lastResponse ?? {}),
-                    [question.id]: response,
-                });
+                // Signal saving started (but wait 500ms to prevent "flash" if quickly saved)
+                setSaving(true);
+
+                try {
+                    // Trigger update
+                    await upsertResponse(question.id, response);
+
+                    // Update context response
+                    ctx.setLastResponse({
+                        ...(ctx.lastResponse ?? {}),
+                        [question.id]: response,
+                    });
+
+                    // Move to the next screen.
+                    ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
+
+                } catch (e) {
+                    ctx.addToast({
+                        message: 'Failed to save response',
+                        type: ToastType.Error
+                    });
+                }
+
+                // Reset the saving state
+                setSaving(false);
+
+            } else {
+                // If no response, no save required, move to the next screen
+                ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
             }
 
-            ctx.setPanelContext({ panel: isLast ? PanelType.Outro : PanelType.Question, number: qNo + 1 });
         } catch (e) {
             ctx.addToast({
                 message: 'Error saving response.',
@@ -106,43 +122,44 @@ export const QuestionPanel = () => {
     };
 
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex-grow h-[0%] flex flex-col gap-2">
-                <div className="text-base md:text-lg font-bold relative leading-none">{question.title}{!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-600 dark:text-neutral-400">(optional)</span>) : ''}</div>
-                {question.description && (
-                    <div className={`text-sm md:text-base ${showDescriptionText ? 'line-clamp-4' : 'underline cursor-pointer'}`} onClick={showDescriptionText ? undefined : showFullDescription}>
-                        {showDescriptionText ? question.description : 'Show question prompt'}
-                    </div>
-                )}
-                <div className={`flex ${question.type === 'scale' ? ' justify-center' : 'justify-start'} items-center w-full`}>
-                    {renderQuestionInput()}
+        <div className="h-full flex flex-col gap-4 relative">
+            {saving && (
+                <div className="z-10 fixed inset-0 w-full h-full flex justify-center items-center bg-black/30">
                 </div>
+            )}
+            <div className="text-xl font-bold text-neutral-content-strong">
+                {question.title}
+                {!question.required ? (<span className="text-sm font-thin ml-2 text-neutral-content-weak">(optional)</span>) : ''}
             </div>
-            <div className="mt-2 w-full flex flex-col gap-2 justify-center items-center">
-                <div className="flex justify-between items-center w-full">
-                    <div className="flex justify-center w-1/5">
-                        {qNo > 0 && (
-                            <button onClick={onPrevious} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                                <ArrowUturnLeftIcon className="size-5" />
-                                <span className="hidden md:block">Previous</span>
-                            </button>
-                        )}
-                    </div>
-                    <div className="flex justify-center items-center w-3/5">
-                        <button disabled={!validResponse} onClick={validResponse ? onNext : undefined} className={`w-full max-w-[300px] text-white bg-blue-800 dark:bg-blue-900 disabled:bg-neutral-600 disabled:dark:bg-neutral-900 px-8 py-2 rounded-xl ${!validResponse ? 'cursor-not-allowed' : ' cursor-pointer'}`}>
-                            {isLast ? 'Finish Survey' : 'Next Question'}
+            <div>{renderMarkdown(question.description)}</div>
+            <div className="flex flex-col gap-2 w-full">
+                {renderQuestionInput()}
+            </div>
+            <div className="flex justify-between flex-wrap gap-x-2 gap-y-4">
+                <div className="flex items-center gap-2 order-2 xs:order-1">
+                    <button onClick={onPrevious} disabled={qNo <= 0 || saving} className="svy-btn-secondary">
+                        <ArrowLeftIcon className="size-5" />
+                        <span>Previous</span>
+                    </button>
+                    {ctx.canViewResults && (
+                        <button disabled={saving} onClick={showResults} className="svy-btn-secondary">
+                            <PresentationChartBarIcon className="size-5" />
+                            <span>Results</span>
                         </button>
-                    </div>
-                    <div className="flex justify-center w-1/5">
-                        {ctx.canViewResults && (
-                            <div onClick={showResults} className="flex gap-1 items-center cursor-pointer rounded-lg p-2 hover:bg-blue-200 hover:text-blue-700 hover:dark:bg-blue-900 hover:dark:text-blue-200">
-                                <PresentationChartBarIcon className="size-5" />
-                                <span className="hidden md:block">Results</span>
-                            </div>
-                        )}
+                    )}
+                </div>
+                <div className="flex-1 order-1 xs:order-2 basis-full xs:basis-0 flex flex-col gap-1 justify-center items-center text-sm">
+                    <div>Question {qNo+1} of {totalQs}</div>
+                    <div className="relative w-full max-w-50 h-1.5 rounded-full bg-neutral-border-weak">
+                        <div className="absolute inset-0 h-full rounded-full bg-survey-button-primary-background" style={{width: Math.floor((qNo+1)/(totalQs+1)*100) + '%'}}></div>
                     </div>
                 </div>
-                <div className="text-neutral-700 dark:text-neutral-300">Question {qNo+1} of {totalQs}</div>
+                <div className="flex items-center gap-2 order-3">
+                    <button disabled={!validResponse || saving} onClick={validResponse ? onNext : undefined} className="svy-btn-primary">
+                        {saving ? 'Saving' : (isLast ? 'Finish' : 'Next')}
+                        <ArrowRightIcon className="size-5" />
+                    </button>
+                </div>
             </div>
         </div>
     );

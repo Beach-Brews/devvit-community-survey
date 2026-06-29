@@ -7,6 +7,7 @@
 
 import { PostResultProps } from './PostResultProps';
 import { QuestionOptionDto } from '../../../../shared/redis/SurveyDto';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
 
 export const MultiOptionResult = (props: PostResultProps) => {
     const question = props.question;
@@ -23,47 +24,40 @@ export const MultiOptionResult = (props: PostResultProps) => {
 
     const total = props.response.total;
     const percentTotal = question.type == 'rank' ? total * sorted.length : total;
-    const resultTextThreshold = 75;
     
     return (
-        <div className="w-full grid grid-cols-[auto_1fr] items-center gap-1">
+        <div className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-2">
             {
-                sorted.map((o, i) => {
+                sorted.map(o => {
                     const score = props.response.responses[o.value] ?? 0;
                     const percentage = total > 0 ? Math.floor(score/percentTotal*100) : 0;
                     const row = [
-                        (<div key={o.value + '_label'} className="max-w-[150px] text-right">{o.label}</div>)
+                        (<div key={o.value + '_label'} className="max-w-[150px] text-right col-start-1 wrap-break-word">{renderMarkdown(o.label)}</div>)
                     ];
-                    if (total == 0 && i == 0) {
+                    if (total > 0) {
+                        row.push(<div key={o.value + '_result'} className="flex-1 grow h-8 p-2 flex justify-start items-center gap-2 font-bold border border-neutral-border rounded-full">
+                            <div style={{ width: `${percentage}%`, minWidth: score === 0 ? '0' : '2px' }} className="h-4 bg-survey-primary-border rounded-full flex justify-end items-center whitespace-nowrap">
+                            </div>
+                        </div>);
                         row.push(
-                            <div key="no_result" className="text-center" style={{gridColumn: '2', gridRow: `1 / span ${sorted.length}`}}>
-                                No Results
+                            <div className="whitespace-nowrap" key={o.value + '_value'}>
+                                {score.toLocaleString()} ({percentage}%)
                             </div>
                         );
-                    }
-                    if (total > 0) {
-                        row.push(<div key={o.value + '_result'} className="w-full p-2 flex justify-start items-center gap-2 font-bold">
-                            <div style={{ width: `${percentage}%` }} className="min-w-1 h-6 bg-blue-200 dark:bg-blue-800 border border-blue-400 dark:border-blue-600 rounded-md flex justify-end items-center whitespace-nowrap">
-                                {percentage >= resultTextThreshold && (
-                                    <div className="px-2">
-                                        {score.toLocaleString()} ({percentage}%)
-                                    </div>
-                                )}
-                            </div>
-                            {total > 0 && percentage < resultTextThreshold && (
-                                <div className="whitespace-nowrap">
-                                    {score.toLocaleString()} ({percentage}%)
-                                </div>
-                            )}
-                        </div>);
                     }
                     return row;
                 })
             }
-            <div className="max-w-[150px] text-right mt-4">
+
+            {total == 0 && (
+                <div key="no_result" className="text-center col-start-2 col-span-2 row-start-1" style={{gridColumn: '2', gridRow: `1 / span ${sorted.length}`}}>
+                    No Results
+                </div>
+            )}
+            <div className="text-right mt-4 col-start-1">
                 Total
             </div>
-            <div className="mt-4">
+            <div className="mt-4 col-start-2 col-span-2">
                 {total.toLocaleString()}
             </div>
         </div>

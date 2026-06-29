@@ -6,6 +6,7 @@
 */
 
 import { PostResultProps } from './PostResultProps';
+import { renderMarkdown } from '../../../shared/markdown/markdownFlavor';
 
 export const ScaleResult = (props: PostResultProps) => {
     const question = props.question;
@@ -16,10 +17,10 @@ export const ScaleResult = (props: PostResultProps) => {
 
     const options = question.max - question.min + 1;
     return (
-        <div className="h-full flex flex-col justify-between items-center">
+        <div className="h-80 flex flex-col justify-between items-center">
             {total == 0 && (
-                <div className="w-full flex-grow h-[0%] flex flex-col items-center gap-2">
-                    <div className="flex-grow h-[0%] flex justify-center items-center" style={{gridRow: '1', gridColumn: `1 / span ${options}`}}>
+                <div className="w-full grow h-[0%] flex flex-col items-center gap-2">
+                    <div className="grow h-[0%] flex justify-center items-center" style={{gridRow: '1', gridColumn: `1 / span ${options}`}}>
                         No Results
                     </div>
                     <div className="flex w-full justify-between items-center">
@@ -37,7 +38,7 @@ export const ScaleResult = (props: PostResultProps) => {
                 </div>
             )}
             {total > 0 && (
-                <div style={{gridTemplateColumns: `repeat(${options}, minmax(0, 1fr))`}} className="w-full flex-grow h-[0%] grid items-center gap-2">
+                <div style={{gridTemplateColumns: `repeat(${options}, minmax(0, 1fr))`}} className="w-full grow h-[0%] grid items-center gap-2">
                     {Array.from({ length: options }, (_, i) => i + question.min)
                         .map(o => {
                             const score = props.response.responses[o] ?? 0;
@@ -47,7 +48,7 @@ export const ScaleResult = (props: PostResultProps) => {
                                     {total > 0 && (
                                         <div className="h-full flex flex-col justify-end items-center gap-2">
                                             <div className="font-bold text-center">{score.toLocaleString()} ({percentage}%)</div>
-                                            <div style={{ height: `${percentage}%` }} className="min-h-1 w-6 bg-blue-200 dark:bg-blue-800 border border-blue-400 dark:border-blue-600 rounded-md flex justify-end items-center"></div>
+                                            <div style={{ height: `${percentage}%`, minHeight: score === 0 ? '0' : '1px' }} className="w-6 bg-survey-primary-border rounded-full flex justify-end items-center"></div>
                                         </div>
                                     )}
                                     <div>{o}</div>
@@ -59,9 +60,9 @@ export const ScaleResult = (props: PostResultProps) => {
             )}
             {(question.minLabel.length > 0 || question.midLabel.length > 0 || question.maxLabel.length > 0) && (
                 <div className="w-full mt-2 flex gap-2 justify-between items-center">
-                    <div className="w-1/3">{question.minLabel}</div>
-                    <div className="w-1/3 text-center">{question.midLabel}</div>
-                    <div className="w-1/3 text-right">{question.maxLabel}</div>
+                    <div className="w-1/3">{renderMarkdown(question.minLabel)}</div>
+                    <div className="w-1/3 text-center">{renderMarkdown(question.midLabel)}</div>
+                    <div className="w-1/3 text-right">{renderMarkdown(question.maxLabel)}</div>
                 </div>
             )}
             <div className="w-full mt-2">

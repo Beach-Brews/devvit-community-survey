@@ -9,6 +9,8 @@ import { useContext } from 'react';
 import { PanelType, SurveyContext } from '../SurveyContext';
 import { deleteResponses } from '../api/surveyApi';
 import { ToastType } from '../../shared/toast/toastTypes';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 export const DeletePanel = () => {
 
@@ -16,15 +18,15 @@ export const DeletePanel = () => {
     const ctx = useContext(SurveyContext);
     if (!ctx) throw Error('Context undefined.');
 
-    const returnToSurvey = () => {
-        ctx.setPanelContext({ ...ctx.panelContext, panel: PanelType.Intro });
+    const returnToSurvey = (deleted: boolean) => {
+        ctx.setPanelContext(c => ({ ...c, panel: !deleted && c.prev === PanelType.Outro ? PanelType.Outro : PanelType.Intro }));
     };
 
     const onDelete = async () => {
         try {
             await deleteResponses();
             ctx.setLastResponse(null);
-            returnToSurvey();
+            returnToSurvey(true);
         } catch(e) {
             ctx.addToast({
                 message: 'Failed to delete responses',
@@ -34,15 +36,16 @@ export const DeletePanel = () => {
     };
 
     return (
-      <div className="flex flex-col gap-4 justify-center items-center h-full">
+      <div className="p-2 flex flex-col gap-4 justify-center items-center h-full">
           <div className="text-center font-bold text-lg">Delete Responses</div>
           <div className="text-center">Are you sure you wish to delete all of your responses to this survey?</div>
           <div className="flex gap-4 justify-center items-center w-full">
-              <button onClick={returnToSurvey} className="w-1/3 text-white bg-blue-800 dark:bg-blue-900 px-8 py-2 rounded-xl cursor-pointer">
+              <button onClick={() => returnToSurvey(false)} className="w-1/3 svy-btn-secondary">
+                  <XMarkIcon className="size-4" />
                   <span>Cancel</span>
               </button>
-              <button onClick={onDelete} className="w-1/3 text-white bg-red-800 dark:bg-red-900 px-8 py-2 rounded-xl cursor-pointer">
-                  <span>DELETE</span>
+              <button onClick={onDelete}className="w-1/3 svy-btn-danger">
+                  <TrashIcon className="size-4" /><span>DELETE</span>
               </button>
           </div>
       </div>

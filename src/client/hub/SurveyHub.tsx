@@ -92,7 +92,7 @@ export const SurveyHub = () => {
                 {hubInit === undefined
                     ? (
                         <>
-                            <LoadingSpinner className="bg-rl-text-weak dark:bg-rd-text-weak" />
+                            <LoadingSpinner className="bg-neutral-content-weak" />
                             <div className="text-xl text-center">Loading Survey Hub...</div>
                         </>
                     )
@@ -114,14 +114,14 @@ export const SurveyHub = () => {
             <div className="container max-w-screen-lg min-h-screen mx-auto flex flex-col relative z-0 h-full">
                 <div className="flex justify-between items-center gap-2 p-2">
                     <div className="flex justify-start items-center gap-2">
-                        <div  className="w-8 h-8 flex-shrink-0 object-contain overflow-hidden rounded-full">
+                        <div  className="w-8 h-8 shrink-0 object-contain overflow-hidden rounded-full">
                             {hubInit.subInfo.icon ? (<img width={32} height={32} alt={hubInit.subInfo.name} src={hubInit.subInfo.icon} />) : (<SubDefaultIcon />)}
                         </div>
                         <h1 className="text-sm md:text-md lg:text-2xl font-bold">r/{hubInit.subInfo.name} Surveys</h1>
                     </div>
                     {allowDashboard && (
                         <button
-                            className="rounded-full h-10 px-4 ml-auto font-semibold text-sm cursor-pointer text-center text-white bg-rl-btn-primary dark:bg-rd-btn-primary"
+                            className="rounded-full h-10 px-4 ml-auto font-semibold text-sm cursor-pointer text-center text-white bg-primary-background"
                             onClick={launchDashboard}
                         >
                             <span className="hidden xs:inline">Survey</span> Editor
@@ -131,31 +131,31 @@ export const SurveyHub = () => {
                 {/* No Surveys */}
                 {hubInit && hubInit.surveys.length <= 0
                     ? (
-                        <div className="flex flex-col gap-2 p-2 justify-center items-center border-t border-t-rl-border-weak dark:border-t-rd-border-weak">
-                            <div className="texf-xl sm:text-2xl text-rl-text dark:text-rd-text font-bold text-center">There are no surveys currently</div>
+                        <div className="flex flex-col gap-2 p-2 justify-center items-center border-t border-t-neutral-border">
+                            <div className="texf-xl sm:text-2xl text-neutral-content-strong font-bold text-center">There are no surveys currently</div>
                             <div className="text-center">Check back soon!</div>
                         </div>
                     )
                     : (
                     <>
                         {/* Pagination + Survey List */}
-                        <div className="text-xs xs:text-base flex justify-between items-center p-2 gap-2 border-b border-b-rl-border-weak dark:border-b-rd-border-weak">
+                        <div className="text-xs xs:text-base flex justify-between items-center p-2 gap-2 border-b border-b-neutral-border">
                             <div className="flex justify-start items-center gap-1 xs:gap-2">
                                 <button
                                     onClick={() => updatePagination(hubInit.surveys, 'live', 1)}
-                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'live' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
+                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'live' ? 'text-secondary-onbackground bg-secondary-background-selected' : 'text-secondary-plain hover:text-secondary-plain-hovered hover:bg-secondary-background-hovered'}`}
                                 >
                                     Live
                                 </button>
                                 <button
                                     onClick={() => updatePagination(hubInit.surveys, 'closed', 1)}
-                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'closed' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
+                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'closed' ? 'text-secondary-onbackground bg-secondary-background-selected' : 'text-secondary-plain hover:text-secondary-plain-hovered hover:bg-secondary-background-hovered'}`}
                                 >
                                     Closed
                                 </button>
                                 <button
                                     onClick={() => updatePagination(hubInit.surveys, 'all', 1)}
-                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'all' ? 'bg-rl-btn-sec-selected dark:bg-rd-btn-sec-selected' : 'hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover'}`}
+                                    className={`xs:min-w-16.25 rounded-full px-4 h-8 cursor-pointer ${pagination.filter === 'all' ? 'text-secondary-onbackground bg-secondary-background-selected' : 'text-secondary-plain hover:text-secondary-plain-hovered hover:bg-secondary-background-hovered'}`}
                                 >
                                     All
                                 </button>
@@ -165,14 +165,14 @@ export const SurveyHub = () => {
                                 <button
                                     disabled={pagination.page <= 1}
                                     onClick={() => { if(pagination.page > 1) updatePagination(hubInit.surveys, undefined, pagination.page-1); }}
-                                    className="p-2 flex justify-center rounded-full cursor-pointer disabled:pointer-events-none disabled:opacity-50 hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover"
+                                    className="p-2 flex justify-center rounded-full cursor-pointer disabled:pointer-events-none disabled:opacity-50 text-secondary-plain hover:text-secondary-plain-hovered hover:bg-secondary-background-hovered"
                                 >
                                     <ChevronLeftIcon className="size-5" />
                                 </button>
                                 <button
                                     disabled={pagination.page >= pagination.total/pagination.pageSize}
                                     onClick={() => { if(pagination.page < pagination.total/pagination.pageSize) updatePagination(hubInit.surveys, undefined, pagination.page+1); }}
-                                    className="p-2 flex justify-center rounded-full cursor-pointer disabled:pointer-events-none disabled:opacity-50 hover:bg-rl-btn-sec-hover hover:dark:bg-rd-btn-sec-hover"
+                                    className="p-2 flex justify-center rounded-full cursor-pointer disabled:pointer-events-none disabled:opacity-50 text-secondary-plain hover:text-secondary-plain-hovered hover:bg-secondary-background-hovered"
                                 >
                                     <ChevronRightIcon className="size-5" />
                                 </button>

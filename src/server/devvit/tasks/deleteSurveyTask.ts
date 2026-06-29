@@ -198,6 +198,9 @@ export const registerDeleteSurveyTask: PathFactory = (router: Router) => {
                         });
                         await post.remove(false);
                         await post.addRemovalNote({ reasonId: '', modNote: `Survey Deleted by ${username}` });
+                        await post.setTextFallback({
+                            text: 'Sorry, this survey has been deleted.'
+                        });
                     }
                 }
 

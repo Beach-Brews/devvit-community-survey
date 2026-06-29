@@ -20,11 +20,12 @@ export const ScaleEditor = (props: CommonQuestionEditorProps) => {
     const q = props.question;
 
     const onChangeKind = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newKind = e.target.value as ScaleKind;
         props.modifyQuestion({
             ...q,
-            kind: e.target.value as ScaleKind,
+            kind: newKind,
             min: 1,
-            max: q.kind === 'ott' ? 10 : 5,
+            max: newKind === 'ott' ? 10 : 5,
         });
     };
 

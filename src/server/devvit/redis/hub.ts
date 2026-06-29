@@ -41,7 +41,7 @@ export const getHubSurveys = async (): Promise<SurveyDto[]> => {
             const now = Date.now();
             return surveys
                 .filter(s => s.publishDate !== null && s.publishDate < now)
-                .sort((a, b) => (a.publishDate ?? 0) - (b.publishDate ?? 0));
+                .sort((a, b) => (b.publishDate ?? 0) - (a.publishDate ?? 0));
 
         } catch (e) {
 
