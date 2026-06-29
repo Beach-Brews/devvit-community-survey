@@ -8,12 +8,16 @@
 * Setup GitHub Project for project tracking (features + bugs)
 
 * Ideas
+  * High - Dashboard redesigns
+  * High - Fix spaces/whitespace questions, descriptions and lables
   * High - Export Results to CSV
   * High - ??Text Responses??
   * High - Dashboard redesign
   * High - Results charts revamp
   * Medium - Rank drag-and-drop (using dnd-kit, lazy loaded?)
   * Medium - Results page sorting: allow "option order", "lowest to highest", or "highest to lowest"
+  * Medium - Sub-Ban vs Site-Ban vs Shadowban etc.
+  * Low - Per-question user criteria (such as general lurker questions vs poster questions)
   * Low - Text fallback changes (update fallback text if post is deleted/removed directly?)
   * Low - Fix hub "there are no closed/live surveys" copy styling
   * Low - ??Add "shareImageUrl" - Generate an image with survey text, upload??

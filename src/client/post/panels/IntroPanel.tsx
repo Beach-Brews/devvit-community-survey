@@ -119,15 +119,17 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         : 'No close date'}
                 </div>
             </div>
-            <div className="w-full p-2 pt-0 flex flex-col gap-2 justify-evenly items-center grow h-[0%]">
-                <div className="flex flex-col gap-2 items-center grow h-[0%]">
-                    <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong">{ctx.survey.title}</div>
+            <div className="w-full flex-1 min-h-0 p-2 pt-0 grid grid-rows-[1fr_auto_1fr_auto_1fr] gap-2">
+                <div></div>
+                <div className="flex flex-col gap-2 items-center min-h-0 overflow-hidden">
+                    <div className="text-2xl font-bold text-center leading-tight text-neutral-content-strong shrink-0">{ctx.survey.title}</div>
                     {ctx.survey.intro && (
-                        <div className={`text-center flex-1 overflow-hidden`}>
+                        <div className="text-center overflow-hidden">
                             {renderMarkdown(ctx.survey.intro)}
                         </div>
                     )}
                 </div>
+                <div></div>
                 <div className="w-full flex flex-col items-center gap-1">
                     <button
                         disabled={disableResponses}
@@ -165,6 +167,7 @@ export const IntroPanel = (props: IntroPanelProps) => {
                         </div>
                     )}
                 </div>
+                <div></div>
             </div>
         </div>
     );

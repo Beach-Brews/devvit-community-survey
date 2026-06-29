@@ -87,9 +87,25 @@ const onAccountDeleted = async (userId: string, context: DeleteAccountTaskContex
     }
 };
 
+/**
+ * Copyright Notice: based on FSV's getRawUserData to capture the 404/403 exceptions when user is banned/deleted
+ * https://github.com/fsvreddit/fsv-devvit-helpers/blob/main/src/extendedDevvit/userExtended.ts#L6
+ * @param userId - The user ID to get
+ */
+const getUserOrUndefined = async (userId: `t2_${string}`) => {
+    try {
+        return await reddit.getUserById(userId);
+    } catch (error) {
+        if (error instanceof Error && (error.message.includes("404 Not Found") || error.message.includes("403 Forbidden"))) {
+            return undefined; // Return undefined if the user was now deleted
+        }
+        throw error; // Rethrow the error if it's not a 404 or 403
+    }
+};
+
 const checkUser = async (userId: string, context: DeleteAccountTaskContext, isAuthor: boolean) => {
     // Check if user exists
-    const userProfile = await reddit.getUserById(userId as `t2_${string}`);
+    const userProfile = await getUserOrUndefined(userId as `t2_${string}`);
 
     // If the user could not be found (undefined, not error), trigger an onAccountDelete
     if (!userProfile) {
@@ -162,7 +178,7 @@ export const registerAccountDeletedTask: PathFactory = (router: Router) => {
 
         } catch (error) {
             if (error instanceof DeleteAccountExecutionLimitError) {
-                logger.warn(error);
+                logger.warn('Ended delete task early due to processing time. Resuming next run: ', error);
                 res.status(200).json({
                     status: 'complete',
                     message: 'Ended delete task early due to processing time. Resuming next run.'
