@@ -24,9 +24,9 @@
 * _More Coming Soon!_
 
 ## Question Types
-* 🔘 Multiple Choice (One Selection)
-* 🔳 Checkbox (Multiple Selection)
-* ↕️ Rank (Order Options Highest to Lowest)
+* 🔘 Multiple Choice (Pick One)
+* 🔳 Checkbox (Pick Many)
+* ↕️ Rank (Order Highest to Lowest)
 * ↔️ Scale (1-5 or 1-10)
 * _More Coming Soon!_
 
@@ -36,7 +36,7 @@ Introducing the Community Survey app for Reddit! A way to provide more advanced 
 
 Moderators are able to create surveys, schedule publish and/or close dates, choose responder criteria, when and who can see results, and view the aggregated responses. Published surveys appear directly in the user's feed, allowing them to respond and view results without having to leave Reddit. This not only helps increase user engagement, but also allows the survey author to choose user account criteria to ensure accurate results for the target audience (e.g. users with a minimum subreddit karma or account age).
 
-Currently, all user responses are anonymously aggregated. Mods do not have the ability to see individual user responses. However, an "application" mode is planned for a future release. Users may delete their response at any time, even after the survey has been closed.
+Currently, all user responses are anonymously aggregated. Mods do not have the ability to see individual user responses. However, an "application" mode is planned for a future release. Users may delete their response at any time, even after the survey has been closed, in line with Reddit policies.
 
 To view tutorials, receive support, report bugs, or request new features, please visit the [r/CommunitySurvey](https://www.reddit.com/r/CommunitySurvey) subreddit!
 

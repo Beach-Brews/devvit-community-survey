@@ -10,7 +10,7 @@ import { UserInfoDto } from '../../shared/types/postApi';
 import { AddToast } from '../shared/toast/toastTypes';
 
 export type DashboardListPageContext = {
-    page: 'list' | 'debug';
+    page: 'list' | 'debug' | 'design';
 };
 export type DashboardSurveyIdPageContext = {
     page: 'edit' | 'results' | 'view';

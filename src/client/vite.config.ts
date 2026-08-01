@@ -2,11 +2,17 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import tailwind from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import {mockDevServerPlugin} from "vite-plugin-mock-dev-server";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [react(), tailwind(), mockDevServerPlugin()],
+    resolve: {
+        alias: {
+            '@devvit/web/client': path.resolve(__dirname, './mock/devvit-web.mock.js'),
+        },
+    },
     build: {
         outDir: '../../dist/client',
         sourcemap: true,

@@ -12,7 +12,7 @@ import { SurveyListPage } from './pages/list/SurveyListPage';
 import { SurveyEditorPage } from './pages/editor/SurveyEditorPage';
 import { SurveyResultsPage } from './pages/results/SurveyResultsPage';
 import { Constants } from '../../shared/constants';
-import { BugAntIcon } from '@heroicons/react/24/solid';
+import { BugAntIcon, PaintBrushIcon } from '@heroicons/react/24/solid';
 import { DebugPage } from './pages/debug/DebugPage';
 import { UserInfoDto } from '../../shared/types/postApi';
 import { DashboardToaster } from './shared/components/DashboardToaster';
@@ -20,6 +20,7 @@ import { useToaster } from '../shared/toast/useToaster';
 import { SurveyViewerPage } from './pages/viewer/SurveyViewerPage';
 import { getUserInfo } from './api/dashboardApi';
 import { SurveyDashboardLoading } from './SurveyDashboardLoading';
+import { DesignLanguagePage } from './pages/design/DesignLanguagePage';
 
 export const SurveyDashboard = () => {
     const [pageContext, setPageContext] = useState<DashboardPageContext>({page: 'list'});
@@ -62,6 +63,14 @@ export const SurveyDashboard = () => {
         ) : undefined;
     };
 
+    const designButton = () => {
+        return context?.subredditName === 'UAT4CommunitySurvey' ? (
+            <button className="cursor-pointer mr-2" onClick={() => dashContext.setPageContext({page: 'design'})}>
+                <PaintBrushIcon className="size-4" />
+            </button>
+        ) : undefined;
+    };
+
     return (
         <DashboardContext.Provider value={dashContext}>
             <div className="w-full h-screen overflow-auto">
@@ -82,6 +91,8 @@ export const SurveyDashboard = () => {
                                     return <SurveyResultsPage />;
                                 case 'debug':
                                     return <DebugPage />;
+                                case 'design':
+                                    return <DesignLanguagePage />;
                                 case 'list':
                                 default:
                                     return <SurveyListPage />;
@@ -100,7 +111,7 @@ export const SurveyDashboard = () => {
                             for Feedback and Support
                         </div>
                         <div className="max-w-1/2 flex items-center">
-                            {debugButton()} v{context?.appVersion ?? Constants.SURVEY_VERSION_DISPLAY}
+                            {designButton()} {debugButton()} v{context?.appVersion ?? Constants.SURVEY_VERSION_DISPLAY}
                             {/*(
                                 <>
                                     &nbsp;-&nbsp;

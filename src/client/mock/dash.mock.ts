@@ -30,7 +30,7 @@ export default defineMock([
             code: 200,
             message: 'OK',
             result: {
-                appUpdateInfo: undefined,
+                appUpdateInfo: { "latestVersion": "0.1.1", "urgent": false, "message": "Survey posts have been redesigned! Choose your theme color. Dashboard redesign coming soon." },
                 surveys: SampleSurveyList
             }
         } satisfies ApiResponse<DashboardListDto>

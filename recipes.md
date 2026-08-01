@@ -1,94 +1,88 @@
 ﻿## Roadmap
-* Develop design system
-* Mock designs
-* Requirements docs
 
-* Update documentation
-* Create demo video
-* Setup GitHub Project for project tracking (features + bugs)
+- Update documentation
+- Create demo video
+- Setup GitHub Project for project tracking (features + bugs)
 
-* Ideas
-  * High - Dashboard redesigns
-  * High - Fix spaces/whitespace questions, descriptions and lables
-  * High - Export Results to CSV
-  * High - ??Text Responses??
-  * High - Dashboard redesign
-  * High - Results charts revamp
-  * Medium - Rank drag-and-drop (using dnd-kit, lazy loaded?)
-  * Medium - Results page sorting: allow "option order", "lowest to highest", or "highest to lowest"
-  * Medium - Sub-Ban vs Site-Ban vs Shadowban etc.
-  * Low - Per-question user criteria (such as general lurker questions vs poster questions)
-  * Low - Text fallback changes (update fallback text if post is deleted/removed directly?)
-  * Low - Fix hub "there are no closed/live surveys" copy styling
-  * Low - ??Add "shareImageUrl" - Generate an image with survey text, upload??
-  * Low - Going to next question does not scroll back to top
-  * Low - Results progress bar is wrong (last question shows space?)
+- Ideas
+  + Highest - Operational - Develop a Design System
+  + Highest - Feature - Dashboard - Redesign
+  + Highest - Feature - Dashboard - Media Library + Images
+    - Allow images in description + options. Intro banner image (not in Markdown?)
+  + Highest - Feature - Free-Text Responses
+      - Would like to discuss on next call
+      - Need to break-down into multiple tickets
+      - Ensure user option to remain anonymous. Note: Mod only responses for these.
+  + Highest - Feature - Rank Drag-and-Drop
+      - Using lazy loaded dnd-kit
+  + High - Feature - Dashboard - Export Results to CSV
+  + High - Feature - Dashboard - Post-As Moderator Support
+  + High - Feature - Dashboard - Collaborative Survey Editing
+  + High - Feature - Dashboard - Distinguish Survey Post as Mod
+  + High - Feature - Dashboard - Survey Preview
+  + High - Feature - Repost Live Survey
+  + High - Feature - New Survey Setting - Post Flair
+  + Medium - Feature - Dashboard - Rolling/Repeating Survey
+  + Medium - Feature - Dashboard - Duplicate / Copy Survey
+  + Medium - Operational - Develop Requirements/Testing Document
+  + Medium - Feature - Post - Help Screen
+  + Medium - Bug - Whitespace / Empty Text Allowed
+    - Trim ending spaces/whitespace in questions, descriptions, and labels
+  + Medium - Feature - Results Sorting
+    - Allow "option order", "lowest to highest", or "highest to lowest"
+  + Medium - Feature - Add Close Screen Link to Survey Hub
+    - "View Other Surveys" or "Open Survey Hub"
+  + Medium - Feature - Per-Question User Criteria 
+    - Such as general lurker questions vs poster questions
+  + Medium - Feature - Bot-Bouncer Integration
+    - Discuss how survey can block users via bot-bouncer reports
+  + Medium - Feature - User Default Preferences
+    - Allow users to save the survey user criteria and results and theme as default preferences
+  + Medium - Feature - Custom Primary Color
+    - Allow custom primary color selection
+  + Medium - Feature - Allow multiple submissions
+  + Medium - Feature - Required/Optional Setting
+  + Medium - Feature - Randomize Question Options
+  + Medium - Bug - Shadowbanned Users Throw 500 Error
+    - Banned and shadowbanned users seem to get a 500 error, not a proper message
+  + Medium - Feature - Checkbox Min or Max Selections
+    - Setting to choose min or max number of selections (i.e. select 2 to 5)
+  + Medium - Bug - Dashboard - View Survey Flair-Selection Shows "Code"
+    - Currently shows "TxtEq" instead of "Equals"
+  + Medium - Feature - Dashboard - User Flair CSS Class and Text RegEx
+  + Medium - Server - Migration Framework
+  + Medium - Feature - Questions - Tiered Rank Type
+  + Medium - Bug - Dashboard - Editing "Published" Survey Date Incorrect
+    - The publish dialog does not show the previously scheduled date
+  + Low - Bug - Safari Not Following Reddit Theme Preference
+  + Low - Bug - Hub - Mobile Landscape Cropping
+  + Low - Feature - "Application Mode"
+    - Moderators see user's specific responses. No public results.
+  + Low - Feature - Remove Banned User Responses Immediately
+    - Use the ModAction trigger to immediately remove banned user responses
+  + Low - Feature - Results Charts Revamp
+  + Low - Feature - Add "shareImageUrl"
+    - Generate an image with survey text, upload??
+  + Low - Bug - Next Question Navigate To-Top
+    - Going to next question does not scroll back to top
+  + Low - Bug - Progress Bar on Results Shows Extra Space
+    - Last question shows space?
+  + Low - Feature - Hub Banner Image
+    - General Setting For "Hub Banner Image" when there are no surveys
+  + Lowest - Feature - App Feedback in Dashboard/Help
+  + Lowest - Bug - Banned User Setting Verbiage
+  + Lowest - Feature - Dashboard - Survey Pagination / Filtering
+  + Lowest - Feature - Text Fallback on Old Reddit
+    - Try adding Markdown link to the text fallback for old reddit users
+  + Lowest - Feature - Text Fallback on Post Removed / Deleted
+    - Update fallback text if post is deleted/removed directly
+  - Lowest - Bug - Hub No-Survey Copy Styling
+    - Fix hub "there are no closed/live surveys" copy styling. NOTE: May be deferred to "Banner Image"
+  - Lowest - Bug - Dashboard - Editor Does Not Start at Top
+    - If the survey list is scrolled, editing a survey does not start at the top
 
-## General
-* Update text fallback for old reddit to include link to new reddit (try markdown)
-  * Update fallback text when survey is deleted. Would need trigger to update as well if mod deletes the post itself? Could fallback set it if config fetched and not exists.
-* Migration Framework
-  * Migrate postIds + hub API
-* Discuss if there is a way to build in bot-bouncer checks (i.e. read wiki?)
-* Add trigger to detect user bans immediately
-* Text field support
-  * Text response comments: anonymously posted or posted as user
-  * If the app comments something, and it is removed (or flagged by Reddit filters), the app is likely to be banned? How can I avoid this?
-* Allow image upload for description and options
-    * Will need expanded view for these
 
-## Dashboard
-* Export Survey Responses to CSV/Xlsx
-* When surveys are published, add new "shareImageUrl" => https://developers.reddit.com/docs/capabilities/creating_custom_post#custom-post-styles
-* Provide feedback within dashboard (and post help)
-* Handle cross-device/multi-tab editing. Channels? Lock?
-    * Allow all mods to see all surveys?
-* Survey settings
-  * Add Flair to Survey Post
-  * Background/button colors (use community theme defaults)
-  * Allow multiple submissions
-  * Anonymous (default), user choice
-  * Application mode
-  * Save default settings for future surveys
-* Survey Question Settings
-  * Required
-  * Randomize question options
-  * (Checkbox) Max selection (e.g. only 3 of 5 can be selected)
-* Markdown support for images, including options
-  * Maybe a media library?
-* Preview survey (theme, mobile vs desktop, etc.)
-* Duplicate/Copy survey (automatic export/import)
-* Rolling/Repeating survey (i.e. monthly reposts)
-* Repost live survey
-* Better error handling with mute/mod/karma failing 500 errors
-  * Site banned and shadowbanned user seem to throw 500s?
-* Survey list filter / pagination
-* Survey Post option to RunAs Author
-  * is this possible as a scheduled post? Might only work as "immediate" posts.
-  * May be possible at some point in the future, but no official confirmation yet.
+* Medium - Feature - Questions - User Nomination
+* Medium - Feature - Questions - Subreddit Nomination
 
-## Survey Post
-* Text responses (added as comment)
-  * Choose anonymous
-* Multiple responses
-* Help screens
-* Feedback / report issue -> Send mod mail with details
-* Expanded view for taking survey
-
-## Know Issues
-
-**General**
-
-* Bug: Safari does not follow user's Reddit theme preference. OS theme takes priority.
-
-**Hub**
-
-* Bug: Visual - iPad landscape is a bit wonky with the width being cut-off.
-* Bug: Visual - Text for "there are no closed/live surveys" (filter selection is empty) should be centered
-
-**Dashboard**
-
-* Bug: Editing surveys on two separate devices at the same time
-* Bug: If survey list is scrolled, the editor also starts already scrolled, which cuts off the setting tabs.
-* Bug: Editing a "scheduled" survey, the publish dialog does not show the previously selected publish or close date.
-* Bug: Visual - Flair criteria shows "code" (TxtEq)
+* Medium - Feature - User Criteria - Is a Moderator of a sub??

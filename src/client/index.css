@@ -27,6 +27,7 @@ html {
 }
 
 @layer components {
+    /* ===== Button styles ===== */
     .svy-btn {
         @apply flex justify-center items-center gap-1 p-2 rounded-full cursor-pointer
         disabled:bg-secondary-background disabled:text-secondary-onbackground disabled:pointer-events-none disabled:opacity-50;
@@ -51,6 +52,81 @@ html {
         font-bold text-danger-onbackground
         bg-danger-background hover:bg-danger-background-hovered;
     }
+
+    .svy-btn-lg {
+        @apply px-6 py-4;
+    }
+
+    .svy-btn-sm {
+        @apply px-2 py-1 text-sm;
+    }
+}
+
+@layer base {
+
+    /* ===== Scrollbar styles ===== */
+    /* TODO: Add :root styles for scroll-bars */
+    ::-webkit-scrollbar {
+        @apply w-2 h-2 bg-transparent;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-lg;
+        background: var(--color-neutral-border);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-neutral-content);
+    }
+
+    /* ===== Remove number field arrows ===== */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type='number'] {
+        -moz-appearance: textfield;
+    }
+
+    /* ===== Heading styles ===== */
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-bold border-b border-b-neutral-border;
+    }
+
+    h1 {
+        @apply text-2xl;
+    }
+
+    h2 {
+        @apply text-xl;
+    }
+
+    h3 {
+        @apply text-lg;
+    }
+
+    h4, h5, h6 {
+        @apply text-base;
+    }
+
+    /* ===== List styles ===== */
+    ul {
+        @apply list-disc list-outside ml-3 space-y-2 pl-2;
+    }
+    ol {
+        @apply list-decimal list-outside ml-3 space-y-2 pl-2;
+    }
+
+    /* ===== Default Link styles ===== */
+    a {
+        @apply cursor-pointer text-survey-primary-content font-bold;
+    }
+    a:hover {
+        @apply underline;
+    }
 }
 
 @theme {
@@ -62,6 +138,7 @@ html {
 
     --color-survey-primary-border: var(--survey-primary-border);
     --color-survey-primary-border-hovered: var(--survey-primary-border-hovered);
+    --color-survey-primary-content: var(--survey-primary-content);
     --color-survey-button-primary-background: var(--survey-button-primary-background);
     --color-survey-button-primary-background-hovered: var(--survey-button-primary-background-hovered);
     --color-survey-button-primary-onbackground: var(--survey-button-primary-onbackground);
@@ -288,8 +365,10 @@ html {
     --color-brown-900: var(--brown-900);
     --color-brown-950: var(--brown-950);
 
-    --color--global-black: var(--global-black);
-    --color--global-white: var(--global-white);
+    --color-global-black: var(--global-black);
+    --color-global-white: var(--global-white);
+    --color-global-black-white: var(--global-black-white);
+    --color-global-white-black: var(--global-white-black);
 
     --color-global-orangered-50: var(--global-orangered-50);
     --color-global-orangered-100: var(--global-orangered-100);
@@ -622,6 +701,8 @@ html {
 
     --global-black: #000000;
     --global-white: #ffffff;
+    --global-black-white: #000000;
+    --global-white-black: #ffffff;
 
     --global-orangered-50: var(--orangered-50);
     --global-orangered-100: var(--orangered-100);
@@ -767,7 +848,7 @@ html {
     --reddit-juniperblue-secondary: #92ffea;
     --reddit-juniperblue-light: #e6fffa;
     --devvit-expanded-header: #ffffff;
-    
+
     --reddit-orangered-dark: #3a1207;
     --reddit-guavapink-dark: #351126;
     --reddit-bananayellow-dark: #332608;
@@ -776,6 +857,7 @@ html {
 
     --survey-primary-border: var(--reddit-limegreen);
     --survey-primary-border-hovered: var(--reddit-limegreen-dark);
+    --survey-primary-content: var(--reddit-limegreen);
     --survey-button-primary-background: var(--reddit-limegreen);
     --survey-button-primary-background-hovered: var(--reddit-limegreen-secondary);
     --survey-button-primary-onbackground: var(--global-black);
@@ -784,6 +866,9 @@ html {
 @media (prefers-color-scheme: dark) {
     :root {
         --survey-primary-border-hovered: var(--reddit-limegreen-secondary);
+
+        --global-black-white: #ffffff;
+        --global-white-black: #000000;
 
         --global-stars: var(--yellow-400);
 
