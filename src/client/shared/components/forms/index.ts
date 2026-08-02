@@ -5,7 +5,7 @@
  * License: BSD-3-Clause
  */
 
-export { type CheckboxFieldProps, CheckboxField } from './CheckboxField';
+export { type ToggleFieldProps, ToggleField } from './ToggleField';
 export { type CollapsableFieldGroupProps, CollapsableFieldGroup } from './CollapsableFieldGroup';
 export { type DescriptionTooltipProps, DescriptionTooltip } from './DescriptionTooltip';
 export { type NumberFieldProps, NumberField } from './NumberField';

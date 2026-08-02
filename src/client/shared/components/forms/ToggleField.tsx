@@ -1,5 +1,5 @@
 /*!
- * A helper component for consistent checkbox fields.
+ * A helper component for consistent toggle fields.
  * AI Assisted.
  *
  * Author: u/Beach-Brews
@@ -9,25 +9,31 @@
 import { useState } from 'react';
 import { DescriptionTooltip } from './DescriptionTooltip';
 
-export type CheckboxFieldProps = {
+export type ToggleFieldProps = {
     label: string;
+    name?: string;
     description?: string;
     checked: boolean | undefined;
     disabled?: boolean;
     allowUndefined?: boolean;
+    onLabel?: string;
+    offLabel?: string;
     onChange: (checked: boolean | undefined) => void;
     onValidate?: (value: boolean | undefined) => (string|undefined);
 };
 
-export const CheckboxField = ({
+export const ToggleField = ({
     label,
+    name,
     description,
     checked: initialChecked,
     disabled = false,
     allowUndefined = false,
+    onLabel = "Yes",
+    offLabel = "No",
     onChange,
     onValidate
-}: CheckboxFieldProps) => {
+}: ToggleFieldProps) => {
     const [checked, setChecked] = useState<boolean | undefined>(() => (initialChecked ?? (allowUndefined ? undefined : false)));
     const [error, setError] = useState<string | undefined>();
 
@@ -61,8 +67,8 @@ export const CheckboxField = ({
         checked === undefined
             ? ""
             : checked
-                ? "Yes"
-                : "No";
+                ? onLabel
+                : offLabel;
 
     const trackClass =
         checked === undefined
@@ -80,6 +86,9 @@ export const CheckboxField = ({
 
     return (
         <div className="relative min-w-35">
+            {checked !== undefined && (
+                <input className="hidden" type="checkbox" name={name ?? label} checked={checked} />
+            )}
             <div className="flex items-center gap-2">
                 <div
                     className={`
@@ -125,7 +134,7 @@ export const CheckboxField = ({
                         onClick={toggle}
                         className={`flex gap-2 items-center min-w-0 text-left ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     >
-                        <span className="text-sm text-black dark:text-white">
+                        <span className="text-sm text-global-black-white">
                             {label}
                         </span>
                     </button>
@@ -137,7 +146,7 @@ export const CheckboxField = ({
             </div>
 
             <div className="flex justify-start px-4">
-                <div className="text-red-800 dark:text-red-400">
+                <div className="text-danger-plain">
                     {error}
                 </div>
             </div>

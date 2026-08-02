@@ -8,10 +8,11 @@
 
 import { useLayoutEffect, useRef, useState, KeyboardEvent } from 'react';
 import { DescriptionTooltip } from './DescriptionTooltip';
-import { useDebounce } from '../../../../shared/debounce';
+import { useDebounce } from '../../debounce';
 
 export type TextFieldProps = {
     label: string;
+    name?: string;
     description?: string;
     value: string;
     minLength?: number;
@@ -31,6 +32,7 @@ export type TextFieldProps = {
 
 export const TextField = ({
     label,
+    name,
     description,
     value: initialValue,
     minLength,
@@ -140,6 +142,7 @@ export const TextField = ({
 
                 <textarea
                     ref={ref}
+                    name={name ?? label}
                     value={value}
                     disabled={disabled}
                     minLength={minLength}

@@ -8,10 +8,11 @@
 
 import { KeyboardEvent, useState } from 'react';
 import { DescriptionTooltip } from './DescriptionTooltip';
-import { useDebounce } from '../../../../shared/debounce';
+import { useDebounce } from '../../debounce';
 
 export type NumberFieldProps = {
     label: string;
+    name?: string;
     description?: string;
     value: number | undefined;
     min?: number;
@@ -26,6 +27,7 @@ export type NumberFieldProps = {
 
 export const NumberField = ({
     label,
+    name,
     description,
     value: initialValue,
     min,
@@ -172,6 +174,7 @@ export const NumberField = ({
 
                 <input
                     type="number"
+                    name={name ?? label}
                     value={value}
                     minLength={min}
                     maxLength={max}

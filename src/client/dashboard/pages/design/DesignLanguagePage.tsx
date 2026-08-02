@@ -14,6 +14,7 @@ import { DlColorTab } from './DlColorTab';
 import { DlTypographyTab } from './DlTypographyTab';
 import { DlButtonsTab } from './DlButtonsTab';
 import { DlFormsTab } from './DlFormsTab';
+import { DlTabsTab } from './DlTabsTab';
 
 export const TempTab = () => {
     return (
@@ -62,7 +63,7 @@ export const DesignLanguagePage = () => {
                 'Buttons': <DlButtonsTab />,
                 'Forms': <DlFormsTab />,
                 'Tables': <TempTab />,
-                'Tabs': <TempTab />,
+                'Tabs': <DlTabsTab />,
                 'Tooltips': <TempTab />,
                 'Alerts': <TempTab />,
                 'Toasts': <TempTab />,

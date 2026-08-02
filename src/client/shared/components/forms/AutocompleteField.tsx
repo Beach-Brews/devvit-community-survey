@@ -14,6 +14,7 @@ export type AutocompleteOptions<T> = Record<string, AutocompleteOption<T>[]>;
 
 export type AutocompleteFieldProps<T> = {
     label: string;
+    name?: string;
     description?: string;
     options: AutocompleteOptions<T>;
     selected?: T[] | undefined,
@@ -26,6 +27,7 @@ export type AutocompleteFieldProps<T> = {
 
 export const AutocompleteField = <T extends string,>({
     label,
+    name,
     description,
     options,
     selected,
@@ -113,6 +115,7 @@ export const AutocompleteField = <T extends string,>({
                 </div>
 
                 <textarea
+                    name={name ?? label}
                     value={value}
                     disabled={disabled}
                     rows={1}
