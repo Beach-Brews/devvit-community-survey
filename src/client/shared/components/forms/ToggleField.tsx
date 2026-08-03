@@ -87,7 +87,7 @@ export const ToggleField = ({
     return (
         <div className="relative min-w-35">
             {checked !== undefined && (
-                <input className="hidden" type="checkbox" name={name ?? label} checked={checked} />
+                <input className="hidden" type="checkbox" name={name ?? label} checked={checked} readOnly={true} />
             )}
             <div className="flex items-center gap-2">
                 <div

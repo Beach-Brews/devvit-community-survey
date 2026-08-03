@@ -9,7 +9,7 @@ export const BulletIcon = ({fill}: {fill: boolean}) => {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" data-slot="icon" className="size-5">
             <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="3" />
-            <circle cx="12" cy="12" r="6" className={fill ? 'text-current group-hover:text-survey-primary-border-hovered' : 'hidden group-hover:block group-hover:text-survey-primary-border-hovered'} fill="currentColor" stroke="none" />
+            <circle cx="12" cy="12" r="6" className={fill ? 'text-current' : 'hidden group-hover:block'} fill="currentColor" stroke="none" />
         </svg>
     );
 };

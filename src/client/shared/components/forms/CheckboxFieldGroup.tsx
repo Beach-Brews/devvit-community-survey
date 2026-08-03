@@ -9,7 +9,7 @@
 import { useMemo, useState } from 'react';
 import { DescriptionTooltip } from './DescriptionTooltip';
 import { useDebounce } from '../../debounce';
-import { CheckboxIcon } from '../CustomIcons';
+import { BulletIcon, CheckboxIcon } from '../CustomIcons';
 
 export type CheckboxFieldOption<T extends string> = {
     label: string;
@@ -49,11 +49,12 @@ export const CheckboxFieldGroup = <T extends string>({
         .filter(o => o.checked)
         .reduce((v, o) => [...v, o.value], [] as T[])
     );
+    const [changed, setChanged] = useState<boolean>(false);
 
     const error = useMemo(() => {
         cancelChangeDebounce();
         if (values.length < min)
-            return `Please select at least ${min} option${min > 1 && 's'}.`;
+            return `Please select at least ${min} option${min > 1 ? 's' : ''}.`;
         if (max > 0 && values.length > max)
             return `You may only select at most ${max} options.`;
         if (onValidate) {
@@ -66,9 +67,10 @@ export const CheckboxFieldGroup = <T extends string>({
     }, [values, min, max, cancelChangeDebounce, onValidate, onChangeDebounce]);
 
     const onSelect = (value: T) => {
-        setValues(vs => vs.indexOf(value) <= -1
-            ? [...vs, value]
-            : [...vs].filter(v => v !== value)
+        setChanged(true);
+        setValues(vs => !vs.includes(value)
+            ? (max == 1 ? [value] : [...vs, value])
+            : vs.filter(v => v !== value)
         );
     };
 
@@ -95,19 +97,21 @@ export const CheckboxFieldGroup = <T extends string>({
                             text-neutral-content text-xs
                         `}
                     >
-                        {!noCount && (
+                        {!noCount && max !== 1 && (
                             <span>{min} - {max > 0 && max <= options.length ? max : options.length}</span>
                         )}
                         {description && <DescriptionTooltip text={description} />}
                     </div>
                 </div>
             )}
-            <div className="flex justify-start">
-                <div className="text-danger-plain">{error}</div>
-            </div>
+            {error && changed && (
+                <div className="flex justify-start">
+                    <div className="text-danger-plain">{error}</div>
+                </div>
+            )}
             <div className="flex flex-col">
                 {options.map(o => {
-                    const selected = values.indexOf(o.value) >= 0;
+                    const selected = values.includes(o.value);
                     return (
                         <div
                             key={o.value}
@@ -117,6 +121,14 @@ export const CheckboxFieldGroup = <T extends string>({
                             `}
                             onClick={() => !disabled && !o.disabled ? onSelect(o.value) : null}
                         >
+                            <input
+                                type={max === 1 ? 'radio' : 'checkbox'}
+                                disabled={disabled || o.disabled}
+                                name={name}
+                                value={o.value}
+                                readOnly={true}
+                                checked={selected}
+                                className="hidden" />
                             <div
                                 className={`
                                     size-6 flex items-center
@@ -131,7 +143,10 @@ export const CheckboxFieldGroup = <T extends string>({
                                     }
                                 `}
                             >
-                                <CheckboxIcon fill={selected} />
+                                {max === 1
+                                    ? (<BulletIcon fill={selected} />)
+                                    : (<CheckboxIcon fill={selected} />)
+                                }
                             </div>
                             <div
                                 className={`
@@ -141,7 +156,6 @@ export const CheckboxFieldGroup = <T extends string>({
                             >
                                 {o.label}
                             </div>
-                            <input type="checkbox" disabled={disabled || o.disabled} name={name} value={o.value} checked={selected} className="hidden" />
                         </div>
                     );
                 })}

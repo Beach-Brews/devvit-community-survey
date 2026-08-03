@@ -64,7 +64,7 @@ export const DescriptionTooltip = ({
             <button
                 ref={anchorRef}
                 type="button"
-                className="inline-flex cursor-pointer text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200"
+                className="inline-flex cursor-pointer text-neutral-content hover:text-neutral-content-strong"
                 onTouchStart={() => setOpen(s => !s)}
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
@@ -80,9 +80,9 @@ export const DescriptionTooltip = ({
                         ref={tooltipRef}
                         className="
                             fixed z-50 w-[min(16rem,calc(100vw-1rem))]
-                            rounded-xl border border-neutral-400 dark:border-neutral-600
-                            bg-neutral-50 dark:bg-neutral-900 px-3 py-2
-                            text-xs text-neutral-900 dark:text-neutral-100 shadow-lg
+                            rounded-xl border border-neutral-border-medium
+                            bg-neutral-background-weak px-3 py-2
+                            text-xs text-neutral-content-strong shadow-lg
                             pointer-events-none
                         "
                         style={{

@@ -49,12 +49,12 @@ export const DesignLanguagePage = () => {
                     <ArrowLeftIcon className="size-5" />
                     Back
                 </button>
-                <select className="text-survey-primary-content" onChange={e => setTheme(e.target?.value)}>
-                    <option selected={theme === 'orangered'} value="orangered" className="text-global-black font-bold bg-reddit-orangered">Orange Red</option>
-                    <option selected={theme === 'guavapink'} value="guavapink" className="text-global-black font-bold bg-reddit-guavapink">Guava Pink</option>
-                    <option selected={theme === 'bananayellow'} value="bananayellow" className="text-global-black font-bold bg-reddit-bananayellow">Banana Yellow</option>
-                    <option selected={theme === 'limegreen'} value="limegreen" className="text-global-black font-bold bg-reddit-limegreen">Lime Green</option>
-                    <option selected={theme === 'juniperblue'} value="juniperblue" className="text-global-black font-bold bg-reddit-juniperblue">Juniper Blue</option>
+                <select className="text-survey-primary-content" value={theme} onChange={e => setTheme(e.target?.value)}>
+                    <option value="orangered" className="text-global-black font-bold bg-reddit-orangered">Orange Red</option>
+                    <option value="guavapink" className="text-global-black font-bold bg-reddit-guavapink">Guava Pink</option>
+                    <option value="bananayellow" className="text-global-black font-bold bg-reddit-bananayellow">Banana Yellow</option>
+                    <option value="limegreen" className="text-global-black font-bold bg-reddit-limegreen">Lime Green</option>
+                    <option value="juniperblue" className="text-global-black font-bold bg-reddit-juniperblue">Juniper Blue</option>
                 </select>
             </div>
             <TabGroup tabs={{

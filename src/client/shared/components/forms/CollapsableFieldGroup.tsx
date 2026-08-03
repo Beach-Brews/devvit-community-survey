@@ -20,8 +20,14 @@ export const CollapsableFieldGroup = ({
 }: CollapsableFieldGroupProps) => {
     const [expand, setExpand] = useState<boolean>(() => initialExpand);
     return (
-        <div className="border rounded-xl border-neutral-300 dark:border-neutral-600">
-            <div className={`p-2 select-none cursor-pointer flex justify-between items-center ${expand && 'border-b border-neutral-300 dark:border-neutral-600'}`} onClick={() => setExpand(e => !e)}>
+        <div className="border rounded-xl border-neutral-border">
+            <div
+                className={`
+                    p-2 select-none cursor-pointer flex justify-between items-center
+                    ${expand && 'border-b border-neutral-border'}
+                `}
+                onClick={() => setExpand(e => !e)}
+            >
                 <div className="font-medium text-sm">{label}</div>
                 <div className="text-xs">{expand ? '\u25B2' : '\u25BC'}</div>
             </div>

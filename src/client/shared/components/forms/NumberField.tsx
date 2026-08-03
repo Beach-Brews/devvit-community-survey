@@ -191,7 +191,7 @@ export const NumberField = ({
                 />
             </div>
 
-            {error && (<div className="text-red-800 dark:text-red-400 px-4">{error}</div>)}
+            {error && (<div className="text-danger-plain px-4">{error}</div>)}
         </div>
     );
 };

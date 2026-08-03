@@ -5,8 +5,17 @@
 * License: BSD-3-Clause
 */
 
-import { NumberField, SelectField, SelectFieldOption, TextField, ToggleField } from '../../../shared/components/forms';
+import {
+    CollapsableFieldGroup,
+    NumberField,
+    SelectField,
+    SelectFieldOption,
+    TextField,
+    ToggleField,
+} from '../../../shared/components/forms';
 import { CheckboxFieldGroup } from '../../../shared/components/forms/CheckboxFieldGroup';
+import { RadioFieldGroup } from '../../../shared/components/forms/RadioFieldGroup';
+import { AutocompleteField } from '../../../shared/components/forms/AutocompleteField';
 
 const testOptions = [
     { label: "First Option", value: "o1" },
@@ -16,7 +25,7 @@ const testOptions = [
 
 export const DlFormsTab = () => {
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-8">
             <h1>Forms</h1>
             <h2>Text</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 justify-between">
@@ -52,7 +61,7 @@ export const DlFormsTab = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2 justify-between my-4">
                 <CheckboxFieldGroup
                     label="Sample Group of Checkboxes"
-                    description="A simple exapole of a checkbox group"
+                    description="A simple example of a checkbox group"
                     options={[
                         { label: 'Foo Bar', value: 'op1', description: 'Sample option description' },
                         { label: 'Hello World', value: 'op2', description: 'Sample option description', checked: true },
@@ -63,7 +72,7 @@ export const DlFormsTab = () => {
                 <CheckboxFieldGroup
                     disabled={true}
                     label="Sample Group of Checkboxes"
-                    description="A simple exapole of a checkbox group"
+                    description="A simple example of a checkbox group"
                     options={[
                         { label: 'Foo Bar', value: 'op1', description: 'Sample option description' },
                         { label: 'Hello World', value: 'op2', description: 'Sample option description', checked: true },
@@ -72,21 +81,76 @@ export const DlFormsTab = () => {
                     onChange={() => {}}
                 />
                 <CheckboxFieldGroup
-                    max={1}
-                    min={1}
+                    min={2}
                     label="Sample Group of Checkboxes"
-                    description="A simple exapole of a checkbox group"
+                    description="A simple example of a checkbox group"
                     options={[
                         { label: 'Foo Bar', value: 'op1', description: 'Sample option description' },
-                        { label: 'Hello World', value: 'op2', description: 'Sample option description', checked: true },
-                        { label: 'Another Option', value: 'op3', description: 'Sample option description', checked: true },
+                        { label: 'Hello World', value: 'op2', description: 'Sample option description', checked: false },
+                        { label: 'Another Option', value: 'op3', description: 'Sample option description', checked: false },
                     ]}
                     onChange={() => {}}
                 />
             </div>
             <h2>Radio Button</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 justify-between my-4">
+                <RadioFieldGroup
+                    label="Sample Group of Radio Buttons"
+                    description="A simple example of a radio button group"
+                    options={[
+                        { label: 'Foo Bar', value: 'op1', description: 'Sample option description' },
+                        { label: 'Hello World', value: 'op2', description: 'Sample option description', checked: true },
+                        { label: 'Another Option', value: 'op3', description: 'Sample option description', disabled: true },
+                    ]}
+                    onChange={() => {}}
+                />
+                <RadioFieldGroup
+                    disabled={true}
+                    label="Sample Group of Radio Buttons"
+                    description="A simple example of a radio button group"
+                    options={[
+                        { label: 'Foo Bar', value: 'op1', description: 'Sample option description' },
+                        { label: 'Hello World', value: 'op2', description: 'Sample option description', checked: true },
+                        { label: 'Another Option', value: 'op3', description: 'Sample option description', disabled: true },
+                    ]}
+                    onChange={() => {}}
+                />
+                <RadioFieldGroup
+                    required={true}
+                    label="Sample Group of Radio Buttons"
+                    description="A simple example of a radio button group"
+                    options={[
+                        { label: 'Foo Bar', value: 'op1', description: 'Sample option description' },
+                        { label: 'Hello World', value: 'op2', description: 'Sample option description' },
+                        { label: 'Another Option', value: 'op3', description: 'Sample option description' },
+                    ]}
+                    onChange={() => {}}
+                />
+            </div>
             <h2>Autocomplete</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 justify-between my-4">
+                <AutocompleteField
+                    label="Autocomplete Input"
+                    description="A simple autocomplete input"
+                    options={{
+                        'Test': [
+                            { label: 'Foo', value: 'foo' },
+                            { label: 'Bar', value: 'bar' },
+                        ],
+                        'Another': [
+                            { label: 'Hello', value: 'hello' },
+                            { label: 'World', value: 'world' },
+                        ],
+                    }}
+                    onSelect={() => {}}
+                />
+            </div>
             <h2>Field Group</h2>
+            <CollapsableFieldGroup label="Group of Fields" expand={true}>
+                <TextField label="Text Input" value={''} onChange={() => {}} />
+                <TextField label="Text Area" multiLine={true} rows={8} value={''} onChange={() => {}} />
+                <ToggleField label="Test" checked={false} onChange={() => {}} />
+            </CollapsableFieldGroup>
         </div>
     );
 };
